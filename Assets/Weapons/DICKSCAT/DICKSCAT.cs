@@ -48,8 +48,8 @@ public class DICKSCAT : WeaponBase
                 //portal.transform.position = new Vector3(0, 0, 0);
 
                 //portal.transform.position.Set(0, 0, 0);
-                Debug.Log(portal.transform.localPosition);
-                Debug.Log(i.ToString() + portal.transform.position);
+                //Debug.Log(portal.transform.localPosition);
+                //Debug.Log(i.ToString() + portal.transform.position);
             }
 
             portal.transform.Translate(vec3);
