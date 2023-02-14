@@ -92,7 +92,7 @@ public class FPS : MonoBehaviour
 
         con.Move(MoveVector * speed * Time.deltaTime);
         Jump();
-
+        UpdateDash(forward);
         con.Move(velocity * Time.deltaTime);
         velocity.y += gravity * Time.deltaTime;
         camera.transform.position = transform.position;
@@ -195,7 +195,7 @@ public class FPS : MonoBehaviour
                 break;
             case Dash.DASH:
                 float dashforce = 500.0f;
-                //rb.AddForce(temp * dashforce * Time.deltaTime);
+                //velocity += forward * dashforce * Time.deltaTime;
                 dashstate = Dash.NONE;
                 break;
        }        
