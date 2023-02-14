@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 using System.Threading;
 
-public class FPS : MonoBehaviour
+public class FPS : NetworkBehaviour
 {
     // Start is called before the first frame update
     public CharacterController con;
@@ -69,6 +70,7 @@ public class FPS : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!IsOwner) return;
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
         yaw += mouseX * CamSen * Time.deltaTime;
