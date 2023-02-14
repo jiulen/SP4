@@ -18,17 +18,10 @@ public class FPS : MonoBehaviour
     private bool doublejump = false, jumpispressed = false;
 
     //For teleport
-    enum TeleportStates
-    {
-        NONE,
-        TELEPORT_MARKER,
-        TELEPORT_CHANNEL,
-    };
-    TeleportStates teleportState = TeleportStates.NONE;
-    const float teleportDuration = 1.0f, teleportCooldown = 5.0f;
-    float teleportProgress = 0.0f, teleportCooldownTimer = 0.0f;
+    bool teleporting = false;
+    const float teleportDuration = 1.0f;
+    float teleportProgress = 0.0f;
     Vector3 teleportLocation = new Vector3();
-    [SerializeField] GameObject teleportMarker;
 
     void Start()
     {
@@ -47,36 +40,12 @@ public class FPS : MonoBehaviour
         yaw += mouseX * CamSen * Time.deltaTime;
         pitch -= mouseY * CamSen * Time.deltaTime;
 
-        //For teleport
-        if (Input.GetKeyDown(KeyCode.Alpha1) && teleportState < TeleportStates.TELEPORT_CHANNEL)
-            StartTeleport();
-
-        if (teleportState == TeleportStates.TELEPORT_MARKER)
+        if (teleporting && teleportProgress >= teleportDuration)
         {
-            Vector3 forward = camera.transform.forward;
-            forward.y = 0;
-            forward.Normalize();
-            float teleportDistance = 10.0f;
+            rb.position = teleportLocation;
+            camera.transform.position = rb.position;
 
-            teleportLocation = rb.position + forward * teleportDistance;
-            //Add raycasts
-        }
-
-        if (teleportState == TeleportStates.TELEPORT_CHANNEL)
-        {
-            if (teleportProgress < teleportDuration)
-            {
-                //Channel teleport
-                teleportProgress += Time.deltaTime;
-            }
-            else
-            {
-                //Do teleport
-                rb.position = teleportLocation;
-                camera.transform.position = rb.position;
-
-                teleportState = TeleportStates.NONE;
-            }
+            teleporting = false;
         }
     }
     // Update is called once per frame
@@ -146,28 +115,14 @@ public class FPS : MonoBehaviour
 
     private void StartTeleport()
     {
-        switch (teleportState)
-        {
-            case TeleportStates.NONE:
-                {
-                    teleportState = TeleportStates.TELEPORT_MARKER;
+        teleportProgress = 0.0f;
+        teleporting = true;
 
-                    break;
-                }
-            case TeleportStates.TELEPORT_MARKER:
-                {
-                    teleportProgress = 0.0f;
-                    teleportState = TeleportStates.TELEPORT_CHANNEL;
+        Vector3 forward = camera.transform.forward;
+        forward.y = 0;
+        forward.Normalize();
+        float teleportDistance = 10.0f;
 
-                    Vector3 forward = camera.transform.forward;
-                    forward.y = 0;
-                    forward.Normalize();
-                    float teleportDistance = 10.0f;
-
-                    teleportLocation = rb.position + forward * teleportDistance;
-
-                    break;
-                }
-        }        
+        teleportLocation = rb.position + forward * teleportDistance;
     }
 }
