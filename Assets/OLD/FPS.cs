@@ -104,7 +104,7 @@ public class FPS : MonoBehaviour
     void FixedUpdate()
     {
         currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
-        currentEquipped.transform.position = rb.position;
+        //currentEquipped.transform.position = rb.position;
     }
 
     private void Jump()
@@ -164,7 +164,7 @@ public class FPS : MonoBehaviour
                     forward.Normalize();
                     float teleportDistance = 10.0f;
 
-                    teleportLocation = rb.position + forward * teleportDistance;
+                    //teleportLocation = rb.position + forward * teleportDistance;
 
                     break;
                 }
