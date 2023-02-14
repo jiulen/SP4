@@ -291,7 +291,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   con: {fileID: 8876862476849156172}
   isGround: 0
-  tpMarkerPrefab: {fileID: 0}
+  tpMarkerPrefab: {fileID: 8623884177538578183, guid: 0d094d82fe2465a4e9199cee4d5d9432, type: 3}
 --- !u!114 &3497636683539348405
 MonoBehaviour:
   m_ObjectHideFlags: 0
