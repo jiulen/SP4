@@ -109,7 +109,7 @@ public class FPS : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
+        //currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
         //currentEquipped.transform.position = rb.position;
     }
 
