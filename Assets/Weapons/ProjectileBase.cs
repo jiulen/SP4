@@ -19,7 +19,6 @@ public class ProjectileBase : MonoBehaviour
     void Update()
     {
         elapsed += Time.deltaTime;
-        Debug.Log(elapsed);
         if(elapsed >= duration)
         {
             Destroy(gameObject);

@@ -17,6 +17,7 @@ public class DICKSCAT : WeaponBase
     public float currentRotate = 0;
     public int numPortals =5;
 
+    private bool portalsActive = false;
     private float steamMax = 100;
     private float steamCurrent = 0;
     public float steamRate = 20;
@@ -88,26 +89,42 @@ public class DICKSCAT : WeaponBase
         
     }
 
-    void Update()
+    private void TogglePortalsActive(bool active)
     {
-        if (!Input.GetButton("Fire1") || currentMode == mode.SCAT)
+        if(active != portalsActive)
         {
+            Debug.Log("sed");
+            portalsActive = active;
             foreach (Transform child in portalParent.transform)
             {
-                Transform laser = child.transform.GetChild(0);
-                laser.gameObject.SetActive(false);
+                child.gameObject.SetActive(active);
+                if (active)
+                {
+                    ParticleSystem particleSystem = child.GetChild(1).GetComponent<ParticleSystem>();
+                    particleSystem.Play();
+                }
+                //Transform laser = child.transform.GetChild(0);
+                //laser.gameObject.SetActive(false);
 
             }
         }
+       
+    }
+
+    void Update()
+    {
+        bool togglePortals = false;
+
         if (Input.GetButton("Fire1"))
         {
             switch (currentMode)
             {
                 case mode.DICK:
                 {
+                    togglePortals = true;
                     //portalParent.GetComponent<Transform>().eulerAngles = new Vector3(0, portalParent.GetComponent<Transform>().eulerAngles.y, currentRotate);
-                    
-                    steamCurrent += steamRate * Time.deltaTime;
+
+                        steamCurrent += steamRate * Time.deltaTime;
                     if (steamCurrent > steamMax)
                     {
                         steamCurrent = steamMax;
@@ -117,14 +134,19 @@ public class DICKSCAT : WeaponBase
                     {
                         Vector3 midPos = (child.transform.position + DICKFocalPoint.transform.position) / 2;
                         Transform laser = child.transform.GetChild(0);
-                         laser.gameObject.SetActive(true);
+                        laser.gameObject.SetActive(true);
                         laser.position = midPos;
                         Vector3 direction = child.transform.position - DICKFocalPoint.transform.position;
                         
                         laser.rotation = Quaternion.LookRotation(direction);
                         laser.Rotate(90, 0, 0);
 
-                        Debug.DrawRay(child.transform.position, 5 * (DICKFocalPoint.transform.position - child.transform.position), Color.red);
+                        LineRenderer laserLine = laser.GetComponent<LineRenderer>();
+                        laserLine.positionCount = 2;
+                        laserLine.SetPosition(0, child.transform.position);
+                        laserLine.SetPosition(1, child.transform.position + (DICKFocalPoint.transform.position - child.transform.position) *3);
+
+                            //Debug.DrawRay(child.transform.position, 5 * (DICKFocalPoint.transform.position - child.transform.position), Color.red);
                         Ray laserRayCast = new Ray(child.transform.position, 5 * (DICKFocalPoint.transform.position - child.transform.position));
                         if (Physics.Raycast(laserRayCast, out RaycastHit hit, 10))
                         {
@@ -140,7 +162,12 @@ public class DICKSCAT : WeaponBase
                 case mode.SCAT:
                 {
                     steamCurrent -= steamRate * Time.deltaTime;
-                    elapsedSinceLastShot += Time.deltaTime;
+
+                    if (steamCurrent < 0)
+                    {
+                        steamCurrent = 0;
+                    }
+                        elapsedSinceLastShot += Time.deltaTime;
                     if (elapsedSinceLastShot >= elapsedBetweenEachShot)
                     {
                         GameObject bullet = Instantiate(SCATBulletPF, bulletEmitter.transform);
@@ -175,6 +202,6 @@ public class DICKSCAT : WeaponBase
         }
 
         steamGauge.value = steamCurrent;
-
+        TogglePortalsActive(togglePortals);
     }
 }

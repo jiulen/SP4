@@ -55,6 +55,7 @@ public class FPS : NetworkBehaviour
     Dash dashstate = Dash.NONE;
     void Start()
     {
+
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         pitch = yaw = 0f;
         CamSen = 220f;
@@ -72,7 +73,10 @@ public class FPS : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!IsOwner) return;
+
+
+        //if (!IsOwner) return;
+
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
         yaw += mouseX * CamSen * Time.deltaTime;
