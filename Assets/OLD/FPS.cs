@@ -55,14 +55,14 @@ public class FPS : MonoBehaviour
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         pitch = yaw = 0f;
         CamSen = 220f;
-        //rb = GetComponent<Rigidbody>();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        tpMarker = Instantiate(tpMarkerPrefab);
-        tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
-        tpMarkerMR.enabled = false;
+        //tpMarker = Instantiate(tpMarkerPrefab);
+        //tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
+        //tpMarkerMR.enabled = false;
         //tpVerticalOffset = rb.transform.localScale.y - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
-        currentEquipped = transform.parent.Find("Equipped");
+        //currentEquipped = transform.parent.Find("Equipped");
+        transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
     }
 
 
