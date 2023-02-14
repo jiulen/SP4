@@ -31,7 +31,6 @@ public class FPS : MonoBehaviour
         float mouseY = Input.GetAxis("Mouse Y");
         yaw += mouseX * CamSen * Time.deltaTime;
         pitch -= mouseY * CamSen * Time.deltaTime;
-        Jump();
     }
     // Update is called once per frame
     void FixedUpdate()
@@ -56,6 +55,7 @@ public class FPS : MonoBehaviour
 
         camera.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
         rb.rotation = Quaternion.Euler(0f, targetAngle, 0f);
+        Jump();
         rb.MovePosition(rb.position + MoveVector * speed * Time.deltaTime);
         camera.transform.position = rb.position;
 
@@ -83,12 +83,12 @@ public class FPS : MonoBehaviour
         {
             if (isGround)
             {
-                rb.AddForce(rb.transform.up * 500f * Time.deltaTime, ForceMode.Impulse);
+                rb.velocity = new Vector3(0, 300 * Time.deltaTime, 0);
                 doublejump = true;
             }
             else if (doublejump)
             {
-                rb.AddForce(rb.transform.up * 500f * Time.deltaTime, ForceMode.Impulse);
+                rb.velocity = new Vector3(0, 300 * Time.deltaTime, 0);
                 doublejump = false;
             }
             jumpispressed = true;
