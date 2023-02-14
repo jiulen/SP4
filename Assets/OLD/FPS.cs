@@ -23,6 +23,12 @@ public class FPS : MonoBehaviour
     float teleportProgress = 0.0f;
     Vector3 teleportLocation = new Vector3();
 
+    enum Dash
+    {
+        NONE,
+        DASH
+    }
+    Dash dashstate = Dash.NONE;
     void Start()
     {
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
@@ -87,6 +93,8 @@ public class FPS : MonoBehaviour
         if (Physics.Raycast(ray, out raycasthit, (GetComponent<CapsuleCollider>().height / 2) + 0.1f))
         {
             isGround = true;
+            rb.velocity = Vector3.zero;
+
         }
         else
         {
