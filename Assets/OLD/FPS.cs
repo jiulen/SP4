@@ -174,8 +174,6 @@ public class FPS : NetworkBehaviour
                     forward.y = 0;
                     forward.Normalize();
 
-                    tpMarker.transform.position = transform.position + forward * teleportDistance - new Vector3(0, tpVerticalOffset, 0);
-
                     break;
                 }
         }
@@ -192,8 +190,21 @@ public class FPS : NetworkBehaviour
             forward.y = 0;
             forward.Normalize();
 
-            tpMarker.transform.position = transform.position + forward * teleportDistance - new Vector3(0, tpVerticalOffset, 0);
-            //Add raycasts uo/down
+            Vector3 tpMarkerPos = transform.position + forward * teleportDistance;
+
+            //Add raycasts down
+            tpMarkerPos.y = 10.0f; //Start from high enough
+            RaycastHit raycasthit;
+            Ray ray = new Ray(tpMarkerPos, -transform.up);
+
+            if (Physics.Raycast(ray, out raycasthit, 11.0f))
+            {
+                tpMarker.transform.position = raycasthit.point + new Vector3(0, tpMarker.transform.localScale.y, 0);
+            }
+            else
+            {
+                Debug.Log("TP Raycast didnt hit!");
+            }
         }
         else if (teleportState == TeleportStates.TELEPORT_CHANNEL)
         {
