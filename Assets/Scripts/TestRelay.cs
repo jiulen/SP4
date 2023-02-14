@@ -56,7 +56,8 @@ public class TestRelay : MonoBehaviour
                 (ushort)joinAllocation.RelayServer.Port,
                 joinAllocation.AllocationIdBytes,
                 joinAllocation.Key,
-                joinAllocation.ConnectionData
+                joinAllocation.ConnectionData,
+                joinAllocation.HostConnectionData
                 );
             NetworkManager.Singleton.StartClient();
         }
