@@ -28,6 +28,8 @@ public class FPS : NetworkBehaviour
     float gravity = -9.81f;
     Vector3 velocity;
 
+    //For teleport
+    bool canTeleport = true;
     enum TeleportStates
     {
         NONE,
@@ -104,7 +106,7 @@ public class FPS : NetworkBehaviour
         
         camera.transform.position = transform.position;
 
-        UpdateTeleport();
+        if (canTeleport) UpdateTeleport();
 
         //Debug.Log(targetAngle);
     }
