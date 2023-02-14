@@ -12,8 +12,16 @@ public class FPS : MonoBehaviour
     private float pitch, yaw;
     private float CamSen;
     private float speed = 5f;
-    private bool doublejump = false, jumpispressed = false;
     private Vector3 offset;
+
+    //For jump
+    private bool doublejump = false, jumpispressed = false;
+
+    //For teleport
+    bool teleporting = false;
+    const float teleportDuration = 1.0f;
+    float teleportProgress = 0.0f;
+    Vector3 teleportLocation = new Vector3();
 
     void Start()
     {
@@ -31,11 +39,18 @@ public class FPS : MonoBehaviour
         float mouseY = Input.GetAxis("Mouse Y");
         yaw += mouseX * CamSen * Time.deltaTime;
         pitch -= mouseY * CamSen * Time.deltaTime;
+
+        if (teleporting && teleportProgress >= teleportDuration)
+        {
+            rb.position = teleportLocation;
+            camera.transform.position = rb.position;
+
+            teleporting = false;
+        }
     }
     // Update is called once per frame
     void FixedUpdate()
     {
-
         float playerVerticalInput = Input.GetAxis("Vertical"); // 1: W key , -1: S key, 0: no key input
         float playerHorizontalInput = Input.GetAxis("Horizontal");
 
@@ -47,18 +62,19 @@ public class FPS : MonoBehaviour
         right = right.normalized;
 
         Vector3 MoveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
+        MoveVector.Normalize();
+
+        //Rotation
         pitch = Mathf.Clamp(pitch, -85f, 85f);
-
-
         float targetAngle = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
-
-
         camera.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
         rb.rotation = Quaternion.Euler(0f, targetAngle, 0f);
-        Jump();
-        rb.MovePosition(rb.position + MoveVector * speed * Time.deltaTime);
-        camera.transform.position = rb.position;
 
+        //Position
+        rb.MovePosition(rb.position + MoveVector * speed * Time.deltaTime);
+        Jump();
+
+        camera.transform.position = rb.position;
 
         //Debug.Log(targetAngle);
     }
@@ -76,8 +92,6 @@ public class FPS : MonoBehaviour
         {
             isGround = false;
         }
-
-
 
         if (!jumpispressed && Input.GetKey(KeyCode.Space))
         {
@@ -99,4 +113,16 @@ public class FPS : MonoBehaviour
         }
     }
 
+    private void StartTeleport()
+    {
+        teleportProgress = 0.0f;
+        teleporting = true;
+
+        Vector3 forward = camera.transform.forward;
+        forward.y = 0;
+        forward.Normalize();
+        float teleportDistance = 10.0f;
+
+        teleportLocation = rb.position + forward * teleportDistance;
+    }
 }
