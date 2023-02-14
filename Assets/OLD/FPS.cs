@@ -19,22 +19,33 @@ public class FPS : MonoBehaviour
     private bool doublejump = false, jumpispressed = false;
 
     //For teleport
-    bool teleporting = false;
-    const float teleportDuration = 1.0f;
     const float dashcooldown = 1.0f;
-    float teleportProgress = 0.0f;
     float dashProgress = 0.0f;
-    Vector3 teleportLocation = new Vector3();
-    Vector3 MoveVector;
 
+    Vector3 MoveVector;
 
     float gravity = -9.81f;
     Vector3 velocity;
+
+    enum TeleportStates
+    {
+        NONE,
+        TELEPORT_MARKER,
+        TELEPORT_CHANNEL,
+    };
+    TeleportStates teleportState = TeleportStates.NONE;
+    const float teleportDuration = 1.0f, teleportCooldown = 5.0f;
+    float teleportProgress = 0.0f, teleportCooldownTimer = 0.0f;
+    Vector3 teleportLocation = new Vector3();
+    [SerializeField] GameObject teleportMarker;
+
+    private Transform currentEquipped;
     enum Dash
     {
         NONE,
         DASH
     }
+    
     Dash dashstate = Dash.NONE;
     void Start()
     {
@@ -44,6 +55,8 @@ public class FPS : MonoBehaviour
         //rb = GetComponent<Rigidbody>();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        currentEquipped = transform.parent.Find("Equipped");
     }
 
 
@@ -54,7 +67,7 @@ public class FPS : MonoBehaviour
         float mouseY = Input.GetAxis("Mouse Y");
         yaw += mouseX * CamSen * Time.deltaTime;
         pitch -= mouseY * CamSen * Time.deltaTime;
-
+        
         float playerVerticalInput = Input.GetAxis("Vertical"); // 1: W key , -1: S key, 0: no key input
         float playerHorizontalInput = Input.GetAxis("Horizontal");
 
@@ -83,9 +96,15 @@ public class FPS : MonoBehaviour
         con.Move(velocity * Time.deltaTime);
         velocity.y += gravity * Time.deltaTime;
         camera.transform.position = transform.position;
-
-
+       
         //Debug.Log(targetAngle);
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
+        currentEquipped.transform.position = rb.position;
     }
 
     private void Jump()
@@ -127,15 +146,29 @@ public class FPS : MonoBehaviour
 
     private void StartTeleport()
     {
-        teleportProgress = 0.0f;
-        teleporting = true;
+        switch (teleportState)
+        {
+            case TeleportStates.NONE:
+                {
+                    teleportState = TeleportStates.TELEPORT_MARKER;
 
-        Vector3 forward = camera.transform.forward;
-        forward.y = 0;
-        forward.Normalize();
-        float teleportDistance = 10.0f;
+                    break;
+                }
+            case TeleportStates.TELEPORT_MARKER:
+                {
+                    teleportProgress = 0.0f;
+                    teleportState = TeleportStates.TELEPORT_CHANNEL;
 
-        //teleportLocation = rb.position + forward * teleportDistance;
+                    Vector3 forward = camera.transform.forward;
+                    forward.y = 0;
+                    forward.Normalize();
+                    float teleportDistance = 10.0f;
+
+                    teleportLocation = rb.position + forward * teleportDistance;
+
+                    break;
+                }
+        }
     }
 
 
@@ -165,6 +198,6 @@ public class FPS : MonoBehaviour
                 //rb.AddForce(temp * dashforce * Time.deltaTime);
                 dashstate = Dash.NONE;
                 break;
-        }
+       }        
     }
 }

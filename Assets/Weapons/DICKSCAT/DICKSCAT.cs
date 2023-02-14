@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DICKSCAT : WeaponBase
 {
@@ -15,16 +16,22 @@ public class DICKSCAT : WeaponBase
     public float currentRotate = 0;
     public int numPortals =5;
 
+    private float steamMax = 100;
+    private float steamCurrent = 0;
+    public float steamRate = 20;
+
     mode currentMode;
-    public GameObject portalParent;
-    public GameObject portal1;
-    public GameObject DICKFocalPoint;
+    GameObject portalParent;
+    GameObject portal1;
+    GameObject DICKFocalPoint;
+    Slider steamGauge;
 
     void Start()
     {
-        //portalParent = GameObject.Find("Portal Parent");
-        //portal1 = GameObject.Find("Portal");
-        //DICKFocalPoint = GameObject.Find("DICK Focal Point");
+        portalParent = GameObject.Find("Portal Parent");
+        portal1 = GameObject.Find("Portal Parent/Portal");
+        DICKFocalPoint = GameObject.Find("DICK Focal Point");
+        steamGauge = GameObject.Find("Steam Gauge Canvas/Steam Gauge Slider").GetComponent<Slider>();
 
         Debug.Log(DICKFocalPoint);
         for(int i = 0; i != numPortals; i++)
@@ -55,17 +62,19 @@ public class DICKSCAT : WeaponBase
             portal.transform.Translate(vec3);
         }
 
-        DICKFocalPoint.transform.Translate(0,0,-DICKDistance);
+        DICKFocalPoint.transform.Translate(0,0,DICKDistance);
 
         currentMode = mode.DICK;
     }
 
     void Update()
     {
+
         if (Input.GetButton("Fire1"))
         {
             currentRotate += 180 * Time.deltaTime;
             portalParent.GetComponent<Transform>().eulerAngles = new Vector3(0, portalParent.GetComponent<Transform>().eulerAngles.y, currentRotate);
+            steamCurrent += steamRate * Time.deltaTime;
         }
 
         foreach (Transform child in portalParent.transform)
@@ -76,6 +85,8 @@ public class DICKSCAT : WeaponBase
             Debug.DrawRay(child.transform.position, 5*(DICKFocalPoint.transform.position - child.transform.position), Color.red);
             //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         }
+
+        steamGauge.value = steamCurrent;
 
     }
 }
