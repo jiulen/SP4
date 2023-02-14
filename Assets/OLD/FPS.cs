@@ -26,7 +26,7 @@ public class FPS : NetworkBehaviour
     Vector3 MoveVector;
 
     float gravity = -9.81f;
-    Vector3 velocity;
+    public Vector3 velocity;
 
     enum TeleportStates
     {
@@ -58,10 +58,10 @@ public class FPS : NetworkBehaviour
         CamSen = 220f;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        //tpMarker = Instantiate(tpMarkerPrefab);
-        //tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
-        //tpMarkerMR.enabled = false;
-        //tpVerticalOffset = rb.transform.localScale.y - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
+        tpMarker = Instantiate(tpMarkerPrefab);
+        tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
+        tpMarkerMR.enabled = false;
+        tpVerticalOffset = transform.localScale.y - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
         //currentEquipped = transform.parent.Find("Equipped");
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
     }
@@ -96,14 +96,15 @@ public class FPS : NetworkBehaviour
         transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
 
         //Position
-        // rb.MovePosition(rb.position + MoveVector * speed * Time.deltaTime);
-
         con.Move(MoveVector * speed * Time.deltaTime);
         Jump();
         UpdateDash(forward);
         con.Move(velocity * Time.deltaTime);
         velocity.y += gravity * Time.deltaTime;
+        
         camera.transform.position = transform.position;
+
+        UpdateTeleport();
 
         //Debug.Log(targetAngle);
     }
@@ -111,6 +112,7 @@ public class FPS : NetworkBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (!IsOwner) return;
         //currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
         //currentEquipped.transform.position = rb.position;
     }
@@ -154,63 +156,64 @@ public class FPS : NetworkBehaviour
 
     private void StartTeleport()
     {
-        //switch (teleportState)
-        //{
-        //    case TeleportStates.NONE:
-        //        {
-        //            teleportState = TeleportStates.TELEPORT_MARKER;
-        //            tpMarkerMR.enabled = true;
+        switch (teleportState)
+        {
+            case TeleportStates.NONE:
+                {
+                    teleportState = TeleportStates.TELEPORT_MARKER;
+                    tpMarkerMR.enabled = true;
 
-        //            break;
-        //        }
-        //    case TeleportStates.TELEPORT_MARKER:
-        //        {
-        //            teleportProgress = 0.0f;
-        //            teleportState = TeleportStates.TELEPORT_CHANNEL;
+                    break;
+                }
+            case TeleportStates.TELEPORT_MARKER:
+                {
+                    teleportProgress = 0.0f;
+                    teleportState = TeleportStates.TELEPORT_CHANNEL;
 
-        //            Vector3 forward = camera.transform.forward;
-        //            forward.y = 0;
-        //            forward.Normalize();
+                    Vector3 forward = camera.transform.forward;
+                    forward.y = 0;
+                    forward.Normalize();
 
-        //            tpMarker.transform.position = rb.position + forward * teleportDistance - new Vector3(0, tpVerticalOffset, 0);
+                    tpMarker.transform.position = transform.position + forward * teleportDistance - new Vector3(0, tpVerticalOffset, 0);
 
-        //            break;
-        //        }
-        //}
+                    break;
+                }
+        }
     }
 
     private void UpdateTeleport()
     {
-        //if (Input.GetKeyDown(KeyCode.Alpha1) && teleportState < TeleportStates.TELEPORT_CHANNEL)
-        //    StartTeleport();
+        if (Input.GetKeyDown(KeyCode.Alpha1) && teleportState < TeleportStates.TELEPORT_CHANNEL)
+            StartTeleport();
 
-        //if (teleportState == TeleportStates.TELEPORT_MARKER)
-        //{
-        //    Vector3 forward = camera.transform.forward;
-        //    forward.y = 0;
-        //    forward.Normalize();
+        if (teleportState == TeleportStates.TELEPORT_MARKER)
+        {
+            Vector3 forward = camera.transform.forward;
+            forward.y = 0;
+            forward.Normalize();
 
-        //    tpMarker.transform.position = rb.position + forward * teleportDistance - new Vector3(0, tpVerticalOffset, 0);
-        //    //Add raycasts uo/down
-        //}
-        //else if (teleportState == TeleportStates.TELEPORT_CHANNEL)
-        //{
-        //    if (teleportProgress < teleportDuration)
-        //    {
-        //        //Channel teleport
-        //        teleportProgress += Time.deltaTime;
-        //    }
-        //    else
-        //    {
-        //        //Do teleport
-        //        rb.position = new Vector3(tpMarker.transform.position.x, .0f, tpMarker.transform.position.z);
-        //        Debug.Log(rb.position.y);
-        //        camera.transform.position = rb.position;
+            tpMarker.transform.position = transform.position + forward * teleportDistance - new Vector3(0, tpVerticalOffset, 0);
+            //Add raycasts uo/down
+        }
+        else if (teleportState == TeleportStates.TELEPORT_CHANNEL)
+        {
+            if (teleportProgress < teleportDuration)
+            {
+                //Channel teleport
+                teleportProgress += Time.deltaTime;
+            }
+            else
+            {
+                //Do teleport
+                con.enabled = false;
+                transform.position = tpMarker.transform.position + new Vector3(0, tpVerticalOffset, 0);
+                con.enabled = true;
+                camera.transform.position = transform.position;
 
-        //        teleportState = TeleportStates.NONE;
-        //        tpMarkerMR.enabled = false;
-        //    }
-        //}
+                teleportState = TeleportStates.NONE;
+                tpMarkerMR.enabled = false;
+            }
+        }
     }
 
     private void UpdateDash(Vector3 forward)
