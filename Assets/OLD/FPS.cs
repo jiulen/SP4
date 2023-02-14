@@ -23,6 +23,8 @@ public class FPS : MonoBehaviour
     float teleportProgress = 0.0f;
     Vector3 teleportLocation = new Vector3();
 
+    private Transform currentEquipped;
+
     void Start()
     {
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
@@ -31,6 +33,8 @@ public class FPS : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        currentEquipped = transform.parent.Find("Equipped");
     }
 
     void Update() // mouse sen smooth
@@ -76,6 +80,8 @@ public class FPS : MonoBehaviour
 
         camera.transform.position = rb.position;
 
+        currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
+        currentEquipped.transform.position = rb.position;
         //Debug.Log(targetAngle);
     }
 
