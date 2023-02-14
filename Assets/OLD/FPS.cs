@@ -31,8 +31,6 @@ public class FPS : MonoBehaviour
     [SerializeField] GameObject teleportMarker;
 
     private Transform currentEquipped;
-
-  =======
     enum Dash
     {
         NONE,
