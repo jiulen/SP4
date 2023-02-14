@@ -18,13 +18,28 @@ public class FPS : MonoBehaviour
     private bool doublejump = false, jumpispressed = false;
 
     //For teleport
-    bool teleporting = false;
-    const float teleportDuration = 1.0f;
-    float teleportProgress = 0.0f;
+    enum TeleportStates
+    {
+        NONE,
+        TELEPORT_MARKER,
+        TELEPORT_CHANNEL,
+    };
+    TeleportStates teleportState = TeleportStates.NONE;
+    const float teleportDuration = 1.0f, teleportCooldown = 5.0f;
+    float teleportProgress = 0.0f, teleportCooldownTimer = 0.0f;
     Vector3 teleportLocation = new Vector3();
+    [SerializeField] GameObject teleportMarker;
 
     private Transform currentEquipped;
 
+  =======
+    enum Dash
+    {
+        NONE,
+        DASH
+    }
+    
+    Dash dashstate = Dash.NONE;
     void Start()
     {
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
@@ -44,14 +59,38 @@ public class FPS : MonoBehaviour
         yaw += mouseX * CamSen * Time.deltaTime;
         pitch -= mouseY * CamSen * Time.deltaTime;
 
-        if (teleporting && teleportProgress >= teleportDuration)
-        {
-            rb.position = teleportLocation;
-            camera.transform.position = rb.position;
+        //For teleport
+        if (Input.GetKeyDown(KeyCode.Alpha1) && teleportState < TeleportStates.TELEPORT_CHANNEL)
+            StartTeleport();
 
-            teleporting = false;
+        if (teleportState == TeleportStates.TELEPORT_MARKER)
+        {
+            Vector3 forward = camera.transform.forward;
+            forward.y = 0;
+            forward.Normalize();
+            float teleportDistance = 10.0f;
+
+            teleportLocation = rb.position + forward * teleportDistance;
+            //Add raycasts
+        }
+        else if (teleportState == TeleportStates.TELEPORT_CHANNEL)
+        {
+            if (teleportProgress < teleportDuration)
+            {
+                //Channel teleport
+                teleportProgress += Time.deltaTime;
+            }
+            else
+            {
+                //Do teleport
+                rb.position = teleportLocation;
+                camera.transform.position = rb.position;
+
+                teleportState = TeleportStates.NONE;
+            }
         }
     }
+
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -93,6 +132,8 @@ public class FPS : MonoBehaviour
         if (Physics.Raycast(ray, out raycasthit, (GetComponent<CapsuleCollider>().height / 2) + 0.1f))
         {
             isGround = true;
+            rb.velocity = Vector3.zero;
+
         }
         else
         {
@@ -121,14 +162,28 @@ public class FPS : MonoBehaviour
 
     private void StartTeleport()
     {
-        teleportProgress = 0.0f;
-        teleporting = true;
+        switch (teleportState)
+        {
+            case TeleportStates.NONE:
+                {
+                    teleportState = TeleportStates.TELEPORT_MARKER;
 
-        Vector3 forward = camera.transform.forward;
-        forward.y = 0;
-        forward.Normalize();
-        float teleportDistance = 10.0f;
+                    break;
+                }
+            case TeleportStates.TELEPORT_MARKER:
+                {
+                    teleportProgress = 0.0f;
+                    teleportState = TeleportStates.TELEPORT_CHANNEL;
 
-        teleportLocation = rb.position + forward * teleportDistance;
+                    Vector3 forward = camera.transform.forward;
+                    forward.y = 0;
+                    forward.Normalize();
+                    float teleportDistance = 10.0f;
+
+                    teleportLocation = rb.position + forward * teleportDistance;
+
+                    break;
+                }
+        }
     }
 }
