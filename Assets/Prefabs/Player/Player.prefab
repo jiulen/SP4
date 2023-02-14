@@ -289,8 +289,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   con: {fileID: 8357801896866181154}
   isGround: 0
-  teleportMarker: {fileID: 0}
---- !u!114 &8357801896866181155
+  tpMarkerPrefab: {fileID: 8623884177538578183, guid: 0d094d82fe2465a4e9199cee4d5d9432, type: 3}
+--- !u!114 &3497636683539348405
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
