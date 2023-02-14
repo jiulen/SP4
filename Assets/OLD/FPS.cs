@@ -26,7 +26,7 @@ public class FPS : NetworkBehaviour
     Vector3 MoveVector;
 
     float gravity = -9.81f;
-    public Vector3 velocity;
+    Vector3 velocity;
 
     enum TeleportStates
     {
@@ -62,7 +62,7 @@ public class FPS : NetworkBehaviour
         tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
         tpMarkerMR.enabled = false;
         tpVerticalOffset = transform.localScale.y - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
-        //currentEquipped = transform.parent.Find("Equipped");
+        currentEquipped = transform.parent.Find("Equipped");
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
     }
 
