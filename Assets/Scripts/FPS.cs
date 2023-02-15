@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Unity.Netcode;
 using System.Threading;
 
@@ -27,10 +28,17 @@ public class FPS : NetworkBehaviour
     public float jumpForce = 250;
 
     //For dash
-    public float dashcooldown = 1.0f;
     public float dashDuration = 0.2f;
-    float dashProgress = 0.2f;
-    Vector3 storeDashDir;
+    private float dashProgress = 0.2f;
+    public int dashNum = 3;
+    
+    private float dashMetre = 0;
+    public float dashMetreRate = 30;
+    private float dashMetreMax = 100;
+    private Vector3 storeDashDir;
+
+    Canvas uiCanvas;
+
 
     // gravity
     float gravity = -9.81f;
@@ -67,6 +75,8 @@ public class FPS : NetworkBehaviour
     Dash dashstate = Dash.NONE;
     void Start()
     {
+        uiCanvas = GameObject.Find("Canvas").GetComponent<Canvas>();
+
         capsuleCollider = GetComponent<CapsuleCollider>(); //set in editor
         //Set dash progress to more than dash so dash isn't activated on start
         dashProgress = dashDuration + 1;
@@ -225,6 +235,7 @@ public class FPS : NetworkBehaviour
         {
             if (isGround)
             {
+
                 rigidbody.AddForce(0, jumpForce, 0);
                 //velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
                 doublejump = true;
@@ -330,8 +341,29 @@ public class FPS : NetworkBehaviour
 
     private void UpdateDash()
     {
+        Debug.Log(dashMetre);
+        Debug.Log(dashMetreMax);
+        Debug.Log(dashNum);
         dashProgress += Time.deltaTime;
-        if (Input.GetKey(KeyCode.LeftShift))
+        dashMetre += dashMetreRate * Time.deltaTime;
+        if(dashMetre > dashMetreMax)
+        {
+            dashMetre = dashMetreMax;
+        }
+
+        //Update the UI
+        int i = 0;
+        foreach(Transform child in uiCanvas.transform)
+        {
+            Slider slider = child.GetComponent<Slider>();
+            slider.maxValue = dashMetreMax / dashNum;
+            float segmentedValue = dashMetre - (dashMetreMax / dashNum) * i;
+            slider.value = segmentedValue;
+            i++;
+
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && dashMetre >= dashMetreMax / dashNum)
         {
             // If no keyboard input, use camera direction
             if (moveVector.magnitude == 0)
@@ -341,13 +373,14 @@ public class FPS : NetworkBehaviour
                 forward.Normalize();
                 storeDashDir = forward;
                 dashProgress = 0;
-
+                dashMetre -= (float)(dashMetreMax / dashNum);
             }
             // Otherwise, dash towards movement input
             else
             {
                 storeDashDir = moveVector;
                 dashProgress = 0;
+                dashMetre -= (float)(dashMetreMax / dashNum);
             }
 
             //DashForwardVelocity = DashSpeed;
@@ -356,47 +389,56 @@ public class FPS : NetworkBehaviour
         }
         if (dashProgress < dashDuration)
         {
-            rigidbody.velocity = storeDashDir * speed * 3;
+            // If the player is falling, cancel their vertical velocity
+            if (rigidbody.velocity.y < 0)
+                rigidbody.velocity = storeDashDir * speed * 3;
+            // If the player is jumping, maintain that velocity
+            else
+            {
+                Vector3 newVelocity = storeDashDir * speed * 3;
+                newVelocity.y = rigidbody.velocity.y;
+                rigidbody.velocity = newVelocity;
+            }
         }
         return;
-        switch(dashstate)
-        {
-            case Dash.NONE:
-                if (dashProgress <= 0)
-                {
-                    if (Input.GetKey(KeyCode.LeftShift))
-                    {
-                        // If no keyboard input, use camera direction
-                        if(moveVector.magnitude == 0)
-                        {
-                            Vector3 forward = camera.transform.forward;
-                            forward.y = 0;
-                            forward.Normalize();
-                            rigidbody.velocity = forward * speed * 3;
+       // switch(dashstate)
+       // {
+       //     case Dash.NONE:
+       //         if (dashProgress <= 0)
+       //         {
+       //             if (Input.GetKey(KeyCode.LeftShift))
+       //             {
+       //                 // If no keyboard input, use camera direction
+       //                 if(moveVector.magnitude == 0)
+       //                 {
+       //                     Vector3 forward = camera.transform.forward;
+       //                     forward.y = 0;
+       //                     forward.Normalize();
+       //                     rigidbody.velocity = forward * speed * 3;
 
-                        }
-                        // Otherwise, dash towards movement input
-                        else
-                        {
-                            rigidbody.velocity = moveVector * speed * 3;
-                        }
+       //                 }
+       //                 // Otherwise, dash towards movement input
+       //                 else
+       //                 {
+       //                     rigidbody.velocity = moveVector * speed * 3;
+       //                 }
 
-                        DashForwardVelocity = DashSpeed;
-                        dashstate = Dash.DASH;
-                        dashProgress = dashcooldown;
-                    }
-                }
-                else
-                {
-                    dashProgress -= Time.deltaTime;
-                }
-                break;
-            case Dash.DASH:
-                //rigidbody.velocity.Set(0, 0, 0);
-                //StartCoroutine(StartDash());
-                dashstate = Dash.NONE;
-                break;
-       }
+       //                 //DashForwardVelocity = DashSpeed;
+       //                 //dashstate = Dash.DASH;
+       //                 //dashProgress = dashcooldown;
+       //             }
+       //         }
+       //         else
+       //         {
+       //             dashProgress -= Time.deltaTime;
+       //         }
+       //         break;
+       //     case Dash.DASH:
+       //         //rigidbody.velocity.Set(0, 0, 0);
+       //         //StartCoroutine(StartDash());
+       //         dashstate = Dash.NONE;
+       //         break;
+       //}
     }
 
     //IEnumerator StartDash()

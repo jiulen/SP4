@@ -57,22 +57,8 @@ public class DICKSCAT : WeaponBase
         GameObject.Find("UI canvas").GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         GameObject.Find("UI canvas").GetComponent<Canvas>().planeDistance = 0.5f;
 
-        GameObject quad = transform.Find("UI canvas/Quad").gameObject;
-        float radius = 20;
-        float maxAngle = 180;
-        int numLines = 18;
-        for(int i = 0; i != numLines; i++)
-        {
-            float angle = (maxAngle / (numLines)) * i;
-            GameObject newLine = Instantiate(quad, quad.transform);
-            newLine.transform.parent = quad.transform.parent;
-            Vector2 vec2 = MyMath.DegreeToVector2(angle);
-            Vector3 vec3 = new Vector3(vec2.x * radius, vec2.y * radius, 0);
-            newLine.transform.localPosition = vec3;
-            newLine.transform.rotation = Quaternion.Euler(0, 0, angle);
-            float distance = radius / Mathf.Cos(angle);
-            newLine.transform.localScale = new Vector3(10, distance, 1);
-        }
+   
+     
 
         Debug.Log(DICKFocalPoint);
         for(int i = 0; i != numPortals; i++)
