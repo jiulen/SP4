@@ -12,6 +12,9 @@ public class GrappleHook : MonoBehaviour
 
     private bool hookActive;
     private Vector3 hookPosition;
+
+    public float grappleDuration = 2;
+    private double grappleElapsed = 0;
     void Start()
     {
         camera = transform.Find("/Main Camera").GetComponent<Camera>();
@@ -29,6 +32,12 @@ public class GrappleHook : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        grappleElapsed += Time.deltaTime;
+        if (grappleElapsed >= grappleDuration)
+        {
+            hookActive = false;
+        }
+
         hook.transform.position = hookPosition;
 
         if ((hook.transform.position - player.transform.position).magnitude <= 1)
@@ -37,25 +46,40 @@ public class GrappleHook : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.Q))
         {
-            Debug.DrawRay(body.transform.position, 5 * (hook.transform.position - body.transform.position), Color.red);
-
-            //Ray laserRayCast = new Ray(body.transform.position, 5 * (hook.transform.position - body.transform.position));
-            Ray laserRayCast = new Ray(camera.transform.position, 50 * (camera.transform.forward));
-            Debug.DrawRay(camera.transform.position, 50 * (camera.transform.forward), Color.blue);
-            if (Physics.Raycast(laserRayCast, out RaycastHit hit, 50))
+            if (hookActive)
             {
-                hookPosition = hit.point;
-                hookActive = true;
+                hookActive = false;
             }
+            else
+            {
+                Debug.DrawRay(body.transform.position, 5 * (hook.transform.position - body.transform.position), Color.red);
 
+                //Ray laserRayCast = new Ray(body.transform.position, 5 * (hook.transform.position - body.transform.position));
+                Ray laserRayCast = new Ray(camera.transform.position, 50 * (camera.transform.forward));
+                Debug.DrawRay(camera.transform.position, 50 * (camera.transform.forward), Color.blue);
+                if (Physics.Raycast(laserRayCast, out RaycastHit hit, 50))
+                {
+                    hookPosition = hit.point;
+                    hookActive = true;
+                    grappleElapsed = 0;    
+                }
+            }
           
         }
 
-        if(hookActive)
+      
+
+    }
+
+    void LateUpdate()
+    {
+        if (hookActive)
         {
             hook.SetActive(true);
             line.SetActive(true);
-            player.GetComponent<Rigidbody>().velocity = ((hook.transform.position - player.transform.position).normalized * 30 );
+            //player.GetComponent<Rigidbody>().velocity = ((hook.transform.position - player.transform.position).normalized * 30 );
+            player.GetComponent<Rigidbody>().AddForce((hook.transform.position - player.transform.position).normalized * 30);
+
             LineRenderer grappleLine = line.GetComponent<LineRenderer>();
             grappleLine.positionCount = 2;
             grappleLine.SetPosition(0, body.transform.position);
@@ -66,6 +90,5 @@ public class GrappleHook : MonoBehaviour
             hook.SetActive(false);
             line.SetActive(false);
         }
-
     }
 }

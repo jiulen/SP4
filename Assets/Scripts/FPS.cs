@@ -14,13 +14,17 @@ public class FPS : NetworkBehaviour
     public bool isGround = false;
     private float pitch, yaw;
     private float CamSen;
-    private float speed = 5f, DashSpeed = 30f, DashForwardVelocity, DashTime = 0.5f;
+    private float DashSpeed = 30f, DashForwardVelocity, DashTime = 0.5f;
     private float decel;
 
     private Rigidbody rigidbody;
+    // general
+    public float speed = 5f;
+    public float airMovementMultiplier = 2.5f;
 
-    //For double jump
+    //For jump
     private bool doublejump = false;
+    public float jumpForce = 250;
 
     //For dash
     public float dashcooldown = 1.0f;
@@ -59,7 +63,7 @@ public class FPS : NetworkBehaviour
         NONE,
         DASH
     }
-    
+
     Dash dashstate = Dash.NONE;
     void Start()
     {
@@ -113,10 +117,10 @@ public class FPS : NetworkBehaviour
 
         yaw += mouseX * CamSen * Time.deltaTime;
         pitch -= mouseY * CamSen * Time.deltaTime;
-       
-        moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right); 
+
+        moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
         moveVector.Normalize();
-     
+
         // WASD movement
         if(isGround)
         {
@@ -125,7 +129,7 @@ public class FPS : NetworkBehaviour
         }
         else
         {
-            rigidbody.AddForce(moveVector * speed * 5);
+            rigidbody.AddForce(moveVector * airMovementMultiplier);
         }
 
         // Drop kick
@@ -166,10 +170,22 @@ public class FPS : NetworkBehaviour
         //con.Move(this.GetComponent<Rigidbody>().velocity * Time.deltaTime);
 
         Jump();
+
+        // Limit speed
+        Vector3 velocityWithoutY = rigidbody.velocity;
+        velocityWithoutY.y = 0;
+        if (velocityWithoutY.magnitude >= speed)
+        {
+            velocityWithoutY = velocityWithoutY.normalized * speed;
+            velocityWithoutY.y = rigidbody.velocity.y;
+            //rigidbody.velocity = velocityWithoutY.normalized * 5;
+            rigidbody.velocity = velocityWithoutY;
+        }
+
         UpdateDash();
         //con.Move(velocity * Time.deltaTime);
         velocity.y += gravity * Time.deltaTime;
-        
+
         camera.transform.position = transform.position;
 
         if (canTeleport) UpdateTeleport();
@@ -178,13 +194,15 @@ public class FPS : NetworkBehaviour
         currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
         currentEquipped.transform.position = transform.position;
         //Debug.Log(targetAngle);
+
+
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
         //if (!IsOwner) return;
-  
+
     }
 
     private void Jump()
@@ -205,15 +223,15 @@ public class FPS : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (isGround) 
+            if (isGround)
             {
-                rigidbody.AddForce(0, 500, 0);
+                rigidbody.AddForce(0, jumpForce, 0);
                 //velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
                 doublejump = true;
             }
             else if (doublejump)
             {
-                rigidbody.AddForce(0, 500, 0);
+                rigidbody.AddForce(0, jumpForce, 0);
                 //velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
                 doublejump = false;
             }
@@ -378,7 +396,7 @@ public class FPS : NetworkBehaviour
                 //StartCoroutine(StartDash());
                 dashstate = Dash.NONE;
                 break;
-       }      
+       }
     }
 
     //IEnumerator StartDash()
