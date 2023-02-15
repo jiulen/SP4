@@ -44,12 +44,13 @@ public class FPS : NetworkBehaviour
     };
     TeleportStates teleportState = TeleportStates.NONE;
     const float teleportDuration = 1.0f, teleportCooldown = 5.0f;
-    float teleportProgress = 0.0f, teleportCooldownTimer = 0.0f;
+    float teleportProgress = 0.0f, teleportCooldownTimer = teleportCooldown;
     float teleportDistance = 5.0f;
     float tpVerticalOffset = 0;
     [SerializeField] GameObject tpMarkerPrefab;
     GameObject tpMarker;
     MeshRenderer tpMarkerMR;
+    LayerMask tpLayerMask;
 
     private Transform currentEquipped;
     enum Dash
@@ -73,11 +74,13 @@ public class FPS : NetworkBehaviour
         tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
         tpMarkerMR.enabled = false;
         tpVerticalOffset = transform.localScale.y - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
-        currentEquipped = transform.parent.Find("Equipped");
+        //currentEquipped = transform.parent.Find("Equipped");
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
         rigidbody = this.GetComponent<Rigidbody>();
         rigidbody.velocity.Set(0, 0, 0);
 
+
+        tpLayerMask = 1 << LayerMask.NameToLayer("Terrain"); //use later when got structures in level 
     }
 
 
@@ -96,8 +99,8 @@ public class FPS : NetworkBehaviour
 
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
-        float playerVerticalInput = Input.GetAxis("Vertical"); // 1: W key , -1: S key, 0: no key input
-        float playerHorizontalInput = Input.GetAxis("Horizontal");
+        float playerVerticalInput = Input.GetAxisRaw("Vertical"); // 1: W key , -1: S key, 0: no key input
+        float playerHorizontalInput = Input.GetAxisRaw("Horizontal");
 
         Vector3 forward = camera.transform.forward;
         Vector3 right = camera.transform.right;
@@ -170,8 +173,8 @@ public class FPS : NetworkBehaviour
         if (canTeleport) UpdateTeleport();
 
 
-        currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
-        currentEquipped.transform.position = transform.position;
+        //currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
+        //currentEquipped.transform.position = transform.position;
         //Debug.Log(targetAngle);
     }
 
@@ -243,25 +246,36 @@ public class FPS : NetworkBehaviour
 
     private void UpdateTeleport()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1) && teleportState < TeleportStates.TELEPORT_CHANNEL)
+        if (Input.GetKeyDown(KeyCode.Alpha1) && teleportState < TeleportStates.TELEPORT_CHANNEL && teleportCooldownTimer >= teleportCooldown)
             StartTeleport();
 
         if (teleportState == TeleportStates.TELEPORT_MARKER)
         {
-            Vector3 forward = camera.transform.forward;
-            forward.y = 0;
-            forward.Normalize();
+            Vector3 forward = camera.transform.forward.normalized;
 
-            Vector3 tpMarkerPos = transform.position + forward * teleportDistance;
+            Vector3 tpMarkerPos;
 
-            //Add raycasts down
-            tpMarkerPos.y = 10.0f; //Start from high enough
-            RaycastHit raycasthit;
-            Ray ray = new Ray(tpMarkerPos, -transform.up);
+            //CapsuleCast forward
+            RaycastHit raycastHitForward;
+            Vector3 bottomCenter = transform.position + Vector3.up * transform.localScale.y * 0.5f;
+            Vector3 topCenter = bottomCenter + Vector3.up * transform.localScale.y;
 
-            if (Physics.Raycast(ray, out raycasthit, 11.0f))
+            if (Physics.CapsuleCast(bottomCenter, topCenter, transform.localScale.x / 2, forward, out raycastHitForward, teleportDistance + transform.localScale.x * 0.25f))
             {
-                tpMarker.transform.position = raycasthit.point + new Vector3(0, tpMarker.transform.localScale.y, 0);
+                tpMarkerPos = transform.position + forward * (raycastHitForward.distance - transform.localScale.x * 0.25f);
+            }
+            else
+            {
+                tpMarkerPos = transform.position + forward * teleportDistance;
+            }
+
+            //Raycast down
+            RaycastHit raycastHitDown;
+            Ray rayDown = new Ray(tpMarkerPos, -transform.up);
+
+            if (Physics.Raycast(rayDown, out raycastHitDown, 11.0f))
+            {
+                tpMarker.transform.position = raycastHitDown.point + new Vector3(0, tpMarker.transform.localScale.y, 0);
             }
             else
             {
@@ -285,7 +299,12 @@ public class FPS : NetworkBehaviour
 
                 teleportState = TeleportStates.NONE;
                 tpMarkerMR.enabled = false;
+                teleportCooldownTimer = 0;
             }
+        }
+        else
+        {
+            teleportCooldownTimer += Time.deltaTime;
         }
     }
 
