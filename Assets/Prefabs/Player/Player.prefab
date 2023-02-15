@@ -310,6 +310,23 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+
+--- !u!114 &9145742884730366251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9145742884730367697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3de743d182b8e4bbc3d86cae2876ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  con: {fileID: 8876862476849156172}
+  isGround: 0
+  tpMarkerPrefab: {fileID: 8623884177538578183, guid: 0d094d82fe2465a4e9199cee4d5d9432, type: 3}
+
 --- !u!114 &3497636683539348405
 MonoBehaviour:
   m_ObjectHideFlags: 0

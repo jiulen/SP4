@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 using System.Threading;
 
-public class FPS : MonoBehaviour
+public class FPS : NetworkBehaviour
 {
     // Start is called before the first frame update
     public CharacterController con;
@@ -26,6 +27,8 @@ public class FPS : MonoBehaviour
     float gravity = -9.81f;
     Vector3 velocity;
 
+    //For teleport
+    bool canTeleport = true;
     enum TeleportStates
     {
         NONE,
@@ -51,16 +54,17 @@ public class FPS : MonoBehaviour
     Dash dashstate = Dash.NONE;
     void Start()
     {
+
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         pitch = yaw = 0f;
         CamSen = 220f;
         decel = -DashSpeed / DashTime;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        //tpMarker = Instantiate(tpMarkerPrefab);
-        //tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
-        //tpMarkerMR.enabled = false;
-        //tpVerticalOffset = rb.transform.localScale.y - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
+        tpMarker = Instantiate(tpMarkerPrefab);
+        tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
+        tpMarkerMR.enabled = false;
+        tpVerticalOffset = transform.localScale.y - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
         //currentEquipped = transform.parent.Find("Equipped");
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
     }
@@ -69,6 +73,10 @@ public class FPS : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+
+        //if (!IsOwner) return;
+
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
         float playerVerticalInput = Input.GetAxis("Vertical"); // 1: W key , -1: S key, 0: no key input
@@ -98,7 +106,10 @@ public class FPS : MonoBehaviour
         UpdateDash();
         con.Move(velocity * Time.deltaTime);
         velocity.y += gravity * Time.deltaTime;
+        
         camera.transform.position = transform.position;
+
+        if (canTeleport) UpdateTeleport();
 
         //Debug.Log(targetAngle);
     }
@@ -106,6 +117,7 @@ public class FPS : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (!IsOwner) return;
         //currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
         //currentEquipped.transform.position = rb.position;
     }
@@ -142,63 +154,75 @@ public class FPS : MonoBehaviour
 
     private void StartTeleport()
     {
-        //switch (teleportState)
-        //{
-        //    case TeleportStates.NONE:
-        //        {
-        //            teleportState = TeleportStates.TELEPORT_MARKER;
-        //            tpMarkerMR.enabled = true;
+        switch (teleportState)
+        {
+            case TeleportStates.NONE:
+                {
+                    teleportState = TeleportStates.TELEPORT_MARKER;
+                    tpMarkerMR.enabled = true;
 
-        //            break;
-        //        }
-        //    case TeleportStates.TELEPORT_MARKER:
-        //        {
-        //            teleportProgress = 0.0f;
-        //            teleportState = TeleportStates.TELEPORT_CHANNEL;
+                    break;
+                }
+            case TeleportStates.TELEPORT_MARKER:
+                {
+                    teleportProgress = 0.0f;
+                    teleportState = TeleportStates.TELEPORT_CHANNEL;
 
-        //            Vector3 forward = camera.transform.forward;
-        //            forward.y = 0;
-        //            forward.Normalize();
+                    Vector3 forward = camera.transform.forward;
+                    forward.y = 0;
+                    forward.Normalize();
 
-        //            tpMarker.transform.position = rb.position + forward * teleportDistance - new Vector3(0, tpVerticalOffset, 0);
-
-        //            break;
-        //        }
-        //}
+                    break;
+                }
+        }
     }
 
     private void UpdateTeleport()
     {
-        //if (Input.GetKeyDown(KeyCode.Alpha1) && teleportState < TeleportStates.TELEPORT_CHANNEL)
-        //    StartTeleport();
+        if (Input.GetKeyDown(KeyCode.Alpha1) && teleportState < TeleportStates.TELEPORT_CHANNEL)
+            StartTeleport();
 
-        //if (teleportState == TeleportStates.TELEPORT_MARKER)
-        //{
-        //    Vector3 forward = camera.transform.forward;
-        //    forward.y = 0;
-        //    forward.Normalize();
+        if (teleportState == TeleportStates.TELEPORT_MARKER)
+        {
+            Vector3 forward = camera.transform.forward;
+            forward.y = 0;
+            forward.Normalize();
 
-        //    tpMarker.transform.position = rb.position + forward * teleportDistance - new Vector3(0, tpVerticalOffset, 0);
-        //    //Add raycasts uo/down
-        //}
-        //else if (teleportState == TeleportStates.TELEPORT_CHANNEL)
-        //{
-        //    if (teleportProgress < teleportDuration)
-        //    {
-        //        //Channel teleport
-        //        teleportProgress += Time.deltaTime;
-        //    }
-        //    else
-        //    {
-        //        //Do teleport
-        //        rb.position = new Vector3(tpMarker.transform.position.x, .0f, tpMarker.transform.position.z);
-        //        Debug.Log(rb.position.y);
-        //        camera.transform.position = rb.position;
+            Vector3 tpMarkerPos = transform.position + forward * teleportDistance;
 
-        //        teleportState = TeleportStates.NONE;
-        //        tpMarkerMR.enabled = false;
-        //    }
-        //}
+            //Add raycasts down
+            tpMarkerPos.y = 10.0f; //Start from high enough
+            RaycastHit raycasthit;
+            Ray ray = new Ray(tpMarkerPos, -transform.up);
+
+            if (Physics.Raycast(ray, out raycasthit, 11.0f))
+            {
+                tpMarker.transform.position = raycasthit.point + new Vector3(0, tpMarker.transform.localScale.y, 0);
+            }
+            else
+            {
+                Debug.Log("TP Raycast didnt hit!");
+            }
+        }
+        else if (teleportState == TeleportStates.TELEPORT_CHANNEL)
+        {
+            if (teleportProgress < teleportDuration)
+            {
+                //Channel teleport
+                teleportProgress += Time.deltaTime;
+            }
+            else
+            {
+                //Do teleport
+                con.enabled = false;
+                transform.position = tpMarker.transform.position + new Vector3(0, tpVerticalOffset, 0);
+                con.enabled = true;
+                camera.transform.position = transform.position;
+
+                teleportState = TeleportStates.NONE;
+                tpMarkerMR.enabled = false;
+            }
+        }
     }
 
     private void UpdateDash()

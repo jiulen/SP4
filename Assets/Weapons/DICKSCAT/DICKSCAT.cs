@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class DICKSCAT : WeaponBase
 {
@@ -12,32 +13,48 @@ public class DICKSCAT : WeaponBase
     }
 
     public float DICKDistance = 1;
-    public float SCATInnacuracy = 1;
+    
     public float currentRotate = 0;
     public int numPortals =5;
 
+    private bool portalsActive = false;
     private float steamMax = 100;
     private float steamCurrent = 0;
     public float steamRate = 20;
 
+    public GameObject SCATBulletPF;
+
+    
     mode currentMode;
     GameObject portalParent;
     GameObject portal1;
     GameObject DICKFocalPoint;
+    GameObject bulletEmitter;
+    GameObject bulletEmitterFront;
+    GameObject projectileManager;
     Slider steamGauge;
-
+    TMP_Text modeText;
+    AudioSource fireAudio;
     void Start()
     {
+        base.Start();
+
         portalParent = GameObject.Find("Portal Parent");
         portal1 = GameObject.Find("Portal Parent/Portal");
         DICKFocalPoint = GameObject.Find("DICK Focal Point");
-        steamGauge = GameObject.Find("Steam Gauge Canvas/Steam Gauge Slider").GetComponent<Slider>();
+        bulletEmitter = GameObject.Find("Bullet emitter");
+        bulletEmitterFront = GameObject.Find("Bullet emitter front");
+        projectileManager = GameObject.Find("Projectile Manager");
+
+        steamGauge = GameObject.Find("UI canvas/Steam Gauge Slider").GetComponent<Slider>();
+        modeText = GameObject.Find("UI canvas/Mode text").GetComponent<TMP_Text>();
+        fireAudio = GameObject.Find("SampleFire").GetComponent<AudioSource>();
 
         Debug.Log(DICKFocalPoint);
         for(int i = 0; i != numPortals; i++)
         {
 
-            float angle = (360 / numPortals) * i;
+            float angle = (180 / (numPortals - 1)) * i;
             float portalDistance = 1;
             Vector2 vec2 = MyMath.DegreeToVector2(angle);
             Vector3 vec3 = new Vector3(vec2.x, vec2.y, 0);
@@ -67,26 +84,124 @@ public class DICKSCAT : WeaponBase
         currentMode = mode.DICK;
     }
 
+    private void FixedUpdate()
+    {
+        
+    }
+
+    private void TogglePortalsActive(bool active)
+    {
+        if(active != portalsActive)
+        {
+            Debug.Log("sed");
+            portalsActive = active;
+            foreach (Transform child in portalParent.transform)
+            {
+                child.gameObject.SetActive(active);
+                if (active)
+                {
+                    ParticleSystem particleSystem = child.GetChild(1).GetComponent<ParticleSystem>();
+                    particleSystem.Play();
+                }
+                //Transform laser = child.transform.GetChild(0);
+                //laser.gameObject.SetActive(false);
+
+            }
+        }
+       
+    }
+
     void Update()
     {
+        bool togglePortals = false;
 
         if (Input.GetButton("Fire1"))
         {
-            currentRotate += 180 * Time.deltaTime;
-            portalParent.GetComponent<Transform>().eulerAngles = new Vector3(0, portalParent.GetComponent<Transform>().eulerAngles.y, currentRotate);
-            steamCurrent += steamRate * Time.deltaTime;
-        }
+            switch (currentMode)
+            {
+                case mode.DICK:
+                {
+                    togglePortals = true;
+                    //portalParent.GetComponent<Transform>().eulerAngles = new Vector3(0, portalParent.GetComponent<Transform>().eulerAngles.y, currentRotate);
 
-        foreach (Transform child in portalParent.transform)
+                        steamCurrent += steamRate * Time.deltaTime;
+                    if (steamCurrent > steamMax)
+                    {
+                        steamCurrent = steamMax;
+                    }
+
+                    foreach (Transform child in portalParent.transform)
+                    {
+                        Vector3 midPos = (child.transform.position + DICKFocalPoint.transform.position) / 2;
+                        Transform laser = child.transform.GetChild(0);
+                        laser.gameObject.SetActive(true);
+                        laser.position = midPos;
+                        Vector3 direction = child.transform.position - DICKFocalPoint.transform.position;
+                        
+                        laser.rotation = Quaternion.LookRotation(direction);
+                        laser.Rotate(90, 0, 0);
+
+                        LineRenderer laserLine = laser.GetComponent<LineRenderer>();
+                        laserLine.positionCount = 2;
+                        laserLine.SetPosition(0, child.transform.position);
+                        laserLine.SetPosition(1, child.transform.position + (DICKFocalPoint.transform.position - child.transform.position) *3);
+
+                            //Debug.DrawRay(child.transform.position, 5 * (DICKFocalPoint.transform.position - child.transform.position), Color.red);
+                        Ray laserRayCast = new Ray(child.transform.position, 5 * (DICKFocalPoint.transform.position - child.transform.position));
+                        if (Physics.Raycast(laserRayCast, out RaycastHit hit, 10))
+                        {
+                            if (hit.collider.tag == "Player")
+                            {
+                                Debug.Log("HIT!!!");
+                            }
+                        }
+                        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    }
+                    break;
+                }
+                case mode.SCAT:
+                {
+                    steamCurrent -= steamRate * Time.deltaTime;
+
+                    if (steamCurrent < 0)
+                    {
+                        steamCurrent = 0;
+                    }
+                        elapsedSinceLastShot += Time.deltaTime;
+                    if (elapsedSinceLastShot >= elapsedBetweenEachShot)
+                    {
+                        GameObject bullet = Instantiate(SCATBulletPF, bulletEmitter.transform);
+                        Vector3 front = bulletEmitterFront.transform.position - bulletEmitter.transform.position;
+                        bullet.GetComponent<Rigidbody>().velocity = RandomSpray(front, inaccuracy) * projectileVel;
+                        bullet.transform.SetParent(projectileManager.transform);
+                        elapsedSinceLastShot = 0;
+                        fireAudio.Play();
+                    }
+                    break;
+                }
+            }
+         
+        }
+     
+        if (Input.GetButtonDown("Fire2"))
         {
-            Vector3 midPos = (child.transform.position + DICKFocalPoint.transform.position) / 2;
-            Debug.Log(midPos);
-            //child.transform.GetChild(0).transform.position = midPos;
-            Debug.DrawRay(child.transform.position, 5*(DICKFocalPoint.transform.position - child.transform.position), Color.red);
-            //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            switch(currentMode)
+            {
+                case mode.DICK:
+                    modeText.text = "S.C.A.T Mode";
+                    currentMode = mode.SCAT;
+                    break;
+
+                case mode.SCAT:
+                    modeText.text = "D.I.C.K Mode";
+                    currentMode = mode.DICK;
+                    break;
+            }
+                
+
         }
 
         steamGauge.value = steamCurrent;
-
+        TogglePortalsActive(togglePortals);
     }
 }

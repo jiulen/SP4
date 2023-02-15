@@ -79,7 +79,7 @@ GameObject:
   - component: {fileID: 2504580644399765044}
   m_Layer: 0
   m_Name: Player Entity
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -160,6 +160,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isGround: 0
+  teleportMarker: {fileID: 0}
 --- !u!54 &2904650825673741593
 Rigidbody:
   m_ObjectHideFlags: 0
