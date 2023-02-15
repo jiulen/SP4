@@ -186,20 +186,32 @@ public class FPS : NetworkBehaviour
 
         if (teleportState == TeleportStates.TELEPORT_MARKER)
         {
-            Vector3 forward = camera.transform.forward;
-            forward.y = 0;
-            forward.Normalize();
+            Vector3 forward = camera.transform.forward.normalized;
+            Vector3 right = camera.transform.right.normalized;
 
-            Vector3 tpMarkerPos = transform.position + forward * teleportDistance;
+            Vector3 tpMarkerPos;
 
-            //Add raycasts down
-            tpMarkerPos.y = 10.0f; //Start from high enough
-            RaycastHit raycasthit;
-            Ray ray = new Ray(tpMarkerPos, -transform.up);
+            //CapsuleCast forward
+            RaycastHit raycastHitForward;
+            Vector3 bottomCenter = transform.position + Vector3.up * transform.localScale.y * 0.5f;
+            Vector3 topCenter = bottomCenter + Vector3.up * transform.localScale.y;
 
-            if (Physics.Raycast(ray, out raycasthit, 11.0f))
+            if (Physics.CapsuleCast(bottomCenter, topCenter, transform.localScale.x / 2, forward, out raycastHitForward, teleportDistance + transform.localScale.x * 0.25f))
             {
-                tpMarker.transform.position = raycasthit.point + new Vector3(0, tpMarker.transform.localScale.y, 0);
+                tpMarkerPos = transform.position + forward * (raycastHitForward.distance - transform.localScale.x * 0.25f);
+            }
+            else
+            {
+                tpMarkerPos = transform.position + forward * teleportDistance;
+            }
+
+            //Raycast down
+            RaycastHit raycastHitDown;
+            Ray rayDown = new Ray(tpMarkerPos, -transform.up);
+
+            if (Physics.Raycast(rayDown, out raycastHitDown, 11.0f))
+            {
+                tpMarker.transform.position = raycastHitDown.point + new Vector3(0, tpMarker.transform.localScale.y, 0);
             }
             else
             {
