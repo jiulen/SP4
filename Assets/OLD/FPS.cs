@@ -111,6 +111,9 @@ public class FPS : NetworkBehaviour
 
         if (canTeleport) UpdateTeleport();
 
+
+        currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
+        currentEquipped.transform.position = transform.position;
         //Debug.Log(targetAngle);
     }
 
@@ -118,8 +121,7 @@ public class FPS : NetworkBehaviour
     void FixedUpdate()
     {
         //if (!IsOwner) return;
-        currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
-        currentEquipped.transform.position = transform.position;
+  
     }
 
     private void Jump()
