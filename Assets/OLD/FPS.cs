@@ -8,22 +8,21 @@ public class FPS : MonoBehaviour
     // Start is called before the first frame update
     public CharacterController con;
     private Camera camera; // Main camera
-   // private Rigidbody rb;
+    Vector3 MoveVector;
     public bool isGround = false;
     private float pitch, yaw;
     private float CamSen;
-    private float speed = 5f;
-    private Vector3 offset;
+    private float speed = 5f, DashSpeed = 30f, DashForwardVelocity, DashTime = 0.5f;
+    private float decel;
 
-    //For jump
-    private bool doublejump = false, jumpispressed = false;
+    //For double jump
+    private bool doublejump = false;
 
-    //For teleport
+    //For dash
     const float dashcooldown = 1.0f;
     float dashProgress = 0.0f;
 
-    Vector3 MoveVector;
-
+    // gravity
     float gravity = -9.81f;
     Vector3 velocity;
 
@@ -55,6 +54,7 @@ public class FPS : MonoBehaviour
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         pitch = yaw = 0f;
         CamSen = 220f;
+        decel = -DashSpeed / DashTime;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         //tpMarker = Instantiate(tpMarkerPrefab);
@@ -71,9 +71,6 @@ public class FPS : MonoBehaviour
     {
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
-        yaw += mouseX * CamSen * Time.deltaTime;
-        pitch -= mouseY * CamSen * Time.deltaTime;
-
         float playerVerticalInput = Input.GetAxis("Vertical"); // 1: W key , -1: S key, 0: no key input
         float playerHorizontalInput = Input.GetAxis("Horizontal");
 
@@ -84,6 +81,8 @@ public class FPS : MonoBehaviour
         forward = forward.normalized;
         right = right.normalized;
 
+        yaw += mouseX * CamSen * Time.deltaTime;
+        pitch -= mouseY * CamSen * Time.deltaTime;
         MoveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
         MoveVector.Normalize();
 
@@ -93,12 +92,10 @@ public class FPS : MonoBehaviour
         camera.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
         transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
 
-        //Position
-        // rb.MovePosition(rb.position + MoveVector * speed * Time.deltaTime);
-
+        //Position & gravity
         con.Move(MoveVector * speed * Time.deltaTime);
         Jump();
-        UpdateDash(forward);
+        UpdateDash();
         con.Move(velocity * Time.deltaTime);
         velocity.y += gravity * Time.deltaTime;
         camera.transform.position = transform.position;
@@ -127,25 +124,18 @@ public class FPS : MonoBehaviour
             isGround = false;
         }
 
-        if (!jumpispressed && Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             if (isGround)
             {
-                //rb.velocity = new Vector3(0, 300 * Time.deltaTime, 0);
                 velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
                 doublejump = true;
             }
             else if (doublejump)
             {
-                //rb.velocity = new Vector3(0, 300 * Time.deltaTime, 0);
                 velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
                 doublejump = false;
             }
-            jumpispressed = true;
-        }
-        else if (jumpispressed && !Input.GetKey(KeyCode.Space))
-        {
-            jumpispressed = false;
         }
 
     }
@@ -211,11 +201,8 @@ public class FPS : MonoBehaviour
         //}
     }
 
-    private void UpdateDash(Vector3 forward)
+    private void UpdateDash()
     {
-        Vector3 temp = forward;
-        temp.y = 0;
-        temp.Normalize();
         switch(dashstate)
         {
             case Dash.NONE:
@@ -223,6 +210,7 @@ public class FPS : MonoBehaviour
                 {
                     if (Input.GetKey(KeyCode.LeftShift))
                     {
+                        DashForwardVelocity = DashSpeed;
                         dashstate = Dash.DASH;
                         dashProgress = dashcooldown;
                     }
@@ -233,10 +221,25 @@ public class FPS : MonoBehaviour
                 }
                 break;
             case Dash.DASH:
-                float dashforce = 500.0f;
-                //velocity += forward * dashforce * Time.deltaTime;
+                StartCoroutine(StartDash());
                 dashstate = Dash.NONE;
                 break;
        }      
+    }
+
+    IEnumerator StartDash()
+    {
+        Vector3 forward = camera.transform.forward;
+        forward.y = 0;
+        forward.Normalize();
+
+        float starttime = Time.time;
+        while (Time.time < starttime + DashTime)
+        {
+            DashForwardVelocity += decel * Time.deltaTime;
+            DashForwardVelocity = Mathf.Clamp(DashForwardVelocity, 0, DashSpeed);
+            con.Move(forward * DashForwardVelocity * Time.deltaTime);
+            yield return null;
+        }
     }
 }

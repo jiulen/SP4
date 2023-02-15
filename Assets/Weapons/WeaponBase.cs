@@ -8,15 +8,47 @@ public class WeaponBase : MonoBehaviour
     public int damage = 1;
     public int bulletsPerShot = 1;
 
+    protected Rigidbody rb;
+    public GameObject weaponholder;
+    protected Camera cam;
+    bool Equipped = true;
+
     void Start()
     {
-        
     }
 
     // Update is called once per frame
     void Update()
     {
-        
     }
 
+    public void UpdateWeaponBase()
+    {
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (Equipped)
+                Drop();
+            else
+                Equip();
+        }
+    }
+    public void Equip()
+    {
+        transform.SetParent(weaponholder.transform);
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.Euler(Vector3.zero);
+
+        rb.isKinematic = true;
+        Equipped = true;
+    }
+    public void Drop()
+    {
+        transform.SetParent(null);
+        rb.isKinematic = false;
+        rb.velocity = rb.GetComponent<Rigidbody>().velocity;
+        rb.AddForce(cam.transform.forward * 200f * Time.deltaTime, ForceMode.Impulse);
+
+        Equipped = false;
+    }
 }
