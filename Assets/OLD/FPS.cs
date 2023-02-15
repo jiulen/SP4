@@ -9,19 +9,23 @@ public class FPS : NetworkBehaviour
     // Start is called before the first frame update
     public CharacterController con;
     private Camera camera; // Main camera
-    Vector3 MoveVector;
+    Vector3 moveVector;
     public bool isGround = false;
     private float pitch, yaw;
     private float CamSen;
     private float speed = 5f, DashSpeed = 30f, DashForwardVelocity, DashTime = 0.5f;
     private float decel;
 
+    private Rigidbody rigidbody;
+
     //For double jump
     private bool doublejump = false;
 
     //For dash
-    const float dashcooldown = 1.0f;
-    float dashProgress = 0.0f;
+    public float dashcooldown = 1.0f;
+    public float dashDuration = 0.2f;
+    float dashProgress = 0.2f;
+    Vector3 storeDashDir;
 
     // gravity
     float gravity = -9.81f;
@@ -29,6 +33,9 @@ public class FPS : NetworkBehaviour
 
     //For teleport
     bool canTeleport = true;
+
+    // Drop kick
+    bool dropKickActive = false;
     enum TeleportStates
     {
         NONE,
@@ -54,7 +61,8 @@ public class FPS : NetworkBehaviour
     Dash dashstate = Dash.NONE;
     void Start()
     {
-
+        //Set dash progress to more than dash so dash isn't activated on start
+        dashProgress = dashDuration + 1;
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         pitch = yaw = 0f;
         CamSen = 220f;
@@ -67,14 +75,23 @@ public class FPS : NetworkBehaviour
         tpVerticalOffset = transform.localScale.y - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
         currentEquipped = transform.parent.Find("Equipped");
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
+        rigidbody = this.GetComponent<Rigidbody>();
+        rigidbody.velocity.Set(0, 0, 0);
+
     }
 
 
     // Update is called once per frame
     void Update()
     {
-
-
+        // Reset position and velocity if player goes out of bounds for debugging
+        if(transform.position.magnitude > 100 || transform.position.y <= -20)
+        {
+            transform.position = new Vector3(0, 10, 0);
+            rigidbody.velocity = new Vector3(0, 0, 0);
+        }
+        UpdateGrounded();
+        
         //if (!IsOwner) return;
 
         float mouseX = Input.GetAxis("Mouse X");
@@ -91,20 +108,61 @@ public class FPS : NetworkBehaviour
 
         yaw += mouseX * CamSen * Time.deltaTime;
         pitch -= mouseY * CamSen * Time.deltaTime;
-        MoveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
-        MoveVector.Normalize();
+       
+        moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right); 
+        moveVector.Normalize();
+     
+        // WASD movement
+        if(isGround)
+        {
+            rigidbody.velocity = moveVector * speed;
+
+        }
+        else
+        {
+            rigidbody.AddForce(moveVector * speed * 5);
+        }
+
+        // Drop kick
+        if(Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            dropKickActive = true;
+        }
+
+        if(dropKickActive)
+        {
+            if (isGround)
+                dropKickActive = false;
+            else
+                rigidbody.velocity = new Vector3(0,-50,0);
+        }
+        //if (isGround && moveVector.magnitude == 0)
+        //{
+        //    //rigidbody.velocity = new Vector3(0, 0, 0);
+        //    rigidbody.AddForce(-rigidbody.velocity.normalized * speed);
+
+        //}
+        //else
+        //{
+        //    Debug.Log("ruh roh");
+        //    rigidbody.velocity = new Vector3(0, rigidbody.velocity.y, 0);
+        //    rigidbody.AddForce(moveVector * 100);
+        //}
+        //this.GetComponent<Rigidbody>().velocity = moveVector;
 
         //Rotation
         pitch = Mathf.Clamp(pitch, -85f, 85f);
         float targetAngle = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
         camera.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
-        transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
+        //transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
 
         //Position & gravity
-        con.Move(MoveVector * speed * Time.deltaTime);
+        //con.Move(moveVector * speed * Time.deltaTime);
+        //con.Move(this.GetComponent<Rigidbody>().velocity * Time.deltaTime);
+
         Jump();
         UpdateDash();
-        con.Move(velocity * Time.deltaTime);
+        //con.Move(velocity * Time.deltaTime);
         velocity.y += gravity * Time.deltaTime;
         
         camera.transform.position = transform.position;
@@ -126,28 +184,32 @@ public class FPS : NetworkBehaviour
 
     private void Jump()
     {
-        RaycastHit raycasthit;
-        Ray ray = new Ray(transform.position, -transform.up);
+        //Ground now has a dedicated function called at the beginning of Update()
 
-        if (Physics.Raycast(ray, out raycasthit, (GetComponent<CapsuleCollider>().height / 2) + 0.1f))
-        {
-            isGround = true;
-        }
-        else
-        {
-            isGround = false;
-        }
+        //RaycastHit raycasthit;
+        //Ray ray = new Ray(transform.position, -transform.up);
+
+        //if (Physics.Raycast(ray, out raycasthit, (GetComponent<CapsuleCollider>().height / 2) + 0.1f))
+        //{
+        //    isGround = true;
+        //}
+        //else
+        //{
+        //    isGround = false;
+        //}
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (isGround)
+            if (isGround) 
             {
-                velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
+                rigidbody.AddForce(0, 500, 0);
+                //velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
                 doublejump = true;
             }
             else if (doublejump)
             {
-                velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
+                rigidbody.AddForce(0, 500, 0);
+                //velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
                 doublejump = false;
             }
         }
@@ -229,6 +291,35 @@ public class FPS : NetworkBehaviour
 
     private void UpdateDash()
     {
+        dashProgress += Time.deltaTime;
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            // If no keyboard input, use camera direction
+            if (moveVector.magnitude == 0)
+            {
+                Vector3 forward = camera.transform.forward;
+                forward.y = 0;
+                forward.Normalize();
+                storeDashDir = forward;
+                dashProgress = 0;
+
+            }
+            // Otherwise, dash towards movement input
+            else
+            {
+                storeDashDir = moveVector;
+                dashProgress = 0;
+            }
+
+            //DashForwardVelocity = DashSpeed;
+            //dashstate = Dash.DASH;
+            //dashProgress = dashcooldown;
+        }
+        if (dashProgress < dashDuration)
+        {
+            rigidbody.velocity = storeDashDir * speed * 3;
+        }
+        return;
         switch(dashstate)
         {
             case Dash.NONE:
@@ -236,6 +327,21 @@ public class FPS : NetworkBehaviour
                 {
                     if (Input.GetKey(KeyCode.LeftShift))
                     {
+                        // If no keyboard input, use camera direction
+                        if(moveVector.magnitude == 0)
+                        {
+                            Vector3 forward = camera.transform.forward;
+                            forward.y = 0;
+                            forward.Normalize();
+                            rigidbody.velocity = forward * speed * 3;
+
+                        }
+                        // Otherwise, dash towards movement input
+                        else
+                        {
+                            rigidbody.velocity = moveVector * speed * 3;
+                        }
+
                         DashForwardVelocity = DashSpeed;
                         dashstate = Dash.DASH;
                         dashProgress = dashcooldown;
@@ -247,25 +353,38 @@ public class FPS : NetworkBehaviour
                 }
                 break;
             case Dash.DASH:
-                StartCoroutine(StartDash());
+                //rigidbody.velocity.Set(0, 0, 0);
+                //StartCoroutine(StartDash());
                 dashstate = Dash.NONE;
                 break;
        }      
     }
 
-    IEnumerator StartDash()
-    {
-        Vector3 forward = camera.transform.forward;
-        forward.y = 0;
-        forward.Normalize();
+    //IEnumerator StartDash()
+    //{
+    //    Vector3 forward = camera.transform.forward;
+    //    forward.y = 0;
+    //    forward.Normalize();
 
-        float starttime = Time.time;
-        while (Time.time < starttime + DashTime)
+    //    float starttime = Time.time;
+    //    while (Time.time < starttime + DashTime)
+    //    {
+    //        DashForwardVelocity += decel * Time.deltaTime;
+    //        DashForwardVelocity = Mathf.Clamp(DashForwardVelocity, 0, DashSpeed);
+    //        con.Move(forward * DashForwardVelocity * Time.deltaTime);
+    //        yield return null;
+    //    }
+    //}
+
+    private void UpdateGrounded()
+    {
+        Ray laserRayCast = new Ray(transform.position, new Vector3(0,-1,0));
+        if (Physics.Raycast(laserRayCast, out RaycastHit hit, 0.51f))
         {
-            DashForwardVelocity += decel * Time.deltaTime;
-            DashForwardVelocity = Mathf.Clamp(DashForwardVelocity, 0, DashSpeed);
-            con.Move(forward * DashForwardVelocity * Time.deltaTime);
-            yield return null;
+
+            isGround = true;
+            return;
         }
+        isGround = false;
     }
 }
