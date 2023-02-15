@@ -52,7 +52,7 @@ public class WeaponBase : MonoBehaviour
         transform.SetParent(null);
         rb.isKinematic = false;
         rb.velocity = rb.GetComponent<Rigidbody>().velocity;
-        rb.AddForce(cam.transform.forward * 200f * Time.deltaTime, ForceMode.Impulse);
+        rb.AddForce(cam.transform.forward * 300f * Time.deltaTime, ForceMode.Impulse);
 
         Equipped = false;
     }

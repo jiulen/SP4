@@ -18,6 +18,7 @@ public class Sniper : WeaponBase
 
         if (Input.GetButton("Fire1"))
         {
+
         }
     }
 }
