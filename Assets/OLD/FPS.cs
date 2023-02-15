@@ -65,7 +65,7 @@ public class FPS : NetworkBehaviour
         tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
         tpMarkerMR.enabled = false;
         tpVerticalOffset = transform.localScale.y - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
-        //currentEquipped = transform.parent.Find("Equipped");
+        currentEquipped = transform.parent.Find("Equipped");
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
     }
 
@@ -117,9 +117,9 @@ public class FPS : NetworkBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (!IsOwner) return;
-        //currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
-        //currentEquipped.transform.position = rb.position;
+        //if (!IsOwner) return;
+        currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
+        currentEquipped.transform.position = transform.position;
     }
 
     private void Jump()
