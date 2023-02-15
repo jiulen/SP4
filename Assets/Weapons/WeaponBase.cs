@@ -17,7 +17,7 @@ public class WeaponBase : MonoBehaviour
     protected double elapsedSinceLastShot = 0;
     protected double elapsedBetweenEachShot = 0;
 
-    void Start()
+    public void Start()
     { 
         elapsedBetweenEachShot = 1 / fireRate;
     }

@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2031339851225526947
 Transform:
   m_ObjectHideFlags: 0
@@ -222,7 +222,7 @@ GameObject:
   - component: {fileID: 6499193081315130587}
   - component: {fileID: 8876862476849156172}
   - component: {fileID: 1713896679796277514}
-  - component: {fileID: 738266705476923095}
+  - component: {fileID: 9145742884730366251}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -310,23 +310,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
-
---- !u!114 &9145742884730366251
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9145742884730367697}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e3de743d182b8e4bbc3d86cae2876ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  con: {fileID: 8876862476849156172}
-  isGround: 0
-  tpMarkerPrefab: {fileID: 8623884177538578183, guid: 0d094d82fe2465a4e9199cee4d5d9432, type: 3}
-
 --- !u!114 &3497636683539348405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399,7 +382,7 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &738266705476923095
+--- !u!114 &9145742884730366251
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -413,7 +396,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   con: {fileID: 8876862476849156172}
   isGround: 0
-  tpMarkerPrefab: {fileID: 0}
+  tpMarkerPrefab: {fileID: 8623884177538578183, guid: 0d094d82fe2465a4e9199cee4d5d9432, type: 3}
 --- !u!1001 &5928470328087640572
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -509,7 +492,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2411887577851961006, guid: b81b0b0421e7b8a4bb256c2aed46551e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3402094154530339546, guid: b81b0b0421e7b8a4bb256c2aed46551e, type: 3}
       propertyPath: m_RootOrder
@@ -557,7 +540,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6494204188781332217, guid: b81b0b0421e7b8a4bb256c2aed46551e, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b81b0b0421e7b8a4bb256c2aed46551e, type: 3}
