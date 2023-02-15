@@ -31,7 +31,7 @@ public class TestRelay : MonoBehaviour
     //}
     
 
-    private async void CreateRelay()
+    public async Task<string> CreateRelay()
     {
         try
         {
