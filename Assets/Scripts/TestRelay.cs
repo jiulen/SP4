@@ -30,13 +30,15 @@ public class TestRelay : MonoBehaviour
     //    await AuthenticationService.Instance.SignInAnonymouslyAsync();
     //}
     
-    public async Task<string> CreateRelay()
+
+    private async void CreateRelay()
     {
         try
         {
             Allocation allocation = await RelayService.Instance.CreateAllocationAsync(3);
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
             Debug.Log(joinCode);
+
 
             RelayServerData relayServerData = new RelayServerData(allocation, "dtls");
 
@@ -54,6 +56,7 @@ public class TestRelay : MonoBehaviour
     }
 
     public async void JoinRelay(string joinCode)
+
     {
         try
         {
