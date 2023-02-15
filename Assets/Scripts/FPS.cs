@@ -8,6 +8,7 @@ public class FPS : NetworkBehaviour
 {
     // Start is called before the first frame update
     public CharacterController con;
+    [SerializeField] CapsuleCollider capsuleCollider;
     private Camera camera; // Main camera
     Vector3 moveVector;
     public bool isGround = false;
@@ -43,7 +44,7 @@ public class FPS : NetworkBehaviour
         TELEPORT_CHANNEL,
     };
     TeleportStates teleportState = TeleportStates.NONE;
-    const float teleportDuration = 1.0f, teleportCooldown = 5.0f;
+    const float teleportDuration = 1.0f, teleportCooldown = 1.0f;
     float teleportProgress = 0.0f, teleportCooldownTimer = teleportCooldown;
     float teleportDistance = 5.0f;
     float tpVerticalOffset = 0;
@@ -74,13 +75,15 @@ public class FPS : NetworkBehaviour
         tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
         tpMarkerMR.enabled = false;
         tpVerticalOffset = transform.localScale.y - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
-        //currentEquipped = transform.parent.Find("Equipped");
+        currentEquipped = transform.parent.Find("Equipped");
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
         rigidbody = this.GetComponent<Rigidbody>();
         rigidbody.velocity.Set(0, 0, 0);
 
 
-        tpLayerMask = 1 << LayerMask.NameToLayer("Terrain"); //use later when got structures in level 
+        tpLayerMask = 1 << LayerMask.NameToLayer("Terrain"); //use later when got structures in level
+
+        capsuleCollider = GetComponent<CapsuleCollider>(); //set in editor
     }
 
 
@@ -173,8 +176,8 @@ public class FPS : NetworkBehaviour
         if (canTeleport) UpdateTeleport();
 
 
-        //currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
-        //currentEquipped.transform.position = transform.position;
+        currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
+        currentEquipped.transform.position = transform.position;
         //Debug.Log(targetAngle);
     }
 
@@ -257,10 +260,10 @@ public class FPS : NetworkBehaviour
 
             //CapsuleCast forward
             RaycastHit raycastHitForward;
-            Vector3 bottomCenter = transform.position + Vector3.up * transform.localScale.y * 0.5f;
-            Vector3 topCenter = bottomCenter + Vector3.up * transform.localScale.y;
+            Vector3 bottomCenter = transform.position + Vector3.up * capsuleCollider.height * 0.5f;
+            Vector3 topCenter = bottomCenter + Vector3.up * capsuleCollider.height;
 
-            if (Physics.CapsuleCast(bottomCenter, topCenter, transform.localScale.x / 2, forward, out raycastHitForward, teleportDistance + transform.localScale.x * 0.25f))
+            if (Physics.CapsuleCast(bottomCenter, topCenter, capsuleCollider.radius, forward, out raycastHitForward, teleportDistance + transform.localScale.x * 0.25f))
             {
                 tpMarkerPos = transform.position + forward * (raycastHitForward.distance - transform.localScale.x * 0.25f);
             }
