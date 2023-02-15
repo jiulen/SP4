@@ -65,7 +65,7 @@ public class FPS : NetworkBehaviour
         tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
         tpMarkerMR.enabled = false;
         tpVerticalOffset = transform.localScale.y - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
-        currentEquipped = transform.parent.Find("Equipped");
+        //currentEquipped = transform.parent.Find("Equipped");
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
     }
 
@@ -79,8 +79,8 @@ public class FPS : NetworkBehaviour
 
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
-        float playerVerticalInput = Input.GetAxis("Vertical"); // 1: W key , -1: S key, 0: no key input
-        float playerHorizontalInput = Input.GetAxis("Horizontal");
+        float playerVerticalInput = Input.GetAxisRaw("Vertical"); // 1: W key , -1: S key, 0: no key input
+        float playerHorizontalInput = Input.GetAxisRaw("Horizontal");
 
         Vector3 forward = camera.transform.forward;
         Vector3 right = camera.transform.right;
@@ -112,8 +112,8 @@ public class FPS : NetworkBehaviour
         if (canTeleport) UpdateTeleport();
 
 
-        currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
-        currentEquipped.transform.position = transform.position;
+        //currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
+        //currentEquipped.transform.position = transform.position;
         //Debug.Log(targetAngle);
     }
 
