@@ -63,6 +63,7 @@ public class FPS : NetworkBehaviour
     Dash dashstate = Dash.NONE;
     void Start()
     {
+        capsuleCollider = GetComponent<CapsuleCollider>(); //set in editor
         //Set dash progress to more than dash so dash isn't activated on start
         dashProgress = dashDuration + 1;
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
@@ -74,7 +75,7 @@ public class FPS : NetworkBehaviour
         tpMarker = Instantiate(tpMarkerPrefab);
         tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
         tpMarkerMR.enabled = false;
-        tpVerticalOffset = transform.localScale.y - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
+        tpVerticalOffset = capsuleCollider.height * 0.5f - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
         currentEquipped = transform.parent.Find("Equipped");
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
         rigidbody = this.GetComponent<Rigidbody>();
@@ -82,8 +83,6 @@ public class FPS : NetworkBehaviour
 
 
         tpLayerMask = 1 << LayerMask.NameToLayer("Terrain"); //use later when got structures in level
-
-        capsuleCollider = GetComponent<CapsuleCollider>(); //set in editor
     }
 
 
@@ -260,7 +259,7 @@ public class FPS : NetworkBehaviour
 
             //CapsuleCast forward
             RaycastHit raycastHitForward;
-            Vector3 bottomCenter = transform.position + Vector3.up * capsuleCollider.height * 0.5f;
+            Vector3 bottomCenter = transform.position - Vector3.up * capsuleCollider.height * 0.5f;
             Vector3 topCenter = bottomCenter + Vector3.up * capsuleCollider.height;
 
             if (Physics.CapsuleCast(bottomCenter, topCenter, capsuleCollider.radius, forward, out raycastHitForward, teleportDistance + transform.localScale.x * 0.25f))
