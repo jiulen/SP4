@@ -14,11 +14,11 @@ public class WeaponBase : MonoBehaviour
     public GameObject weaponholder;
     protected Camera cam;
     bool Equipped = true;
+    protected double elapsedSinceLastShot = 0;
+    protected double elapsedBetweenEachShot = 0;
 
     void Start()
-    {
-        protected double elapsedSinceLastShot = 0;
-        protected double elapsedBetweenEachShot = 0;
+    { 
         elapsedBetweenEachShot = 1 / fireRate;
     }
 
