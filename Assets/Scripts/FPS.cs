@@ -11,7 +11,7 @@ public class FPS : NetworkBehaviour
     [SerializeField] CapsuleCollider capsuleCollider;
     public Camera camera; // Main camera
     Vector3 moveVector;
-    public bool isGround = false;
+    private bool isGround = false;
     private float pitch, yaw, roll;
     private float CamSen;
     private float speed = 5f;
@@ -24,11 +24,9 @@ public class FPS : NetworkBehaviour
     //private GameObject head;
     private GameObject bodyPivot;
     // General
-    public float speed = 5f;
     public float airMovementMultiplier = 2.5f;
 
     // Grounded check
-    private bool isGround = false;
     private float headHeight = 1;
     private float bodyHeight = 1;
     private float bodyRadius = 1;
@@ -55,10 +53,6 @@ public class FPS : NetworkBehaviour
 
     Canvas uiCanvas;
 
-
-
-    //For teleport
-    bool canTeleport = true;
     //// Gravity
     //float gravity = -9.81f;
     //Vector3 velocity;
@@ -248,18 +242,7 @@ public class FPS : NetworkBehaviour
 
             Jump();
 
-            // Limit speed
-            Vector3 velocityWithoutY = rigidbody.velocity;
-            velocityWithoutY.y = 0;
-            if (velocityWithoutY.magnitude >= speed)
-            {
-                velocityWithoutY = velocityWithoutY.normalized * speed;
-                velocityWithoutY.y = rigidbody.velocity.y;
-                //rigidbody.velocity = velocityWithoutY.normalized * 5;
-                rigidbody.velocity = velocityWithoutY;
-            }
-
-            UpdateDash();
+ 
         }
 
 
