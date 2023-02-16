@@ -8,12 +8,11 @@ using System.Threading;
 public class FPS : NetworkBehaviour
 {
     // Start is called before the first frame update
-    public CharacterController con;
     [SerializeField] CapsuleCollider capsuleCollider;
-    private Camera camera; // Main camera
+    public Camera camera; // Main camera
     Vector3 moveVector;
     public bool isGround = false;
-    private float pitch, yaw;
+    private float pitch, yaw, roll;
     private float CamSen;
     private float speed = 5f;
     private float DashSpeed = 30f, DashForwardVelocity, DashTime = 0.5f;
@@ -75,6 +74,10 @@ public class FPS : NetworkBehaviour
 
     Dash dashstate = Dash.NONE;
 
+    //Wallrunning
+    public bool canWallrun = true;
+    public bool isWallrunning = false;
+    
     void Start()
     {
         uiCanvas = GameObject.Find("Canvas").GetComponent<Canvas>();
@@ -83,7 +86,7 @@ public class FPS : NetworkBehaviour
         //Set dash progress to more than dash so dash isn't activated on start
         dashProgress = dashDuration + 1;
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
-        pitch = yaw = 0f;
+        pitch = yaw = roll =  0f;
         CamSen = 220f;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -131,73 +134,72 @@ public class FPS : NetworkBehaviour
         yaw += mouseX * CamSen * Time.deltaTime;
         pitch -= mouseY * CamSen * Time.deltaTime;
 
-        moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
-        moveVector.Normalize();
-
-        // WASD movement
-        if(isGround)
+        if (!isWallrunning)
         {
-            rigidbody.velocity = moveVector * speed;
+            moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
+            moveVector.Normalize();
 
-        }
-        else
-        {
-            rigidbody.AddForce(moveVector * airMovementMultiplier);
-        }
-
-        // Drop kick
-        if(Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            dropKickActive = true;
-        }
-
-        if(dropKickActive)
-        {
+            // WASD movement
             if (isGround)
-                dropKickActive = false;
-            else
-                rigidbody.velocity = new Vector3(0,-50,0);
-        }
-        //if (isGround && moveVector.magnitude == 0)
-        //{
-        //    //rigidbody.velocity = new Vector3(0, 0, 0);
-        //    rigidbody.AddForce(-rigidbody.velocity.normalized * speed);
+            {
+                rigidbody.velocity = moveVector * speed;
 
-        //}
-        //else
-        //{
-        //    Debug.Log("ruh roh");
-        //    rigidbody.velocity = new Vector3(0, rigidbody.velocity.y, 0);
-        //    rigidbody.AddForce(moveVector * 100);
-        //}
-        //this.GetComponent<Rigidbody>().velocity = moveVector;
+            }
+            else
+            {
+                rigidbody.AddForce(moveVector * airMovementMultiplier);
+            }
+
+            // Drop kick
+            if (Input.GetKeyDown(KeyCode.LeftControl))
+            {
+                dropKickActive = true;
+            }
+
+            if (dropKickActive)
+            {
+                if (isGround)
+                    dropKickActive = false;
+                else
+                    rigidbody.velocity = new Vector3(0, -50, 0);
+            }
+            //if (isGround && moveVector.magnitude == 0)
+            //{
+            //    //rigidbody.velocity = new Vector3(0, 0, 0);
+            //    rigidbody.AddForce(-rigidbody.velocity.normalized * speed);
+
+            //}
+            //else
+            //{
+            //    Debug.Log("ruh roh");
+            //    rigidbody.velocity = new Vector3(0, rigidbody.velocity.y, 0);
+            //    rigidbody.AddForce(moveVector * 100);
+            //}
+            //this.GetComponent<Rigidbody>().velocity = moveVector;
+
+            Jump();
+
+            // Limit speed
+            Vector3 velocityWithoutY = rigidbody.velocity;
+            velocityWithoutY.y = 0;
+            if (velocityWithoutY.magnitude >= speed)
+            {
+                velocityWithoutY = velocityWithoutY.normalized * speed;
+                velocityWithoutY.y = rigidbody.velocity.y;
+                //rigidbody.velocity = velocityWithoutY.normalized * 5;
+                rigidbody.velocity = velocityWithoutY;
+            }
+
+            UpdateDash();
+            velocity.y += gravity * Time.deltaTime;
+        }
+
 
         //Rotation
         pitch = Mathf.Clamp(pitch, -85f, 85f);
         float targetAngle = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
-        camera.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
+        camera.transform.rotation = Quaternion.Euler(pitch, yaw, roll);
         //transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
-
-        //Position & gravity
-        //con.Move(moveVector * speed * Time.deltaTime);
-        //con.Move(this.GetComponent<Rigidbody>().velocity * Time.deltaTime);
-
-        Jump();
-
-        // Limit speed
-        Vector3 velocityWithoutY = rigidbody.velocity;
-        velocityWithoutY.y = 0;
-        if (velocityWithoutY.magnitude >= speed)
-        {
-            velocityWithoutY = velocityWithoutY.normalized * speed;
-            velocityWithoutY.y = rigidbody.velocity.y;
-            //rigidbody.velocity = velocityWithoutY.normalized * 5;
-            rigidbody.velocity = velocityWithoutY;
-        }
-
-        UpdateDash();
-        //con.Move(velocity * Time.deltaTime);
-        velocity.y += gravity * Time.deltaTime;
 
         camera.transform.position = transform.position;
         Sniper sniper = transform.parent.GetComponentInChildren<Sniper>();
@@ -207,12 +209,9 @@ public class FPS : NetworkBehaviour
         }
         if (canTeleport) UpdateTeleport();
 
-
         currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
         currentEquipped.transform.position = transform.position;
         //Debug.Log(targetAngle);
-
-
     }
 
     // Update is called once per frame
@@ -346,9 +345,9 @@ public class FPS : NetworkBehaviour
 
     private void UpdateDash()
     {
-        Debug.Log(dashMetre);
-        Debug.Log(dashMetreMax);
-        Debug.Log(dashNum);
+        //Debug.Log(dashMetre);
+        //Debug.Log(dashMetreMax);
+        //Debug.Log(dashNum);
         dashProgress += Time.deltaTime;
 
         dashMetre += dashMetreRate * Time.deltaTime;
@@ -431,5 +430,29 @@ public class FPS : NetworkBehaviour
             return;
         }
         isGround = false;
+    }
+
+    //Camera functions
+    public IEnumerator DoFOV(float endValue, float zoomSpeed) //adjust field of view
+    {
+        while (camera.fieldOfView != endValue)
+        {
+            camera.fieldOfView = Mathf.MoveTowards(camera.fieldOfView, endValue, zoomSpeed * Time.deltaTime);
+            yield return null;
+        }
+
+        yield break;
+    }
+
+    public IEnumerator DoTiltZ(float endValue, float tiltSpeed) //adjust roll
+    {
+        while (roll != endValue)
+        {
+            roll = Mathf.MoveTowards(roll, endValue, tiltSpeed * Time.deltaTime);
+
+            yield return null;
+        }
+
+        yield break;
     }
 }

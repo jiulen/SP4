@@ -25,7 +25,7 @@ public class GrappleHook : MonoBehaviour
         GameObject test = transform.parent.gameObject;
         GameObject test2 = test.transform.parent.gameObject;
         GameObject test3 = test2.transform.Find("Player Entity").gameObject;
-        Debug.Log("Hello everynyan" + test3.name);
+        //Debug.Log("Hello everynyan" + test3.name);
    
     }
 

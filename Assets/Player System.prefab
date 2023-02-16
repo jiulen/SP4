@@ -1040,6 +1040,7 @@ GameObject:
   - component: {fileID: 6627585382205033490}
   - component: {fileID: 4066843824968675632}
   - component: {fileID: 8943218968077514313}
+  - component: {fileID: 8074001033437812659}
   m_Layer: 0
   m_Name: Player Entity
   m_TagString: Player
@@ -1122,15 +1123,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e3de743d182b8e4bbc3d86cae2876ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  con: {fileID: 4066843824968675632}
   capsuleCollider: {fileID: 0}
+  camera: {fileID: 0}
   isGround: 0
   speed: 5
   airMovementMultiplier: 2.5
   jumpForce: 250
-  dashcooldown: 1
   dashDuration: 0.2
+  dashNum: 3
+  dashMetreRate: 30
   tpMarkerPrefab: {fileID: 8623884177538578183, guid: 0d094d82fe2465a4e9199cee4d5d9432, type: 3}
+  canWallrun: 1
+  isWallrunning: 0
 --- !u!54 &2904650825673741593
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1221,6 +1225,18 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
+--- !u!114 &8074001033437812659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7192775230315233508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b001cc086a76ec8409af7761df154b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8936510955541285364
 GameObject:
   m_ObjectHideFlags: 0
