@@ -8,7 +8,12 @@ public class ProjectileBase : MonoBehaviour
     public float duration = 1;
 
     protected double elapsed = 0;
+    protected GameObject creator;
 
+    public void SetCreator(GameObject _creator)
+    {
+        creator = _creator;
+    }
     public void Start()
     {
     }

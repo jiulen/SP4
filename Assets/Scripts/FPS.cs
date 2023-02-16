@@ -167,7 +167,13 @@ public class FPS : NetworkBehaviour
         {
             //moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
             //moveVector.Normalize();
-            rigidbody.velocity = moveVector * speed;
+            Vector3 newDirection = moveVector * speed;
+            newDirection.y = rigidbody.velocity.y; ;
+            rigidbody.velocity = newDirection;
+            if (rigidbody.velocity.magnitude >= speed)
+            {
+                rigidbody.velocity = rigidbody.velocity.normalized * speed;
+            }
 
         }
         else
@@ -253,15 +259,17 @@ public class FPS : NetworkBehaviour
         Jump();
 
         // Limit speed
-        Vector3 velocityWithoutY = rigidbody.velocity;
-        velocityWithoutY.y = 0;
-        if (velocityWithoutY.magnitude >= speed)
-        {
-            velocityWithoutY = velocityWithoutY.normalized * speed;
-            velocityWithoutY.y = rigidbody.velocity.y;
-            //rigidbody.velocity = velocityWithoutY.normalized * 5;
-            rigidbody.velocity = velocityWithoutY;
-        }
+        //Vector3 velocityWithoutY = rigidbody.velocity;
+        //velocityWithoutY.y = 0;
+        //if ( rigidbody.velocity.magnitude >= speed)
+        //{
+        //    velocityWithoutY = velocityWithoutY.normalized * speed;
+        //    velocityWithoutY.y = rigidbody.velocity.y;
+        //    //rigidbody.velocity = velocityWithoutY.normalized * 5;
+        //    rigidbody.velocity = velocityWithoutY;
+        //}
+
+      
 
         UpdateDash();
         UpdateSlide();

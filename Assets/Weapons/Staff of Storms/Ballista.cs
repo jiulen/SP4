@@ -49,8 +49,9 @@ public class Ballista : WeaponBase
         Transform newTransform = camera.transform;
         GameObject blast = Instantiate(stormBlastPF, bulletEmitter.transform);
         Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
-        blast.GetComponent<Rigidbody>().velocity = RandomSpray(front.normalized, inaccuracy) * projectileVel;
+        blast.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel;
         blast.transform.SetParent(projectileManager.transform);
+        blast.GetComponent<StormBlast>().SetCreator(playerOwner);
         elapsedSinceLastShot = 0;
         fireAudio.Play();
     }

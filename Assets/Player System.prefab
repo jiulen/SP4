@@ -1162,6 +1162,7 @@ GameObject:
   - component: {fileID: 6627585382205033490}
   - component: {fileID: 4066843824968675632}
   - component: {fileID: 8943218968077514313}
+  - component: {fileID: 2380581511885981185}
   - component: {fileID: 5084781543756615461}
   - component: {fileID: 8223840984771899471}
   - component: {fileID: 8864401461093406745}
@@ -1249,6 +1250,18 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
+--- !u!114 &2380581511885981185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7192775230315233508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b001cc086a76ec8409af7761df154b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &5084781543756615461
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1285,7 +1298,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
-  m_Height: 2
+  m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &8864401461093406745
