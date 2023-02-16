@@ -7,14 +7,12 @@ using System.Threading;
 public class FPS : NetworkBehaviour
 {
     // Start is called before the first frame update
-    public CharacterController con;
     private Camera camera; // Main camera
     Vector3 moveVector;
     public bool isGround = false;
     private float pitch, yaw;
     private float CamSen;
-    private float speed = 5f, DashSpeed = 30f, DashForwardVelocity, DashTime = 0.5f;
-    private float decel;
+    private float speed = 5f;
 
     private Rigidbody rigidbody;
 
@@ -25,11 +23,9 @@ public class FPS : NetworkBehaviour
     public float dashcooldown = 1.0f;
     public float dashDuration = 0.2f;
     float dashProgress = 0.2f;
+    public bool candash = true;
     Vector3 storeDashDir;
 
-    // gravity
-    float gravity = -9.81f;
-    Vector3 velocity;
 
     //For teleport
     bool canTeleport = true;
@@ -53,13 +49,7 @@ public class FPS : NetworkBehaviour
     LayerMask tpLayerMask;
 
     private Transform currentEquipped;
-    enum Dash
-    {
-        NONE,
-        DASH
-    }
-    
-    Dash dashstate = Dash.NONE;
+
     void Start()
     {
         //Set dash progress to more than dash so dash isn't activated on start
@@ -67,14 +57,13 @@ public class FPS : NetworkBehaviour
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         pitch = yaw = 0f;
         CamSen = 220f;
-        decel = -DashSpeed / DashTime;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         tpMarker = Instantiate(tpMarkerPrefab);
         tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
         tpMarkerMR.enabled = false;
         tpVerticalOffset = transform.localScale.y - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
-        //currentEquipped = transform.parent.Find("Equipped");
+        currentEquipped = transform.parent.Find("Equipped");
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
         rigidbody = this.GetComponent<Rigidbody>();
         rigidbody.velocity.Set(0, 0, 0);
@@ -109,12 +98,13 @@ public class FPS : NetworkBehaviour
         forward = forward.normalized;
         right = right.normalized;
 
+
         yaw += mouseX * CamSen * Time.deltaTime;
         pitch -= mouseY * CamSen * Time.deltaTime;
        
         moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right); 
         moveVector.Normalize();
-     
+
         // WASD movement
         if(isGround)
         {
@@ -166,15 +156,18 @@ public class FPS : NetworkBehaviour
         Jump();
         UpdateDash();
         //con.Move(velocity * Time.deltaTime);
-        velocity.y += gravity * Time.deltaTime;
-        
+        //velocity.y += gravity * Time.deltaTime;
         camera.transform.position = transform.position;
-
+        Sniper sniper = transform.parent.GetComponentInChildren<Sniper>();
+        if (sniper != null && sniper.allowbobbing)
+        {
+            camera.transform.position += camera.transform.up * (Mathf.Sin(sniper.stablizeElasped * 2) / 2) * 0.4f + camera.transform.right * Mathf.Cos(sniper.stablizeElasped) * 0.4f;
+        }
         if (canTeleport) UpdateTeleport();
 
 
-        //currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
-        //currentEquipped.transform.position = transform.position;
+        currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
+        currentEquipped.transform.position = transform.position;
         //Debug.Log(targetAngle);
     }
 
@@ -292,9 +285,7 @@ public class FPS : NetworkBehaviour
             else
             {
                 //Do teleport
-                con.enabled = false;
                 transform.position = tpMarker.transform.position + new Vector3(0, tpVerticalOffset, 0);
-                con.enabled = true;
                 camera.transform.position = transform.position;
 
                 teleportState = TeleportStates.NONE;
@@ -311,7 +302,7 @@ public class FPS : NetworkBehaviour
     private void UpdateDash()
     {
         dashProgress += Time.deltaTime;
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) && candash)
         {
             // If no keyboard input, use camera direction
             if (moveVector.magnitude == 0)
@@ -329,54 +320,12 @@ public class FPS : NetworkBehaviour
                 storeDashDir = moveVector;
                 dashProgress = 0;
             }
-
-            //DashForwardVelocity = DashSpeed;
-            //dashstate = Dash.DASH;
-            //dashProgress = dashcooldown;
         }
         if (dashProgress < dashDuration)
         {
             rigidbody.velocity = storeDashDir * speed * 3;
         }
         return;
-        switch(dashstate)
-        {
-            case Dash.NONE:
-                if (dashProgress <= 0)
-                {
-                    if (Input.GetKey(KeyCode.LeftShift))
-                    {
-                        // If no keyboard input, use camera direction
-                        if(moveVector.magnitude == 0)
-                        {
-                            Vector3 forward = camera.transform.forward;
-                            forward.y = 0;
-                            forward.Normalize();
-                            rigidbody.velocity = forward * speed * 3;
-
-                        }
-                        // Otherwise, dash towards movement input
-                        else
-                        {
-                            rigidbody.velocity = moveVector * speed * 3;
-                        }
-
-                        DashForwardVelocity = DashSpeed;
-                        dashstate = Dash.DASH;
-                        dashProgress = dashcooldown;
-                    }
-                }
-                else
-                {
-                    dashProgress -= Time.deltaTime;
-                }
-                break;
-            case Dash.DASH:
-                //rigidbody.velocity.Set(0, 0, 0);
-                //StartCoroutine(StartDash());
-                dashstate = Dash.NONE;
-                break;
-       }      
     }
 
     //IEnumerator StartDash()

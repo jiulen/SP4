@@ -71,8 +71,8 @@ public class FPSTEST : MonoBehaviour
         transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
 
         Vector3 temp = MoveVector * 300f * Time.deltaTime;
-        //rb.velocity = new Vector3(temp.x, rb.velocity.y, temp.z);
-        rb.MovePosition(rb.position + MoveVector * speed * Time.deltaTime);
+        rb.velocity = new Vector3(temp.x, rb.velocity.y, temp.z);
+        //rb.MovePosition(rb.position + MoveVector * speed * Time.deltaTime);
         Jump();
         UpdateDash(forward);
         camera.transform.position = transform.position;

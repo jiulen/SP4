@@ -10,15 +10,16 @@ public class WeaponBase : MonoBehaviour
     public float inaccuracy = 10;
     public float projectileVel = 1;
 
-    protected Rigidbody rb;
-    public GameObject weaponholder;
-    protected Camera cam;
-    bool Equipped = true;
+    //protected Rigidbody rb;
+    //public GameObject weaponholder;
+    [SerializeField] protected Camera cam;
+    //bool Equipped = true;
     protected double elapsedSinceLastShot = 0;
     protected double elapsedBetweenEachShot = 0;
 
     public void Start()
-    { 
+    {
+        cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         elapsedBetweenEachShot = 1 / fireRate;
     }
 
@@ -27,35 +28,35 @@ public class WeaponBase : MonoBehaviour
     {
     }
 
-    public void UpdateWeaponBase()
-    {
+    //public void UpdateWeaponBase()
+    //{
 
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            if (Equipped)
-                Drop();
-            else
-                Equip();
-        }
-    }
-    public void Equip()
-    {
-        transform.SetParent(weaponholder.transform);
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.Euler(Vector3.zero);
+    //    if (Input.GetKeyDown(KeyCode.E))
+    //    {
+    //        if (Equipped)
+    //            Drop();
+    //        else
+    //            Equip();
+    //    }
+    //}
+    //public void Equip()
+    //{
+    //    transform.SetParent(weaponholder.transform);
+    //    transform.localPosition = Vector3.zero;
+    //    transform.localRotation = Quaternion.Euler(Vector3.zero);
 
-        rb.isKinematic = true;
-        Equipped = true;
-    }
-    public void Drop()
-    {
-        transform.SetParent(null);
-        rb.isKinematic = false;
-        rb.velocity = rb.GetComponent<Rigidbody>().velocity;
-        rb.AddForce(cam.transform.forward * 300f * Time.deltaTime, ForceMode.Impulse);
+    //    rb.isKinematic = true;
+    //    Equipped = true;
+    //}
+    //public void Drop()
+    //{
+    //    transform.SetParent(null);
+    //    rb.isKinematic = false;
+    //    rb.velocity = rb.GetComponent<Rigidbody>().velocity;
+    //    rb.AddForce(cam.transform.forward * 300f * Time.deltaTime, ForceMode.Impulse);
 
-        Equipped = false;
-    }
+    //    Equipped = false;
+    //}
     public static Vector3 RandomSpray(Vector3 front, float maxInnacuracy)
     {
         float randomAngle = Random.Range(-maxInnacuracy / 2, maxInnacuracy / 2);

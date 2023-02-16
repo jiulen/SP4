@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Bullet
   - Collectibles
+  - Crates
   layers:
   - Default
   - TransparentFX
