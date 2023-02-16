@@ -95,7 +95,7 @@ public class FPS : NetworkBehaviour
 
     void Start()
     {
-        uiCanvas = GameObject.Find("Canvas").GetComponent<Canvas>();
+        uiCanvas = GameObject.Find("Player System/Canvas").GetComponent<Canvas>();
 
         bodyPivot = transform.Find("Body pivot").gameObject;
         body = bodyPivot.transform.GetChild(0).gameObject;
@@ -438,16 +438,7 @@ public class FPS : NetworkBehaviour
         }
 
         //Update the UI
-        int i = 0;
-        foreach(Transform child in uiCanvas.transform)
-        {
-            Slider slider = child.GetComponent<Slider>();
-            slider.maxValue = dashMetreMax / dashNum;
-            float segmentedValue = dashMetre - (dashMetreMax / dashNum) * i;
-            slider.value = segmentedValue;
-            i++;
-
-        }
+    
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && dashMetre >= dashMetreMax / dashNum && candash)
         {
@@ -482,6 +473,18 @@ public class FPS : NetworkBehaviour
                 rigidbody.velocity = newVelocity;
             }
         }
+
+        int i = 0;
+        foreach (Transform child in uiCanvas.transform)
+        {
+            Slider slider = child.GetComponent<Slider>();
+            slider.maxValue = dashMetreMax / dashNum;
+            float segmentedValue = dashMetre - (dashMetreMax / dashNum) * i;
+            slider.value = segmentedValue;
+            i++;
+
+        }
+
         return;
     }
 
@@ -563,3 +566,4 @@ public class FPS : NetworkBehaviour
         yield break;
     }
 }
+
