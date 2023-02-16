@@ -1159,15 +1159,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2536903626656623270}
-  - component: {fileID: 5084781543756615461}
   - component: {fileID: 6627585382205033490}
   - component: {fileID: 4066843824968675632}
   - component: {fileID: 8943218968077514313}
+  - component: {fileID: 5084781543756615461}
   - component: {fileID: 8223840984771899471}
   - component: {fileID: 8864401461093406745}
   - component: {fileID: 4550364135124883825}
   - component: {fileID: 6783211076846146731}
-  - component: {fileID: 3871085432490835568}
   m_Layer: 0
   m_Name: Player Entity
   m_TagString: Player
@@ -1190,31 +1189,6 @@ Transform:
   m_Father: {fileID: 8570041545983154035}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5084781543756615461
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7192775230315233508}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e3de743d182b8e4bbc3d86cae2876ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  con: {fileID: 4066843824968675632}
-  capsuleCollider: {fileID: 0}
-  camera: {fileID: 0}
-  airMovementMultiplier: 2.5
-  jumpForce: 250
-  dashDuration: 0.2
-  candash: 1
-  dashNum: 3
-  dashMetreRate: 30
-  slideMultiplier: 2
-  tpMarkerPrefab: {fileID: 8623884177538578183, guid: 0d094d82fe2465a4e9199cee4d5d9432, type: 3}
-  canWallrun: 1
-  isWallrunning: 0
 --- !u!114 &6627585382205033490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1275,6 +1249,31 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
+--- !u!114 &5084781543756615461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7192775230315233508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3de743d182b8e4bbc3d86cae2876ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  con: {fileID: 4066843824968675632}
+  capsuleCollider: {fileID: 0}
+  camera: {fileID: 0}
+  airMovementMultiplier: 2.5
+  jumpForce: 250
+  dashDuration: 0.2
+  candash: 1
+  dashNum: 3
+  dashMetreRate: 30
+  slideMultiplier: 2
+  tpMarkerPrefab: {fileID: 8623884177538578183, guid: 0d094d82fe2465a4e9199cee4d5d9432, type: 3}
+  canWallrun: 0
+  isWallrunning: 0
 --- !u!136 &8223840984771899471
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1286,7 +1285,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
-  m_Height: 1
+  m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &8864401461093406745
@@ -1354,20 +1353,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!136 &3871085432490835568
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7192775230315233508}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 1
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8936510955541285364
 GameObject:
   m_ObjectHideFlags: 0

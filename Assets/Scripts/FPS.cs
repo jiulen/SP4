@@ -158,15 +158,16 @@ public class FPS : NetworkBehaviour
         yaw += mouseX * CamSen * Time.deltaTime;
         pitch -= mouseY * CamSen * Time.deltaTime;
 
-        if (!isWallrunning)
+        //if (!isWallrunning)
         moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
         moveVector.Normalize();
 
         // WASD movement
-        if(isGround)
+        if (isGround)
         {
-            moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
-            moveVector.Normalize();
+            //moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
+            //moveVector.Normalize();
+            rigidbody.velocity = moveVector * speed;
 
         }
         else
@@ -201,18 +202,6 @@ public class FPS : NetworkBehaviour
         }
 
 
-        if (dropKickActive)
-        {
-            if (isGround)
-            {
-                rigidbody.velocity = moveVector * speed;
-
-            }
-            else
-            {
-                rigidbody.AddForce(moveVector * airMovementMultiplier);
-            }
-
             // Drop kick
             if (Input.GetKeyDown(KeyCode.LeftControl))
             {
@@ -240,10 +229,8 @@ public class FPS : NetworkBehaviour
             //}
             //this.GetComponent<Rigidbody>().velocity = moveVector;
 
-            Jump();
 
- 
-        }
+        
 
 
         //Rotation
