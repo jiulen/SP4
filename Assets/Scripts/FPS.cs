@@ -1,30 +1,47 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Unity.Netcode;
 using System.Threading;
 
 public class FPS : NetworkBehaviour
 {
     // Start is called before the first frame update
+    public CharacterController con;
+    [SerializeField] CapsuleCollider capsuleCollider;
     private Camera camera; // Main camera
     Vector3 moveVector;
     public bool isGround = false;
     private float pitch, yaw;
     private float CamSen;
     private float speed = 5f;
+    private float DashSpeed = 30f, DashForwardVelocity, DashTime = 0.5f;
+    private float decel;
 
     private Rigidbody rigidbody;
+    // general
+    public float speed = 5f;
+    public float airMovementMultiplier = 2.5f;
 
-    //For double jump
+    //For jump
     private bool doublejump = false;
+    public float jumpForce = 250;
 
     //For dash
-    public float dashcooldown = 1.0f;
     public float dashDuration = 0.2f;
     float dashProgress = 0.2f;
     public bool candash = true;
-    Vector3 storeDashDir;
+    private float dashProgress = 0.2f;
+    public int dashNum = 3;
+    
+    private float dashMetre = 0;
+    public float dashMetreRate = 30;
+    private float dashMetreMax = 100;
+    private Vector3 storeDashDir;
+
+    Canvas uiCanvas;
+
 
 
     //For teleport
@@ -39,7 +56,7 @@ public class FPS : NetworkBehaviour
         TELEPORT_CHANNEL,
     };
     TeleportStates teleportState = TeleportStates.NONE;
-    const float teleportDuration = 1.0f, teleportCooldown = 5.0f;
+    const float teleportDuration = 1.0f, teleportCooldown = 1.0f;
     float teleportProgress = 0.0f, teleportCooldownTimer = teleportCooldown;
     float teleportDistance = 5.0f;
     float tpVerticalOffset = 0;
@@ -50,8 +67,19 @@ public class FPS : NetworkBehaviour
 
     private Transform currentEquipped;
 
+    enum Dash
+    {
+        NONE,
+        DASH
+    }
+
+    Dash dashstate = Dash.NONE;
+
     void Start()
     {
+        uiCanvas = GameObject.Find("Canvas").GetComponent<Canvas>();
+
+        capsuleCollider = GetComponent<CapsuleCollider>(); //set in editor
         //Set dash progress to more than dash so dash isn't activated on start
         dashProgress = dashDuration + 1;
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
@@ -62,14 +90,15 @@ public class FPS : NetworkBehaviour
         tpMarker = Instantiate(tpMarkerPrefab);
         tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
         tpMarkerMR.enabled = false;
-        tpVerticalOffset = transform.localScale.y - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
+        tpVerticalOffset = capsuleCollider.height * 0.5f - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
+
         currentEquipped = transform.parent.Find("Equipped");
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
         rigidbody = this.GetComponent<Rigidbody>();
         rigidbody.velocity.Set(0, 0, 0);
 
 
-        tpLayerMask = 1 << LayerMask.NameToLayer("Terrain"); //use later when got structures in level 
+        tpLayerMask = 1 << LayerMask.NameToLayer("Terrain"); //use later when got structures in level
     }
 
 
@@ -101,8 +130,8 @@ public class FPS : NetworkBehaviour
 
         yaw += mouseX * CamSen * Time.deltaTime;
         pitch -= mouseY * CamSen * Time.deltaTime;
-       
-        moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right); 
+
+        moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
         moveVector.Normalize();
 
         // WASD movement
@@ -113,7 +142,7 @@ public class FPS : NetworkBehaviour
         }
         else
         {
-            rigidbody.AddForce(moveVector * speed * 5);
+            rigidbody.AddForce(moveVector * airMovementMultiplier);
         }
 
         // Drop kick
@@ -154,9 +183,22 @@ public class FPS : NetworkBehaviour
         //con.Move(this.GetComponent<Rigidbody>().velocity * Time.deltaTime);
 
         Jump();
+
+        // Limit speed
+        Vector3 velocityWithoutY = rigidbody.velocity;
+        velocityWithoutY.y = 0;
+        if (velocityWithoutY.magnitude >= speed)
+        {
+            velocityWithoutY = velocityWithoutY.normalized * speed;
+            velocityWithoutY.y = rigidbody.velocity.y;
+            //rigidbody.velocity = velocityWithoutY.normalized * 5;
+            rigidbody.velocity = velocityWithoutY;
+        }
+
         UpdateDash();
         //con.Move(velocity * Time.deltaTime);
-        //velocity.y += gravity * Time.deltaTime;
+        velocity.y += gravity * Time.deltaTime;
+
         camera.transform.position = transform.position;
         Sniper sniper = transform.parent.GetComponentInChildren<Sniper>();
         if (sniper != null && sniper.allowbobbing)
@@ -169,13 +211,15 @@ public class FPS : NetworkBehaviour
         currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
         currentEquipped.transform.position = transform.position;
         //Debug.Log(targetAngle);
+
+
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
         //if (!IsOwner) return;
-  
+
     }
 
     private void Jump()
@@ -196,15 +240,16 @@ public class FPS : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (isGround) 
+            if (isGround)
             {
-                rigidbody.AddForce(0, 500, 0);
+
+                rigidbody.AddForce(0, jumpForce, 0);
                 //velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
                 doublejump = true;
             }
             else if (doublejump)
             {
-                rigidbody.AddForce(0, 500, 0);
+                rigidbody.AddForce(0, jumpForce, 0);
                 //velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
                 doublejump = false;
             }
@@ -250,10 +295,10 @@ public class FPS : NetworkBehaviour
 
             //CapsuleCast forward
             RaycastHit raycastHitForward;
-            Vector3 bottomCenter = transform.position + Vector3.up * transform.localScale.y * 0.5f;
-            Vector3 topCenter = bottomCenter + Vector3.up * transform.localScale.y;
+            Vector3 bottomCenter = transform.position - Vector3.up * capsuleCollider.height * 0.5f;
+            Vector3 topCenter = bottomCenter + Vector3.up * capsuleCollider.height;
 
-            if (Physics.CapsuleCast(bottomCenter, topCenter, transform.localScale.x / 2, forward, out raycastHitForward, teleportDistance + transform.localScale.x * 0.25f))
+            if (Physics.CapsuleCast(bottomCenter, topCenter, capsuleCollider.radius, forward, out raycastHitForward, teleportDistance + transform.localScale.x * 0.25f))
             {
                 tpMarkerPos = transform.position + forward * (raycastHitForward.distance - transform.localScale.x * 0.25f);
             }
@@ -301,8 +346,30 @@ public class FPS : NetworkBehaviour
 
     private void UpdateDash()
     {
+        Debug.Log(dashMetre);
+        Debug.Log(dashMetreMax);
+        Debug.Log(dashNum);
         dashProgress += Time.deltaTime;
-        if (Input.GetKey(KeyCode.LeftShift) && candash)
+
+        dashMetre += dashMetreRate * Time.deltaTime;
+        if(dashMetre > dashMetreMax)
+        {
+            dashMetre = dashMetreMax;
+        }
+
+        //Update the UI
+        int i = 0;
+        foreach(Transform child in uiCanvas.transform)
+        {
+            Slider slider = child.GetComponent<Slider>();
+            slider.maxValue = dashMetreMax / dashNum;
+            float segmentedValue = dashMetre - (dashMetreMax / dashNum) * i;
+            slider.value = segmentedValue;
+            i++;
+
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && dashMetre >= dashMetreMax / dashNum && candash)
         {
             // If no keyboard input, use camera direction
             if (moveVector.magnitude == 0)
@@ -312,18 +379,28 @@ public class FPS : NetworkBehaviour
                 forward.Normalize();
                 storeDashDir = forward;
                 dashProgress = 0;
-
+                dashMetre -= (float)(dashMetreMax / dashNum);
             }
             // Otherwise, dash towards movement input
             else
             {
                 storeDashDir = moveVector;
                 dashProgress = 0;
+                dashMetre -= (float)(dashMetreMax / dashNum);
             }
         }
         if (dashProgress < dashDuration)
         {
-            rigidbody.velocity = storeDashDir * speed * 3;
+            // If the player is falling, cancel their vertical velocity
+            if (rigidbody.velocity.y < 0)
+                rigidbody.velocity = storeDashDir * speed * 3;
+            // If the player is jumping, maintain that velocity
+            else
+            {
+                Vector3 newVelocity = storeDashDir * speed * 3;
+                newVelocity.y = rigidbody.velocity.y;
+                rigidbody.velocity = newVelocity;
+            }
         }
         return;
     }

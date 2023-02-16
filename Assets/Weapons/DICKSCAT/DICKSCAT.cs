@@ -35,6 +35,9 @@ public class DICKSCAT : WeaponBase
     Slider steamGauge;
     TMP_Text modeText;
     AudioSource fireAudio;
+
+    bool togglePortals = false;
+
     void Start()
     {
         base.Start();
@@ -49,6 +52,13 @@ public class DICKSCAT : WeaponBase
         steamGauge = GameObject.Find("UI canvas/Steam Gauge Slider").GetComponent<Slider>();
         modeText = GameObject.Find("UI canvas/Mode text").GetComponent<TMP_Text>();
         fireAudio = GameObject.Find("SampleFire").GetComponent<AudioSource>();
+
+        // Set camera for canvas
+        GameObject.Find("UI canvas").GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        GameObject.Find("UI canvas").GetComponent<Canvas>().planeDistance = 0.5f;
+
+   
+     
 
         Debug.Log(DICKFocalPoint);
         for(int i = 0; i != numPortals; i++)
@@ -83,12 +93,6 @@ public class DICKSCAT : WeaponBase
 
         currentMode = mode.DICK;
     }
-
-    private void FixedUpdate()
-    {
-        
-    }
-
     private void TogglePortalsActive(bool active)
     {
         if(active != portalsActive)
@@ -113,7 +117,7 @@ public class DICKSCAT : WeaponBase
 
     void Update()
     {
-        bool togglePortals = false;
+        togglePortals = false;
 
         if (Input.GetButton("Fire1"))
         {
@@ -130,33 +134,7 @@ public class DICKSCAT : WeaponBase
                         steamCurrent = steamMax;
                     }
 
-                    foreach (Transform child in portalParent.transform)
-                    {
-                        Vector3 midPos = (child.transform.position + DICKFocalPoint.transform.position) / 2;
-                        Transform laser = child.transform.GetChild(0);
-                        laser.gameObject.SetActive(true);
-                        laser.position = midPos;
-                        Vector3 direction = child.transform.position - DICKFocalPoint.transform.position;
-                        
-                        laser.rotation = Quaternion.LookRotation(direction);
-                        laser.Rotate(90, 0, 0);
-
-                        LineRenderer laserLine = laser.GetComponent<LineRenderer>();
-                        laserLine.positionCount = 2;
-                        laserLine.SetPosition(0, child.transform.position);
-                        laserLine.SetPosition(1, child.transform.position + (DICKFocalPoint.transform.position - child.transform.position) *3);
-
-                            //Debug.DrawRay(child.transform.position, 5 * (DICKFocalPoint.transform.position - child.transform.position), Color.red);
-                        Ray laserRayCast = new Ray(child.transform.position, 5 * (DICKFocalPoint.transform.position - child.transform.position));
-                        if (Physics.Raycast(laserRayCast, out RaycastHit hit, 10))
-                        {
-                            if (hit.collider.tag == "Player")
-                            {
-                                Debug.Log("HIT!!!");
-                            }
-                        }
-                        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    }
+                    
                     break;
                 }
                 case mode.SCAT:
@@ -202,6 +180,37 @@ public class DICKSCAT : WeaponBase
         }
 
         steamGauge.value = steamCurrent;
+    }
+
+    private void LateUpdate()
+    {
         TogglePortalsActive(togglePortals);
+        foreach (Transform child in portalParent.transform)
+        {
+            Vector3 midPos = (child.transform.position + DICKFocalPoint.transform.position) / 2;
+            Transform laser = child.transform.GetChild(0);
+            laser.gameObject.SetActive(true);
+            laser.position = midPos;
+            Vector3 direction = child.transform.position - DICKFocalPoint.transform.position;
+
+            laser.rotation = Quaternion.LookRotation(direction);
+            laser.Rotate(90, 0, 0);
+
+            LineRenderer laserLine = laser.GetComponent<LineRenderer>();
+            laserLine.positionCount = 2;
+            laserLine.SetPosition(0, child.transform.position);
+            laserLine.SetPosition(1, child.transform.position + (DICKFocalPoint.transform.position - child.transform.position) * 3);
+
+            //Debug.DrawRay(child.transform.position, 5 * (DICKFocalPoint.transform.position - child.transform.position), Color.red);
+            Ray laserRayCast = new Ray(child.transform.position, 5 * (DICKFocalPoint.transform.position - child.transform.position));
+            if (Physics.Raycast(laserRayCast, out RaycastHit hit, 10))
+            {
+                if (hit.collider.tag == "Player")
+                {
+                    Debug.Log("HIT!!!");
+                }
+            }
+            //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        }
     }
 }
