@@ -8,28 +8,26 @@ public class DestructibleObjects : MonoBehaviour
     public GameObject destructcrates, Health, Ammo;
     private Vector3 offset;
     private Rigidbody rb;
+   
     void Start()
     {
         offset = new Vector3(0, 0, 0);
         rb = GetComponent<Rigidbody>();
     }
 
-    private void OnCollisionEnter(Collision collision)
+    public void DestroyDestructible()
     {
-        if (collision.gameObject.tag == "Bullet")
+        switch(Random.Range(0, 2)) // 0: none
         {
-            switch(Random.Range(0, 2)) // 0: none
-            {
-                case 1:
-                    Instantiate(Health, rb.position + offset, Quaternion.identity);
-                    break;
-                case 2:
-                    Instantiate(Ammo, rb.position + offset, Quaternion.identity);
-                    break;
-            }
-            Destroy(this.gameObject);
-            Instantiate(destructcrates, rb.position, Quaternion.identity);
+            case 1:
+                Instantiate(Health, rb.position + offset, Quaternion.identity);
+                break;
+            case 2:
+                Instantiate(Ammo, rb.position + offset, Quaternion.identity);
+                break;
         }
+        Destroy(this.gameObject);
+        Instantiate(destructcrates, rb.position, Quaternion.identity);
     }
 
 }

@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7982064822255811197}
   m_Layer: 0
   m_Name: Wooden_Crate
-  m_TagString: Untagged
+  m_TagString: Crates
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
