@@ -96,7 +96,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 8569531449500307843, guid: 7451a29ba7066144a851714a75331914, type: 3}
 --- !u!114 &8817414717796851442
@@ -108,7 +108,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5738864235527963283}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b194258949af79443af8bba3263d660c, type: 3}
+  m_Script: {fileID: 11500000, guid: 46f0b770fc37fed45bb801ed76553b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   destructcrates: {fileID: 7173136001693520582, guid: 5e359e9c313bd994faf39491600b4a00, type: 3}

@@ -26,8 +26,8 @@ public class DestructibleObjects : MonoBehaviour
                 Instantiate(Ammo, rb.position + offset, Quaternion.identity);
                 break;
         }
-        Destroy(this.gameObject);
         Instantiate(destructcrates, rb.position, Quaternion.identity);
+        Destroy(this.gameObject);
     }
 
 }

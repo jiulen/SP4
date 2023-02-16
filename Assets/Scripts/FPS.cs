@@ -21,7 +21,6 @@ public class FPS : NetworkBehaviour
 
     private Rigidbody rigidbody;
     // general
-    public float speed = 5f;
     public float airMovementMultiplier = 2.5f;
 
     //For jump
@@ -32,7 +31,6 @@ public class FPS : NetworkBehaviour
     public float dashDuration = 0.2f;
     float dashProgress = 0.2f;
     public bool candash = true;
-    private float dashProgress = 0.2f;
     public int dashNum = 3;
     
     private float dashMetre = 0;
@@ -77,7 +75,7 @@ public class FPS : NetworkBehaviour
 
     void Start()
     {
-        uiCanvas = GameObject.Find("Canvas").GetComponent<Canvas>();
+        uiCanvas = GameObject.Find("PlayerCanvasUI").GetComponent<Canvas>();
 
         capsuleCollider = GetComponent<CapsuleCollider>(); //set in editor
         //Set dash progress to more than dash so dash isn't activated on start
@@ -85,8 +83,6 @@ public class FPS : NetworkBehaviour
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         pitch = yaw = 0f;
         CamSen = 220f;
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
         tpMarker = Instantiate(tpMarkerPrefab);
         tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
         tpMarkerMR.enabled = false;
@@ -105,8 +101,10 @@ public class FPS : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
         // Reset position and velocity if player goes out of bounds for debugging
-        if(transform.position.magnitude > 100 || transform.position.y <= -20)
+        if (transform.position.magnitude > 100 || transform.position.y <= -20)
         {
             transform.position = new Vector3(0, 10, 0);
             rigidbody.velocity = new Vector3(0, 0, 0);
@@ -173,7 +171,7 @@ public class FPS : NetworkBehaviour
         //this.GetComponent<Rigidbody>().velocity = moveVector;
 
         //Rotation
-        pitch = Mathf.Clamp(pitch, -85f, 85f);
+        pitch = Mathf.Clamp(pitch, -89f, 89f);
         float targetAngle = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
         camera.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
         //transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
@@ -197,11 +195,11 @@ public class FPS : NetworkBehaviour
 
         UpdateDash();
         //con.Move(velocity * Time.deltaTime);
-        velocity.y += gravity * Time.deltaTime;
+        //velocity.y += gravity * Time.deltaTime;
 
         camera.transform.position = transform.position;
         Sniper sniper = transform.parent.GetComponentInChildren<Sniper>();
-        if (sniper != null && sniper.allowbobbing)
+        if (sniper != null && sniper.Scoped.enabled)
         {
             camera.transform.position += camera.transform.up * (Mathf.Sin(sniper.stablizeElasped * 2) / 2) * 0.4f + camera.transform.right * Mathf.Cos(sniper.stablizeElasped) * 0.4f;
         }
@@ -346,9 +344,10 @@ public class FPS : NetworkBehaviour
 
     private void UpdateDash()
     {
-        Debug.Log(dashMetre);
-        Debug.Log(dashMetreMax);
-        Debug.Log(dashNum);
+        //Debug.Log(dashMetre);
+        //Debug.Log(dashMetreMax);
+        //Debug.Log(dashNum);
+        //Debug.Log(uiCanvas);
         dashProgress += Time.deltaTime;
 
         dashMetre += dashMetreRate * Time.deltaTime;
@@ -362,10 +361,13 @@ public class FPS : NetworkBehaviour
         foreach(Transform child in uiCanvas.transform)
         {
             Slider slider = child.GetComponent<Slider>();
-            slider.maxValue = dashMetreMax / dashNum;
-            float segmentedValue = dashMetre - (dashMetreMax / dashNum) * i;
-            slider.value = segmentedValue;
-            i++;
+            if (slider != null)
+            {
+                slider.maxValue = dashMetreMax / dashNum;
+                float segmentedValue = dashMetre - (dashMetreMax / dashNum) * i;
+                slider.value = segmentedValue;
+                i++;
+            }
 
         }
 
