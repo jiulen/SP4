@@ -20,7 +20,6 @@ public class FPS : NetworkBehaviour
 
     private Rigidbody rigidbody;
     // general
-    public float speed = 5f;
     public float airMovementMultiplier = 2.5f;
 
     //For jump
@@ -31,7 +30,6 @@ public class FPS : NetworkBehaviour
     public float dashDuration = 0.2f;
     float dashProgress = 0.2f;
     public bool candash = true;
-    private float dashProgress = 0.2f;
     public int dashNum = 3;
     
     private float dashMetre = 0;
@@ -191,7 +189,6 @@ public class FPS : NetworkBehaviour
             }
 
             UpdateDash();
-            velocity.y += gravity * Time.deltaTime;
         }
 
 

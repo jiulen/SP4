@@ -10,6 +10,7 @@ public class Wallrunning : MonoBehaviour
     float wallRunSpeed = 5.0f;
     RaycastHit leftWallHit, rightWallHit;
     bool wallLeft = false, wallRight = false;
+    bool wallRunningLeft = false; //check which direction wallrunning on - doesnt matter when not wallrunning
 
     //Wall jump
     float wallJumpUpForce = 5, wallJumpSideForce = 25;
@@ -72,6 +73,32 @@ public class Wallrunning : MonoBehaviour
         {
             if (!playerFPSScript.isWallrunning)
                 StartWallRun();
+            else
+            {
+                //Adjust camera tilt here when change direction
+                if (wallRunningLeft && wallRight) //From left to right wall
+                {
+                    //Camera Tilt
+                    if (tiltToRightCoroutine != null) StopCoroutine(tiltToRightCoroutine);
+                    if (tiltToLeftCoroutine != null) StopCoroutine(tiltToLeftCoroutine);
+                    if (tiltToMiddleCoroutine != null) StopCoroutine(tiltToMiddleCoroutine);
+
+                    tiltToLeftCoroutine = StartCoroutine(playerFPSScript.DoTiltZ(5, 20));
+
+                    wallRunningLeft = false;
+                }
+                else if (!wallRunningLeft && wallLeft) //From right to left wall
+                {
+                    //Camera Tilt
+                    if (tiltToRightCoroutine != null) StopCoroutine(tiltToRightCoroutine);
+                    if (tiltToLeftCoroutine != null) StopCoroutine(tiltToLeftCoroutine);
+                    if (tiltToMiddleCoroutine != null) StopCoroutine(tiltToMiddleCoroutine);
+
+                    tiltToRightCoroutine = StartCoroutine(playerFPSScript.DoTiltZ(-5, 20));
+
+                    wallRunningLeft = true;
+                }
+            }
         }
         else if (exitingWall)
         {
@@ -97,6 +124,9 @@ public class Wallrunning : MonoBehaviour
     {
         playerFPSScript.isWallrunning = true;
         rb.useGravity = false;
+
+        if (wallLeft) wallRunningLeft = true;
+        else if (wallRight) wallRunningLeft = false;
 
         //Camera Zoom
         if (zoomInCoroutine != null) StopCoroutine(zoomInCoroutine);
