@@ -7,7 +7,7 @@ using System.Threading;
 
 public class FPS : NetworkBehaviour
 {
-    // Start is called before the first frame update
+    public CharacterController con;
     [SerializeField] CapsuleCollider capsuleCollider;
     public Camera camera; // Main camera
     Vector3 moveVector;
@@ -20,22 +20,38 @@ public class FPS : NetworkBehaviour
 
     private Rigidbody rigidbody;
     // general
+    private GameObject body;
+    //private GameObject head;
+    private GameObject bodyPivot;
+    // General
+    public float speed = 5f;
     public float airMovementMultiplier = 2.5f;
 
-    //For jump
+    // Grounded check
+    private bool isGround = false;
+    private float headHeight = 1;
+    private float bodyHeight = 1;
+    private float bodyRadius = 1;
+
+    // Jump
     private bool doublejump = false;
     public float jumpForce = 250;
 
-    //For dash
+    // Dash
     public float dashDuration = 0.2f;
     float dashProgress = 0.2f;
     public bool candash = true;
     public int dashNum = 3;
-    
+
     private float dashMetre = 0;
     public float dashMetreRate = 30;
     private float dashMetreMax = 100;
     private Vector3 storeDashDir;
+
+    // Slide
+    public float slideMultiplier = 2;
+    private Vector3 storeSlideDir;
+    private bool isSlide = false;
 
     Canvas uiCanvas;
 
@@ -43,9 +59,16 @@ public class FPS : NetworkBehaviour
 
     //For teleport
     bool canTeleport = true;
+    //// Gravity
+    //float gravity = -9.81f;
+    //Vector3 velocity;
 
     // Drop kick
     bool dropKickActive = false;
+
+    // Teleport
+    bool canTeleport = true;
+
     enum TeleportStates
     {
         NONE,
@@ -75,12 +98,21 @@ public class FPS : NetworkBehaviour
     //Wallrunning
     public bool canWallrun = true;
     public bool isWallrunning = false;
-    
+
     void Start()
     {
         uiCanvas = GameObject.Find("Canvas").GetComponent<Canvas>();
 
-        capsuleCollider = GetComponent<CapsuleCollider>(); //set in editor
+        bodyPivot = transform.Find("Body pivot").gameObject;
+        body = bodyPivot.transform.GetChild(0).gameObject;
+        //body = transform.Find("Body").gameObject;
+        capsuleCollider = this.GetComponent<CapsuleCollider>(); //set in editor
+
+        headHeight = this.transform.position.y - body.transform.position.y + (body.GetComponent<CapsuleCollider>().height * this.transform.localScale.y * body.transform.localScale.y)/2;
+
+        // bodyHeight refers to its relative y position, not the height of the collider
+        bodyHeight = (body.GetComponent<CapsuleCollider>().height * this.transform.localScale.y * body.transform.localScale.y)/ 2;
+        bodyRadius = (body.GetComponent<CapsuleCollider>().radius * this.transform.localScale.y * body.transform.localScale.y);
         //Set dash progress to more than dash so dash isn't activated on start
         dashProgress = dashDuration + 1;
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
@@ -113,7 +145,7 @@ public class FPS : NetworkBehaviour
             rigidbody.velocity = new Vector3(0, 0, 0);
         }
         UpdateGrounded();
-        
+
         //if (!IsOwner) return;
 
         float mouseX = Input.GetAxis("Mouse X");
@@ -133,11 +165,50 @@ public class FPS : NetworkBehaviour
         pitch -= mouseY * CamSen * Time.deltaTime;
 
         if (!isWallrunning)
+        moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
+        moveVector.Normalize();
+
+        // WASD movement
+        if(isGround)
         {
             moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
             moveVector.Normalize();
 
-            // WASD movement
+        }
+        else
+        {
+            rigidbody.AddForce(moveVector * airMovementMultiplier);
+            //isSlide = false;
+            //this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
+
+        }
+
+
+        // Drop kick and slide
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            if (isGround)
+            {
+                if (isSlide)
+                {
+                    isSlide = false;
+                    this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
+
+                }
+                else
+                {
+                    isSlide = true;
+                    storeSlideDir = moveVector;
+
+                }
+            }
+            else
+                dropKickActive = true;
+        }
+
+
+        if (dropKickActive)
+        {
             if (isGround)
             {
                 rigidbody.velocity = moveVector * speed;
@@ -198,16 +269,41 @@ public class FPS : NetworkBehaviour
         camera.transform.rotation = Quaternion.Euler(pitch, yaw, roll);
         //transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
 
+        //Position & gravity
+        //con.Move(moveVector * speed * Time.deltaTime);
+        //con.Move(this.GetComponent<Rigidbody>().velocity * Time.deltaTime);
+
         camera.transform.position = transform.position;
         Sniper sniper = transform.parent.GetComponentInChildren<Sniper>();
         if (sniper != null && sniper.allowbobbing)
         {
             camera.transform.position += camera.transform.up * (Mathf.Sin(sniper.stablizeElasped * 2) / 2) * 0.4f + camera.transform.right * Mathf.Cos(sniper.stablizeElasped) * 0.4f;
         }
+
+        Jump();
+
+        // Limit speed
+        Vector3 velocityWithoutY = rigidbody.velocity;
+        velocityWithoutY.y = 0;
+        if (velocityWithoutY.magnitude >= speed)
+        {
+            velocityWithoutY = velocityWithoutY.normalized * speed;
+            velocityWithoutY.y = rigidbody.velocity.y;
+            //rigidbody.velocity = velocityWithoutY.normalized * 5;
+            rigidbody.velocity = velocityWithoutY;
+        }
+
+        UpdateDash();
+        UpdateSlide();
+        //con.Move(velocity * Time.deltaTime);
+        //velocity.y += gravity * Time.deltaTime;
+
+        camera.transform.position = this.transform.position;
+
         if (canTeleport) UpdateTeleport();
 
         currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
-        currentEquipped.transform.position = transform.position;
+        currentEquipped.transform.position = this.transform.position;
         //Debug.Log(targetAngle);
     }
 
@@ -242,6 +338,11 @@ public class FPS : NetworkBehaviour
                 rigidbody.AddForce(0, jumpForce, 0);
                 //velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
                 doublejump = true;
+                //if(isSlide)
+                //{
+                //    isSlide = false;
+                //    this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
+                //}
             }
             else if (doublejump)
             {
@@ -401,6 +502,24 @@ public class FPS : NetworkBehaviour
         return;
     }
 
+    private void UpdateSlide()
+    {
+        if (isSlide)
+        {
+            Vector3 newVel = storeSlideDir.normalized * speed * slideMultiplier; ;
+            newVel.y = rigidbody.velocity.y;
+            rigidbody.velocity = newVel;
+            this.transform.localRotation = Quaternion.Euler( -45, this.transform.localRotation.y, this.transform.localRotation.z);
+            bodyPivot.transform.localRotation = Quaternion.Euler(-45, bodyPivot.transform.localRotation.y, bodyPivot.transform.localRotation.z);
+
+        }
+        else
+        {
+            this.transform.localRotation = Quaternion.Euler(0, this.transform.localRotation.y, this.transform.localRotation.z);
+            bodyPivot.transform.localRotation = Quaternion.Euler(0, bodyPivot.transform.localRotation.y, bodyPivot.transform.localRotation.z);
+        }
+    }
+
     //IEnumerator StartDash()
     //{
     //    Vector3 forward = camera.transform.forward;
@@ -419,10 +538,18 @@ public class FPS : NetworkBehaviour
 
     private void UpdateGrounded()
     {
-        Ray laserRayCast = new Ray(transform.position, new Vector3(0,-1,0));
-        if (Physics.Raycast(laserRayCast, out RaycastHit hit, 0.51f))
-        {
+        //Debug.Log("GROUNDED: " + isGround);
+        //Debug.Log("SLIDE: " + isSlide);
+        float valueToUse = 0;
+        if (isSlide)
+            valueToUse = bodyRadius;
+        else
+            valueToUse = bodyHeight;
 
+        Ray laserRayCast = new Ray(body.transform.position, new Vector3(0, -1, 0));
+        Debug.DrawRay(body.transform.position, new Vector3(0, -valueToUse - 0.01f, 0 ), Color.red);
+        if (Physics.Raycast(laserRayCast, out RaycastHit hit, valueToUse + 0.01f))
+        {
             isGround = true;
             return;
         }

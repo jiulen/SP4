@@ -17,15 +17,66 @@ public class WeaponBase : MonoBehaviour
     protected double elapsedSinceLastShot = 0;
     protected double elapsedBetweenEachShot = 0;
 
+    protected AudioSource fireAudio;
+    protected Camera camera;
+    protected GameObject projectileManager;
+    protected GameObject bulletEmitter;
+
     public void Start()
     {
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         elapsedBetweenEachShot = 1 / fireRate;
+        camera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        fireAudio = GameObject.Find("SampleFire").GetComponent<AudioSource>();
+        projectileManager = GameObject.Find("Projectile Manager");
+        bulletEmitter = GameObject.Find("Bullet emitter");
+
     }
 
     // Update is called once per frame
-    void Update()
+    public void Update()
     {
+        elapsedSinceLastShot += Time.deltaTime;
+
+        if (Input.GetButton("Fire1"))
+        {
+            Fire1();
+        }
+
+        if (Input.GetButton("Fire2"))
+        {
+            Fire2();
+        }
+
+        if (Input.GetButtonDown("Fire1"))
+        {
+            Fire1Once();
+        }
+
+        if (Input.GetButtonDown("Fire2"))
+        {
+            Fire2Once();
+        }
+    }
+
+    protected virtual void Fire1()
+    {
+
+    }
+
+    protected virtual void Fire2()
+    {
+
+    }
+
+    protected virtual void Fire1Once()
+    {
+
+    }
+
+    protected virtual void Fire2Once()
+    {
+
     }
 
     //public void UpdateWeaponBase()
