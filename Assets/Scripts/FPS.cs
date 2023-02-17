@@ -112,8 +112,6 @@ public class FPS : NetworkBehaviour
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         pitch = yaw = roll =  0f;
         CamSen = 220f;
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
         tpMarker = Instantiate(tpMarkerPrefab);
         tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
         tpMarkerMR.enabled = false;
@@ -132,8 +130,10 @@ public class FPS : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
         // Reset position and velocity if player goes out of bounds for debugging
-        if(transform.position.magnitude > 100 || transform.position.y <= -20)
+        if (transform.position.magnitude > 100 || transform.position.y <= -20)
         {
             transform.position = new Vector3(0, 10, 0);
             rigidbody.velocity = new Vector3(0, 0, 0);
@@ -240,7 +240,7 @@ public class FPS : NetworkBehaviour
 
 
         //Rotation
-        pitch = Mathf.Clamp(pitch, -85f, 85f);
+        pitch = Mathf.Clamp(pitch, -89f, 89f);
         float targetAngle = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
         camera.transform.rotation = Quaternion.Euler(pitch, yaw, roll);
         //transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
@@ -276,8 +276,12 @@ public class FPS : NetworkBehaviour
         //con.Move(velocity * Time.deltaTime);
         //velocity.y += gravity * Time.deltaTime;
 
-        camera.transform.position = this.transform.position;
-
+        camera.transform.position = transform.position;
+        Sniper sniper = transform.parent.GetComponentInChildren<Sniper>();
+        if (sniper != null && sniper.Scoped.enabled)
+        {
+            camera.transform.position += camera.transform.up * (Mathf.Sin(sniper.stablizeElasped * 2) / 2) * 0.4f + camera.transform.right * Mathf.Cos(sniper.stablizeElasped) * 0.4f;
+        }
         if (canTeleport) UpdateTeleport();
 
         currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
@@ -431,9 +435,6 @@ public class FPS : NetworkBehaviour
         {
             dashMetre = dashMetreMax;
         }
-
-        //Update the UI
-    
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && dashMetre >= dashMetreMax / dashNum && candash)
         {
