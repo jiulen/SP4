@@ -15,8 +15,6 @@ public class FPS : NetworkBehaviour
     private float pitch, yaw, roll;
     private float CamSen;
     private float speed = 5f;
-    private float DashSpeed = 30f, DashForwardVelocity, DashTime = 0.5f;
-    private float decel;
 
     private Rigidbody rigidbody;
     // general

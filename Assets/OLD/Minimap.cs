@@ -69,6 +69,7 @@ public class Minimap : MonoBehaviour
     public GameObject TwoDSprite;
     private GameObject MinimapCamera;
     private GameObject maincam;
+    private Quaternion parent;
     // Start is called before the first frame update
     void Start()
     {

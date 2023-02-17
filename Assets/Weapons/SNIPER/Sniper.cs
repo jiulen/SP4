@@ -19,7 +19,7 @@ public class Sniper : WeaponBase
     private Vector3 velocity = Vector3.zero;
     private Vector3 desiredPositionAnimation;
     private bool animationdone = true;
-    private AudioSource fireAudio, ScopeSound;
+    private AudioSource ScopeSound;
     private GameObject SniperModel;
     private Vector3 temp;
     private float DmgReduction;
@@ -54,76 +54,68 @@ public class Sniper : WeaponBase
     {
         FPS player = transform.root.GetComponentInChildren<FPS>();
 
-        if (player != null)
+        base.Update();
+
+        if (!Input.GetButton("Fire2")) // scope
         {
-
-            if (Input.GetButton("Fire2")) // scope
-            {
-                if (animationdone)
-                {
-                    Scoped.enabled = true; // change later
-                    if (!PlayOnce)
-                    {
-                        ScopeSound.Play();
-                        PlayOnce = true;
-                    }
-                    camaim.ZoomIn();
-                    SniperModel.SetActive(false);
-                }
-                temp = desiredPositionAnimation = new Vector3(0.0f, -0.15f, 0.58f);
-                player.candash = false;
-            }
-            else
-            {
-                Scoped.enabled = false;
-                PlayOnce = false;
-                camaim.ZoomOut();
-                desiredPositionAnimation = new Vector3(0.25f, -0.2f, 0.75f);
-                player.candash = true;
-                SniperModel.SetActive(true);
-            }
-            transform.localPosition = Vector3.SmoothDamp(transform.localPosition, desiredPositionAnimation, ref velocity, AnimationRate);
-
-            if ((transform.localPosition - temp).magnitude <= 0.01f)
-                animationdone = true;
-            else
-                animationdone = false;
-
-            UpdateStablize();
-
-            if (Input.GetButton("Fire1"))
-            {
-                elapsedSinceLastShot += Time.deltaTime;
-                if (elapsedSinceLastShot >= elapsedBetweenEachShot)
-                {
-                    // for now
-                    //GameObject bullet = Instantiate(SCATBulletPF, bulletEmitter.transform);
-                    front = bulletEmitterFront.transform.position - bulletEmitter.transform.position;
-                    //bullet.GetComponent<Rigidbody>().velocity = front * projectileVel;
-                    //bullet.transform.SetParent(projectileManager.transform);
-
-                    // new
-                    if (Physics.Raycast(bulletEmitter.transform.position, front, out RaycastHit hit))
-                    {
-                        //Instantiate(hiteffect, hit.point, Quaternion.LookRotation(hit.normal));
-                        //Destroy(hiteffect);
-
-                        if (hit.transform.tag == "Crates")
-                        {
-                            DestructibleObjects destructibleObjects = hit.transform.GetComponent<DestructibleObjects>();
-                            destructibleObjects.DestroyDestructible();
-                        }
-                    }
-
-
-
-
-                    elapsedSinceLastShot = 0;
-                    fireAudio.Play();
-                }
-            }
+            Scoped.enabled = false;
+            PlayOnce = false;
+            camaim.ZoomOut();
+            desiredPositionAnimation = new Vector3(0.25f, -0.2f, 0.75f);
+            player.candash = true;
+            SniperModel.SetActive(true);
         }
+        transform.localPosition = Vector3.SmoothDamp(transform.localPosition, desiredPositionAnimation, ref velocity, AnimationRate);
+
+        if ((transform.localPosition - temp).magnitude <= 0.01f)
+            animationdone = true;
+        else
+            animationdone = false;
+
+        UpdateStablize();
+
     }
+
+    override protected void Fire1() // right click press and hold
+    {
+        if (CheckCanFire(1))
+        {
+            front = bulletEmitterFront.transform.position - bulletEmitter.transform.position;
+
+            // new
+            if (Physics.Raycast(bulletEmitter.transform.position, front, out RaycastHit hit))
+            {
+                if (hit.transform.tag == "Crates")
+                {
+                    DestructibleObjects destructibleObjects = hit.transform.GetComponent<DestructibleObjects>();
+                    destructibleObjects.DestroyDestructible();
+                }
+            }
+            fireAudio.Play();
+        }
+    }    
+
+    override protected void Fire2() // right click press and hold
+    {
+        FPS player = transform.root.GetComponentInChildren<FPS>();
+
+        if (animationdone)
+        {
+            Scoped.enabled = true; // change later
+            if (!PlayOnce)
+            {
+                ScopeSound.Play();
+                PlayOnce = true;
+            }
+            camaim.ZoomIn();
+            SniperModel.SetActive(false);
+        }
+        temp = desiredPositionAnimation = new Vector3(0.0f, -0.15f, 0.58f);
+        player.candash = false;
+    }
+
+
+
 
 
     void UpdateStablize()
