@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6709977120409069194}
   - component: {fileID: 7982064822255811197}
   - component: {fileID: 1957434433656428280}
+  - component: {fileID: 7729243466542843898}
   m_Layer: 0
   m_Name: Wooden_Crate
   m_TagString: Crates
@@ -130,6 +131,19 @@ MonoBehaviour:
   destructcrates: {fileID: 7173136001693520582, guid: 5e359e9c313bd994faf39491600b4a00, type: 3}
   Health: {fileID: 8288899645475317960, guid: 8b4d4e6b15c85714eab4124f0b18f773, type: 3}
   Ammo: {fileID: 8288899645475317960, guid: 8b4d4e6b15c85714eab4124f0b18f773, type: 3}
+--- !u!114 &7729243466542843898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5738864235527963283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dc8315c3220d904da117f8fac6ab3c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &6836494227851685759
 GameObject:
   m_ObjectHideFlags: 0
@@ -142,6 +156,7 @@ GameObject:
   - component: {fileID: 2462749774235325106}
   - component: {fileID: 2452937897788900625}
   - component: {fileID: 6676373136031586586}
+  - component: {fileID: 2915632117140827584}
   m_Layer: 3
   m_Name: Canvas
   m_TagString: Untagged
@@ -230,6 +245,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &2915632117140827584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6836494227851685759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b00c89367f70ce4b8f3988ecd140c76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9174831358043483124
 GameObject:
   m_ObjectHideFlags: 0

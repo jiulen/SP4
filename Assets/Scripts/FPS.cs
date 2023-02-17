@@ -466,10 +466,13 @@ public class FPS : NetworkBehaviour
         foreach (Transform child in uiCanvas.transform)
         {
             Slider slider = child.GetComponent<Slider>();
-            slider.maxValue = dashMetreMax / dashNum;
-            float segmentedValue = dashMetre - (dashMetreMax / dashNum) * i;
-            slider.value = segmentedValue;
-            i++;
+            if (slider != null)
+            {
+                slider.maxValue = dashMetreMax / dashNum;
+                float segmentedValue = dashMetre - (dashMetreMax / dashNum) * i;
+                slider.value = segmentedValue;
+                i++;
+            }
 
         }
 

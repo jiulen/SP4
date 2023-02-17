@@ -367,11 +367,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2319e174c4361354da2f8ed308187417, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 5
-  damage: 1
-  bulletsPerShot: 1
-  inaccuracy: 0
-  projectileVel: 0
+  fireRate:
+  - -1
+  - 5
+  damage: 
+  bulletsPerShot: 
+  inaccuracy: []
+  projectileVel:
+  - -1
+  - 25
   cam: {fileID: 0}
   SCATBulletPF: {fileID: 4136986527977053402, guid: 7fe315266963d914284057486c11b524, type: 3}
   Scoped: {fileID: 0}
