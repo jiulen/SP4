@@ -350,6 +350,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5084781543756615461, guid: 37d2d5b071ab13c4b89418a1b18bc186, type: 3}
+      propertyPath: canWallrun
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5512895270723486547, guid: 37d2d5b071ab13c4b89418a1b18bc186, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1163,7 +1167,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.01
   far clip plane: 1000
   field of view: 60
   orthographic: 0
