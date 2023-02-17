@@ -6,6 +6,12 @@ using TMPro;
 
 public class Shotgun : WeaponBase
 {
+    void Start()
+    {
+        base.Start();
+        bulletEmitter = GameObject.Find("BulletEmitter");
+    }
+
     override protected void Fire1()
     {
         if (CheckCanFire(1))
@@ -16,7 +22,9 @@ public class Shotgun : WeaponBase
                 Vector3 bulletDir = newTransform.forward;
                 bulletDir = RandomSpray(bulletDir.normalized, inaccuracy[0]);
                 //Do hitscan
+
                 //Do bullet tracer
+
             }
         }
     }
