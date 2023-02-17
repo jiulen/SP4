@@ -6,31 +6,24 @@ using UnityEngine.UI;
 
 public class Healthbar : MonoBehaviour
 {
-    private float Health;
-    public float MaxHealth;
     private Slider slider;
     [SerializeField] Text hbartext;
     [SerializeField] Image hBarFill;
+    private EntityBase player;
     // Start is called before the first frame update
     void Start()
     {
         slider = GetComponentInChildren<Slider>();
-        SetMaxHealth(MaxHealth);
+        player = transform.parent.GetComponentInChildren<EntityBase>();
+        slider.maxValue = slider.value = player.MaxHealth;
     }
 
     // Update is called once per frame
     void Update()
     {
-        float percentage = (Health / MaxHealth);
-        Health -= Time.deltaTime;
-        SetHealth(Health);
-
-        if (Health > MaxHealth)
-            Health = MaxHealth;
-        if (Health < 0)
-            Health = 0;
-
-
+        float percentage = (player.GetHealth() / player.MaxHealth);
+        //player.TakeDamage(Time.deltaTime); // testing
+        UpdateSlider();
 
         if (percentage <= 0.75f)
             hBarFill.color = new Color32(85, 229, 106, 255);
@@ -43,23 +36,11 @@ public class Healthbar : MonoBehaviour
         hbartext.text = ((int)(percentage * 100f)).ToString() + "%";
     }
 
-    public void SetMaxHealth(float hp)
+    void UpdateSlider()
     {
         if (!slider)
-            slider = GetComponent<Slider>();
-        slider.maxValue = hp;
-        slider.value = hp;
-        Health = MaxHealth = hp;
-    }
+            return;
 
-    public void SetHealth(float hp)
-    {
-        Health = hp;
-        slider.value = hp;
-    }
-
-    public float GetHealth()
-    {
-        return Health;
+        slider.value = player.GetHealth();
     }
 }

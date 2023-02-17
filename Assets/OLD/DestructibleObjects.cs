@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DestructibleObjects : MonoBehaviour
+public class DestructibleObjects : EntityBase
 {
     // Start is called before the first frame update
-    public GameObject destructcrates, Health, Ammo;
+    public GameObject destructcrates, HealthPack, Ammo;
     private Vector3 offset;
     private Rigidbody rb;
    
@@ -13,6 +13,7 @@ public class DestructibleObjects : MonoBehaviour
     {
         offset = new Vector3(0, 0, 0);
         rb = GetComponent<Rigidbody>();
+        base.Start();
     }
 
     public void DestroyDestructible()
@@ -20,7 +21,7 @@ public class DestructibleObjects : MonoBehaviour
         switch(Random.Range(0, 2)) // 0: none
         {
             case 1:
-                Instantiate(Health, rb.position + offset, Quaternion.identity);
+                Instantiate(HealthPack, rb.position + offset, Quaternion.identity);
                 break;
             case 2:
                 Instantiate(Ammo, rb.position + offset, Quaternion.identity);
@@ -33,13 +34,26 @@ public class DestructibleObjects : MonoBehaviour
         Destroy(this.gameObject);
     }
 
+    void Update()
+    {
+        base.Update();
+    }
+
     public void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Bullet")
         {
-            DestroyDestructible();
+            TakeDamage(1);
             Destroy(collision.gameObject);
         }
     }
+    override public void TakeDamage(float hp)
+    {
+        SetHealth(GetHealth() - hp);
 
+        if (Health <= 0)
+        {
+            DestroyDestructible();
+        }
+    }
 }

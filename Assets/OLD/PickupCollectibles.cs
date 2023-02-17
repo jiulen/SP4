@@ -4,14 +4,19 @@ using UnityEngine;
 
 public class PickupCollectibles : MonoBehaviour
 {
-    [SerializeField] Healthbar healthmanager;
+    private EntityBase player;
+
+    private void Start()
+    {
+        player = GetComponent<EntityBase>();
+    }
     private void OnTriggerEnter(Collider collision)
     {
         if (collision.gameObject.tag == "Collectibles")
         {
             if (collision.gameObject.name == "HealthPack(Clone)")
             {
-                healthmanager.SetHealth(healthmanager.GetHealth() + 20f);
+                player.SetHealth(player.GetHealth() + 20f);
             }
             else if (collision.gameObject.name == "Ammo(Clone)")
             {
