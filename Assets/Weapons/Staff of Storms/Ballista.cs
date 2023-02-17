@@ -30,14 +30,16 @@ public class Ballista : WeaponBase
             BallistaLaser laserScript = laser.GetComponent<BallistaLaser>();
             if (Physics.Raycast(laserRayCast, out RaycastHit hit, 1000))
             {
-                laserScript.SetLaserPoins(bulletEmitter.transform.position, hit.point);
+                Vector3 direction = hit.point - bulletEmitter.transform.position;
+                laserScript.InitParticleSystem(bulletEmitter.transform.position, direction, hit.distance);
             }
             else
             {
-                Vector3 test = bulletEmitter.transform.position;
-                test = camera.transform.position;
-                test = laser.transform.position;
-                laserScript.SetLaserPoins(bulletEmitter.transform.position, camera.transform.forward * 1000);
+                //Vector3 test = bulletEmitter.transform.position;
+                //test = camera.transform.position;
+                //test = laser.transform.position;
+                Vector3 direction = camera.transform.forward * 1000 - bulletEmitter.transform.position;
+                laserScript.InitParticleSystem(bulletEmitter.transform.position, camera.transform.forward, 1000);
 
             }
             Debug.DrawRay(camera.transform.position, 50 * (camera.transform.forward), Color.blue);
@@ -45,7 +47,7 @@ public class Ballista : WeaponBase
             Vector3 knockBackDirection = camera.transform.forward;
             knockBackDirection.y = 0;
             knockBackDirection.Normalize();
-            playerOwner.GetComponent<Rigidbody>().AddForce(knockBackDirection * fire1KnockbackForce);
+            playerOwner.GetComponent<Rigidbody>().AddForce(-knockBackDirection * fire1KnockbackForce);
         }
 
     }

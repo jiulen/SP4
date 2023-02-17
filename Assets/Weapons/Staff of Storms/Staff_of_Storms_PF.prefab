@@ -220,8 +220,7 @@ MonoBehaviour:
   cam: {fileID: 0}
   ballistaLaserPF: {fileID: 8676091470326512184, guid: 13f964860fbd257408c5384d352a7198, type: 3}
   stormBlastPF: {fileID: 2619753917312295667, guid: 9fe55b738caafe64c80315106c77d353, type: 3}
-  fire1KnockbackForce: 30
-  sex: 
+  fire1KnockbackForce: 750
 --- !u!1 &6025750620512795547
 GameObject:
   m_ObjectHideFlags: 0
