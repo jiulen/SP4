@@ -147,7 +147,7 @@ public class Sniper : WeaponBase
         DmgReduction = (StablizeProgress / StablizeDuration);
         if (DmgReduction <= .1f)
             DmgReduction = .1f;
-        DmgReductionTxt.text = "Damage" + (int)(DmgReduction * 100f) + "%";
+        DmgReductionTxt.text = (int)(DmgReduction * 100f) + "%";
     }
 
     void UpdateSlider(float value)

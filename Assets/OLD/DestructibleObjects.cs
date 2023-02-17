@@ -26,8 +26,20 @@ public class DestructibleObjects : MonoBehaviour
                 Instantiate(Ammo, rb.position + offset, Quaternion.identity);
                 break;
         }
-        Instantiate(destructcrates, rb.position, Quaternion.identity);
+        if (this.gameObject.tag == "Crates")
+        {
+            Instantiate(destructcrates, rb.position, Quaternion.identity);
+        }
         Destroy(this.gameObject);
+    }
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Bullet")
+        {
+            DestroyDestructible();
+            Destroy(collision.gameObject);
+        }
     }
 
 }
