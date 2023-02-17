@@ -5597,7 +5597,7 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 1549706801}
-    PlayerPrefab: {fileID: 9145742884730367697, guid: 9bf8b01a0dee9ae4aa8235ae2c428085, type: 3}
+    PlayerPrefab: {fileID: 938903241585491733, guid: 37d2d5b071ab13c4b89418a1b18bc186, type: 3}
     NetworkPrefabs: []
     TickRate: 30
     ClientConnectionBufferTimeout: 10
