@@ -5,9 +5,11 @@ using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class LobbyManager : MonoBehaviour {
+public class LobbyManager : NetworkBehaviour {
 
 
     public static LobbyManager Instance { get; private set; }
@@ -388,6 +390,7 @@ public class LobbyManager : MonoBehaviour {
                     }
                 });
                 joinedLobby = lobby;
+                NetworkManager.SceneManager.LoadScene("Game", LoadSceneMode.Single);
             }
             catch (LobbyServiceException e)
             {
