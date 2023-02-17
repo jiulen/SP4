@@ -146,7 +146,7 @@ public class DICKSCAT : WeaponBase
                     {
                         steamCurrent = 0;
                     }
-                    if (CheckCanFire(1))
+                    if (CheckCanFire(2))
                     {
                         Transform newTransform = camera.transform;
                         GameObject bullet = Instantiate(SCATBulletPF, bulletEmitter.transform);
@@ -199,16 +199,21 @@ public class DICKSCAT : WeaponBase
             LineRenderer laserLine = laser.GetComponent<LineRenderer>();
             laserLine.positionCount = 2;
             laserLine.SetPosition(0, child.transform.position);
-            laserLine.SetPosition(1, child.transform.position + (DICKFocalPoint.transform.position - child.transform.position) * 3);
 
             //Debug.DrawRay(child.transform.position, 5 * (DICKFocalPoint.transform.position - child.transform.position), Color.red);
             Ray laserRayCast = new Ray(child.transform.position, 5 * (DICKFocalPoint.transform.position - child.transform.position));
-            if (Physics.Raycast(laserRayCast, out RaycastHit hit, 10))
+            if (Physics.Raycast(laserRayCast, out RaycastHit hit, 50))
             {
+                laserLine.SetPosition(1, child.transform.position + (DICKFocalPoint.transform.position - child.transform.position) * hit.distance);
                 if (hit.collider.tag == "Player")
                 {
                     Debug.Log("HIT!!!");
                 }
+            }
+            else
+            {
+                laserLine.SetPosition(1, child.transform.position + (DICKFocalPoint.transform.position - child.transform.position) * 50);
+
             }
             //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         }

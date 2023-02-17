@@ -9,7 +9,6 @@ public class WeaponBase : MonoBehaviour
     public int[] bulletsPerShot;
     public float[] inaccuracy;
     public float[] projectileVel;
-
     //protected Rigidbody rb;
     //public GameObject weaponholder;
     [SerializeField] protected Camera cam;
@@ -92,9 +91,10 @@ public class WeaponBase : MonoBehaviour
 
     }
 
-    // Returns true and resets elapsedSinceLastShot if can be fired. Parameter chooses for which weapon fire, starts from 0
+    // Returns true and resets elapsedSinceLastShot if can be fired. Parameter chooses for which weapon fire
     protected bool CheckCanFire(int i)
     {
+        i -= 1;
         if (elapsedSinceLastShot[i] >= elapsedBetweenEachShot[i])
         {
             elapsedSinceLastShot[i] = 0;

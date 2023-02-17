@@ -6,6 +6,9 @@ public class Ballista : WeaponBase
 {
     public GameObject ballistaLaserPF;
     public GameObject stormBlastPF;
+
+    public float fire1KnockbackForce = 1;
+
     void Start()
     {
         base.Start();
@@ -20,7 +23,7 @@ public class Ballista : WeaponBase
 
     override protected void Fire1Once()
     {
-        if (CheckCanFire(0))
+        if (CheckCanFire(1))
         {
             Ray laserRayCast = new Ray(camera.transform.position, camera.transform.forward);
             GameObject laser = Instantiate(ballistaLaserPF, projectileManager.transform);
@@ -38,19 +41,27 @@ public class Ballista : WeaponBase
 
             }
             Debug.DrawRay(camera.transform.position, 50 * (camera.transform.forward), Color.blue);
+
+            Vector3 knockBackDirection = camera.transform.forward;
+            knockBackDirection.y = 0;
+            knockBackDirection.Normalize();
+            playerOwner.GetComponent<Rigidbody>().AddForce(knockBackDirection * fire1KnockbackForce);
         }
 
     }
 
     override protected void Fire2Once()
     {
-        Transform newTransform = camera.transform;
-        GameObject blast = Instantiate(stormBlastPF, bulletEmitter.transform);
-        Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
-        blast.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[1];
-        blast.transform.SetParent(projectileManager.transform);
-        blast.GetComponent<StormBlast>().SetCreator(playerOwner);
-        fireAudio.Play();
+        if (CheckCanFire(2))
+        {
+            Transform newTransform = camera.transform;
+            GameObject blast = Instantiate(stormBlastPF, bulletEmitter.transform);
+            Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
+            blast.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[1];
+            blast.transform.SetParent(projectileManager.transform);
+            blast.GetComponent<StormBlast>().SetCreator(playerOwner);
+            fireAudio.Play();
+        }
     }
 
 } 
