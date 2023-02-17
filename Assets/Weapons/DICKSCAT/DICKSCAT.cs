@@ -29,12 +29,11 @@ public class DICKSCAT : WeaponBase
     GameObject portalParent;
     GameObject portal1;
     GameObject DICKFocalPoint;
-    GameObject bulletEmitter;
     GameObject bulletEmitterFront;
-    GameObject projectileManager;
+ 
     Slider steamGauge;
     TMP_Text modeText;
-    AudioSource fireAudio;
+   
 
     bool togglePortals = false;
 
@@ -45,16 +44,13 @@ public class DICKSCAT : WeaponBase
         portalParent = GameObject.Find("Portal Parent");
         portal1 = GameObject.Find("Portal Parent/Portal");
         DICKFocalPoint = GameObject.Find("DICK Focal Point");
-        bulletEmitter = GameObject.Find("Bullet emitter");
         bulletEmitterFront = GameObject.Find("Bullet emitter front");
-        projectileManager = GameObject.Find("Projectile Manager");
 
         steamGauge = GameObject.Find("UI canvas/Steam Gauge Slider").GetComponent<Slider>();
         modeText = GameObject.Find("UI canvas/Mode text").GetComponent<TMP_Text>();
-        fireAudio = GameObject.Find("SampleFire").GetComponent<AudioSource>();
 
         // Set camera for canvas
-        GameObject.Find("UI canvas").GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        GameObject.Find("UI canvas").GetComponent<Canvas>().worldCamera = camera;
         GameObject.Find("UI canvas").GetComponent<Canvas>().planeDistance = 0.5f;
 
    
@@ -119,25 +115,30 @@ public class DICKSCAT : WeaponBase
     {
         togglePortals = false;
 
-        if (Input.GetButton("Fire1"))
+        base.Update();
+
+        steamGauge.value = steamCurrent;
+    }
+
+    override protected void Fire1()
+    {
+        switch (currentMode)
         {
-            switch (currentMode)
-            {
-                case mode.DICK:
+            case mode.DICK:
                 {
                     togglePortals = true;
                     //portalParent.GetComponent<Transform>().eulerAngles = new Vector3(0, portalParent.GetComponent<Transform>().eulerAngles.y, currentRotate);
 
-                        steamCurrent += steamRate * Time.deltaTime;
+                    steamCurrent += steamRate * Time.deltaTime;
                     if (steamCurrent > steamMax)
                     {
                         steamCurrent = steamMax;
                     }
 
-                    
+
                     break;
                 }
-                case mode.SCAT:
+            case mode.SCAT:
                 {
                     steamCurrent -= steamRate * Time.deltaTime;
 
@@ -145,42 +146,42 @@ public class DICKSCAT : WeaponBase
                     {
                         steamCurrent = 0;
                     }
-                        elapsedSinceLastShot += Time.deltaTime;
                     if (elapsedSinceLastShot >= elapsedBetweenEachShot)
                     {
+                        Transform newTransform = camera.transform;
                         GameObject bullet = Instantiate(SCATBulletPF, bulletEmitter.transform);
-                        Vector3 front = bulletEmitterFront.transform.position - bulletEmitter.transform.position;
-                        bullet.GetComponent<Rigidbody>().velocity = RandomSpray(front, inaccuracy) * projectileVel;
+                        Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
+                        bullet.GetComponent<Rigidbody>().velocity = RandomSpray(front.normalized, inaccuracy) * projectileVel;
                         bullet.transform.SetParent(projectileManager.transform);
                         elapsedSinceLastShot = 0;
                         fireAudio.Play();
                     }
                     break;
                 }
-            }
-         
         }
-     
-        if (Input.GetButtonDown("Fire2"))
-        {
-            switch(currentMode)
-            {
-                case mode.DICK:
-                    modeText.text = "S.C.A.T Mode";
-                    currentMode = mode.SCAT;
-                    break;
-
-                case mode.SCAT:
-                    modeText.text = "D.I.C.K Mode";
-                    currentMode = mode.DICK;
-                    break;
-            }
-                
-
-        }
-
-        steamGauge.value = steamCurrent;
     }
+
+    override protected void Fire2()
+    {
+        
+    }
+
+    override protected void Fire2Once()
+    {
+        switch (currentMode)
+        {
+            case mode.DICK:
+                modeText.text = "S.C.A.T Mode";
+                currentMode = mode.SCAT;
+                break;
+
+            case mode.SCAT:
+                modeText.text = "D.I.C.K Mode";
+                currentMode = mode.DICK;
+                break;
+        }
+    }
+
 
     private void LateUpdate()
     {
