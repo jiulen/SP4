@@ -11,7 +11,7 @@ public class WeaponBase : MonoBehaviour
     public float[] projectileVel;
     //protected Rigidbody rb;
     //public GameObject weaponholder;
-    [SerializeField] protected Camera cam;
+
     //bool Equipped = true;
     protected double[] elapsedSinceLastShot;
     protected double[] elapsedBetweenEachShot;
@@ -25,8 +25,6 @@ public class WeaponBase : MonoBehaviour
 
     public void Start()
     {
-     
-        cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         //elapsedBetweenEachShot = 1 / fireRate;
         elapsedSinceLastShot = new double[fireRate.Length];
         elapsedBetweenEachShot = new double[fireRate.Length];

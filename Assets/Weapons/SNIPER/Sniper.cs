@@ -1,4 +1,3 @@
-using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -8,9 +7,6 @@ using UnityEngine.UI;
 public class Sniper : WeaponBase
 {
     public GameObject SCATBulletPF;
-    GameObject projectileManager;
-    GameObject bulletEmitter;
-    GameObject bulletEmitterFront;
     private Vector3 front;
     public Canvas Scoped;
     private Slider slider;
@@ -35,12 +31,8 @@ public class Sniper : WeaponBase
         base.Start();
         slider = GetComponentInChildren<Slider>();
         Scoped = transform.Find("SniperUICanvas").GetComponent<Canvas>();
-        bulletEmitter = GameObject.Find("Bullet emitter");
-        projectileManager = GameObject.Find("Projectile Manager");
-        bulletEmitterFront = GameObject.Find("Bullet emitter front");
         camaim = GetComponent<AimZoom>();
         slider = GetComponentInChildren<Slider>();
-        fireAudio = GameObject.Find("SampleFire").GetComponent<AudioSource>();
         ScopeSound = GameObject.Find("ScopeSound").GetComponent<AudioSource>();
         StablizeProgress = StablizeDuration;
         slider.maxValue = slider.value = StablizeProgress;
@@ -79,15 +71,16 @@ public class Sniper : WeaponBase
     {
         if (CheckCanFire(1))
         {
-            front = bulletEmitterFront.transform.position - bulletEmitter.transform.position;
+            Transform newTransform = camera.transform;
+            front = newTransform.forward * 1000 - bulletEmitter.transform.position;
 
             // new
             if (Physics.Raycast(bulletEmitter.transform.position, front, out RaycastHit hit))
             {
-                if (hit.transform.tag == "Crates")
+                EntityBase entity = hit.transform.gameObject.GetComponent<EntityBase>();
+                if (entity != null)
                 {
-                    DestructibleObjects destructibleObjects = hit.transform.GetComponent<DestructibleObjects>();
-                    destructibleObjects.DestroyDestructible();
+                    entity.TakeDamage(1);
                 }
             }
             fireAudio.Play();
