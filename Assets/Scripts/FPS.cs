@@ -249,12 +249,6 @@ public class FPS : NetworkBehaviour
         //con.Move(moveVector * speed * Time.deltaTime);
         //con.Move(this.GetComponent<Rigidbody>().velocity * Time.deltaTime);
 
-        camera.transform.position = transform.position;
-        Sniper sniper = transform.parent.GetComponentInChildren<Sniper>();
-        if (sniper != null && sniper.allowbobbing)
-        {
-            camera.transform.position += camera.transform.up * (Mathf.Sin(sniper.stablizeElasped * 2) / 2) * 0.4f + camera.transform.right * Mathf.Cos(sniper.stablizeElasped) * 0.4f;
-        }
 
         Jump();
 
