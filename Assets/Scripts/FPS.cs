@@ -152,59 +152,59 @@ public class FPS : NetworkBehaviour
         forward = forward.normalized;
         right = right.normalized;
 
-
         yaw += mouseX * CamSen * Time.deltaTime;
         pitch -= mouseY * CamSen * Time.deltaTime;
 
-        //if (!isWallrunning)
-        moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
-        moveVector.Normalize();
-
-        // WASD movement
-        if (isGround)
+        if (!isWallrunning)
         {
-            //moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
-            //moveVector.Normalize();
-            Vector3 newDirection = moveVector * speed;
-            newDirection.y = rigidbody.velocity.y; ;
-            rigidbody.velocity = newDirection;
-            if (rigidbody.velocity.magnitude >= speed)
-            {
-                rigidbody.velocity = rigidbody.velocity.normalized * speed;
-            }
+            //Disable movement while wallrunning
 
-        }
-        else
-        {
-            rigidbody.AddForce(moveVector * airMovementMultiplier);
-            //isSlide = false;
-            //this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
+            moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
+            moveVector.Normalize();
 
-        }
-
-
-        // Drop kick and slide
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
+            // WASD movement
             if (isGround)
             {
-                if (isSlide)
+                //moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
+                //moveVector.Normalize();
+                Vector3 newDirection = moveVector * speed;
+                newDirection.y = rigidbody.velocity.y; ;
+                rigidbody.velocity = newDirection;
+                if (rigidbody.velocity.magnitude >= speed)
                 {
-                    isSlide = false;
-                    this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
-
+                    rigidbody.velocity = rigidbody.velocity.normalized * speed;
                 }
-                else
-                {
-                    isSlide = true;
-                    storeSlideDir = moveVector;
 
-                }
             }
             else
-                dropKickActive = true;
-        }
+            {
+                rigidbody.AddForce(moveVector * airMovementMultiplier);
+                //isSlide = false;
+                //this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
 
+            }
+
+            // Drop kick and slide
+            if (Input.GetKeyDown(KeyCode.LeftControl))
+            {
+                if (isGround)
+                {
+                    if (isSlide)
+                    {
+                        isSlide = false;
+                        this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
+
+                    }
+                    else
+                    {
+                        isSlide = true;
+                        storeSlideDir = moveVector;
+
+                    }
+                }
+                else
+                    dropKickActive = true;
+            }
 
             // Drop kick
             if (Input.GetKeyDown(KeyCode.LeftControl))
@@ -219,6 +219,7 @@ public class FPS : NetworkBehaviour
                 else
                     rigidbody.velocity = new Vector3(0, -50, 0);
             }
+
             //if (isGround && moveVector.magnitude == 0)
             //{
             //    //rigidbody.velocity = new Vector3(0, 0, 0);
@@ -233,9 +234,23 @@ public class FPS : NetworkBehaviour
             //}
             //this.GetComponent<Rigidbody>().velocity = moveVector;
 
+            Jump();
 
-        
+            // Limit speed
+            //Vector3 velocityWithoutY = rigidbody.velocity;
+            //velocityWithoutY.y = 0;
+            //if ( rigidbody.velocity.magnitude >= speed)
+            //{
+            //    velocityWithoutY = velocityWithoutY.normalized * speed;
+            //    velocityWithoutY.y = rigidbody.velocity.y;
+            //    //rigidbody.velocity = velocityWithoutY.normalized * 5;
+            //    rigidbody.velocity = velocityWithoutY;
+            //}
 
+            UpdateDash();
+            UpdateSlide();
+            //velocity.y += gravity * Time.deltaTime;
+        }
 
         //Rotation
         pitch = Mathf.Clamp(pitch, -89f, 89f);
@@ -243,30 +258,7 @@ public class FPS : NetworkBehaviour
         camera.transform.rotation = Quaternion.Euler(pitch, yaw, roll);
         //transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
 
-        //Position & gravity
-        //con.Move(moveVector * speed * Time.deltaTime);
-        //con.Move(this.GetComponent<Rigidbody>().velocity * Time.deltaTime);
-
-
-        Jump();
-
-        // Limit speed
-        //Vector3 velocityWithoutY = rigidbody.velocity;
-        //velocityWithoutY.y = 0;
-        //if ( rigidbody.velocity.magnitude >= speed)
-        //{
-        //    velocityWithoutY = velocityWithoutY.normalized * speed;
-        //    velocityWithoutY.y = rigidbody.velocity.y;
-        //    //rigidbody.velocity = velocityWithoutY.normalized * 5;
-        //    rigidbody.velocity = velocityWithoutY;
-        //}
-
-      
-
-        UpdateDash();
-        UpdateSlide();
-        //con.Move(velocity * Time.deltaTime);
-        //velocity.y += gravity * Time.deltaTime;
+        
 
         camera.transform.position = transform.position;
         Sniper sniper = transform.parent.GetComponentInChildren<Sniper>();
