@@ -561,5 +561,10 @@ public class FPS : NetworkBehaviour
 
         yield break;
     }
+
+    public bool GetIsGrounded()
+    {
+        return isGround;
+    }
 }
 

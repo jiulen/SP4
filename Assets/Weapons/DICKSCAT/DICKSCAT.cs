@@ -146,14 +146,13 @@ public class DICKSCAT : WeaponBase
                     {
                         steamCurrent = 0;
                     }
-                    if (elapsedSinceLastShot >= elapsedBetweenEachShot)
+                    if (CheckCanFire(1))
                     {
                         Transform newTransform = camera.transform;
                         GameObject bullet = Instantiate(SCATBulletPF, bulletEmitter.transform);
                         Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
-                        bullet.GetComponent<Rigidbody>().velocity = RandomSpray(front.normalized, inaccuracy) * projectileVel;
+                        bullet.GetComponent<Rigidbody>().velocity = RandomSpray(front.normalized, inaccuracy[1]) * projectileVel[1];
                         bullet.transform.SetParent(projectileManager.transform);
-                        elapsedSinceLastShot = 0;
                         fireAudio.Play();
                     }
                     break;

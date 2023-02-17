@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class WeaponBase : MonoBehaviour
 {
-    public float fireRate = 1;
-    public int damage = 1;
-    public int bulletsPerShot = 1;
-    public float inaccuracy = 10;
-    public float projectileVel = 1;
+    public float[] fireRate;
+    public int[] damage;
+    public int[] bulletsPerShot;
+    public float[] inaccuracy;
+    public float[] projectileVel;
 
     //protected Rigidbody rb;
     //public GameObject weaponholder;
     [SerializeField] protected Camera cam;
     //bool Equipped = true;
-    protected double elapsedSinceLastShot = 0;
-    protected double elapsedBetweenEachShot = 0;
+    protected double[] elapsedSinceLastShot;
+    protected double[] elapsedBetweenEachShot;
 
     protected AudioSource fireAudio;
     protected Camera camera;
@@ -26,9 +26,17 @@ public class WeaponBase : MonoBehaviour
 
     public void Start()
     {
+     
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
-        elapsedBetweenEachShot = 1 / fireRate;
-        camera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        //elapsedBetweenEachShot = 1 / fireRate;
+        elapsedSinceLastShot = new double[fireRate.Length];
+        elapsedBetweenEachShot = new double[fireRate.Length];
+        for (int i =0; i != fireRate.Length; i++)
+        {
+            elapsedSinceLastShot[i] = 0;
+            elapsedBetweenEachShot[i] = 1 / fireRate[i];
+        }
+            camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         fireAudio = GameObject.Find("SampleFire").GetComponent<AudioSource>();
         projectileManager = GameObject.Find("Projectile Manager");
         bulletEmitter = GameObject.Find("Bullet emitter");
@@ -38,7 +46,10 @@ public class WeaponBase : MonoBehaviour
     // Update is called once per frame
     public void Update()
     {
-        elapsedSinceLastShot += Time.deltaTime;
+        for (int i = 0; i != elapsedSinceLastShot.Length; i++)
+        {
+            elapsedSinceLastShot[i] += Time.deltaTime;
+        }
 
         if (Input.GetButton("Fire1"))
         {
@@ -79,6 +90,17 @@ public class WeaponBase : MonoBehaviour
     protected virtual void Fire2Once()
     {
 
+    }
+
+    // Returns true and resets elapsedSinceLastShot if can be fired. Parameter chooses for which weapon fire, starts from 0
+    protected bool CheckCanFire(int i)
+    {
+        if (elapsedSinceLastShot[i] >= elapsedBetweenEachShot[i])
+        {
+            elapsedSinceLastShot[i] = 0;
+            return true;
+        }
+        return false;
     }
 
     //public void UpdateWeaponBase()

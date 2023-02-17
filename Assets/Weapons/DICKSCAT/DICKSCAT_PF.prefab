@@ -623,12 +623,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 287e38e246e28f64f836efc856e7922a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 25
-  damage: 1
-  bulletsPerShot: 1
-  inaccuracy: 5
-  projectileVel: 10
-  weaponholder: {fileID: 0}
+  fireRate:
+  - -1
+  - 25
+  damage: 
+  bulletsPerShot: 
+  inaccuracy:
+  - -1
+  - 10
+  projectileVel:
+  - -1
+  - 10
+  cam: {fileID: 0}
   DICKDistance: 3
   currentRotate: 0
   numPortals: 5
