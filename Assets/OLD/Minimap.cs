@@ -69,7 +69,7 @@ public class Minimap : MonoBehaviour
     public GameObject TwoDSprite;
     private GameObject MinimapCamera;
     private GameObject maincam;
-    private Quaternion parent;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -80,7 +80,6 @@ public class Minimap : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         MinimapCamera.transform.position = transform.position;
         MinimapCamera.transform.position = new Vector3(MinimapCamera.transform.position.x, 200f, MinimapCamera.transform.position.z);
 
