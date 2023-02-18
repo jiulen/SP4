@@ -217,7 +217,6 @@ public class FPS : NetworkBehaviour
                 {
                     rigidbody.velocity = rigidbody.velocity.normalized * speed;
                 }
-
             }
             else
             {
@@ -292,9 +291,9 @@ public class FPS : NetworkBehaviour
         pitch = Mathf.Clamp(pitch, -89f, 89f);
         float targetAngle = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
         camera.transform.rotation = Quaternion.Euler(pitch, yaw, roll);
-        //transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
-
-
+        transform.rotation = Quaternion.Euler(0f, targetAngle, roll);
+        //head.transform.rotation = Quaternion.Euler(pitch, targetAngle, roll); //rotate head to face same dir as camera - uncomment
+        //help make body not rotate upwards with head
 
         camera.transform.position = head.transform.position;
         Sniper sniper = transform.GetComponent<Sniper>();
