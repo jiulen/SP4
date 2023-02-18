@@ -43,11 +43,11 @@ public class DestructibleObjects : EntityBase
     {
         if (collision.gameObject.tag == "Bullet")
         {
-            TakeDamage(1);
+            TakeDamage(1, new Vector3(0,0,0));
             Destroy(collision.gameObject);
         }
     }
-    override public void TakeDamage(float hp)
+    override public void TakeDamage(float hp, Vector3 dir)
     {
         SetHealth(GetHealth() - hp);
 

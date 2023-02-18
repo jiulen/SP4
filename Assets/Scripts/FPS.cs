@@ -252,7 +252,7 @@ public class FPS : NetworkBehaviour
         camera.transform.rotation = Quaternion.Euler(pitch, yaw, roll);
         //transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
 
-        
+
 
         camera.transform.position = head.transform.position;
         Sniper sniper = transform.parent.GetComponentInChildren<Sniper>();
@@ -291,7 +291,7 @@ public class FPS : NetworkBehaviour
     }
 
     private void Jump()
-    { 
+    {
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -473,7 +473,7 @@ public class FPS : NetworkBehaviour
     {
         if (isSlide)
         {
-            
+
             if (airTimer >= 0.5)
             {
                 isSlide = false;
@@ -568,4 +568,3 @@ public class FPS : NetworkBehaviour
         return isGround;
     }
 }
-
