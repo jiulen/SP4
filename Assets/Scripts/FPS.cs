@@ -18,11 +18,15 @@ public class FPS : NetworkBehaviour
     private float speed = 5f;
 
     private Rigidbody rigidbody;
-    // general
+
+    // Debug
+    public bool debugBelongsToPlayer = false;
+
+    // General
     private GameObject body;
     private GameObject head;
     private GameObject bodyPivot;
-    // General
+    Canvas uiCanvas;
     public float airMovementMultiplier = 2.5f;
 
     // Grounded check
@@ -51,7 +55,8 @@ public class FPS : NetworkBehaviour
     private bool isSlide = false;
     private Vector3 storeSlideVelocity;
 
-    Canvas uiCanvas;
+    // Grapple
+    public bool isGrapple = false;
 
     //// Gravity
     //float gravity = -9.81f;
@@ -62,6 +67,8 @@ public class FPS : NetworkBehaviour
 
     // Teleport
     bool canTeleport = true;
+
+    
 
     enum TeleportStates
     {
@@ -155,6 +162,7 @@ public class FPS : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.DrawRay(camera.transform.position, 100 *camera.transform.forward, Color.black);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         // Reset position and velocity if player goes out of bounds for debugging
@@ -165,7 +173,7 @@ public class FPS : NetworkBehaviour
         }
         UpdateGrounded();
 
-        //if (!IsOwner) return;
+        if (!IsOwner && !debugBelongsToPlayer) return;
 
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
@@ -190,12 +198,20 @@ public class FPS : NetworkBehaviour
             moveVector.Normalize();
 
             // WASD movement
-            if (isGround)
+            if (isGrapple)
+            {
+                Vector3 moveVectorWithY;
+                moveVectorWithY = (playerVerticalInput * camera.transform.forward) + (playerHorizontalInput * camera.transform.right);
+                moveVectorWithY.Normalize();
+                rigidbody.AddForce(moveVectorWithY * airMovementMultiplier);
+
+            }
+            else if (isGround)
             {
                 //moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
                 //moveVector.Normalize();
                 Vector3 newDirection = moveVector * speed;
-                newDirection.y = rigidbody.velocity.y; ;
+                newDirection.y = rigidbody.velocity.y;
                 rigidbody.velocity = newDirection;
                 if (rigidbody.velocity.magnitude >= speed)
                 {
@@ -205,6 +221,7 @@ public class FPS : NetworkBehaviour
             }
             else
             {
+            
                 rigidbody.AddForce(moveVector * airMovementMultiplier);
                 //isSlide = false;
                 //this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
@@ -322,8 +339,10 @@ public class FPS : NetworkBehaviour
         {
             if (isGround)
             {
-
-                rigidbody.AddForce(0, jumpForce, 0);
+                if(isGrapple)
+                    rigidbody.AddForce(0, jumpForce * 2.5f, 0);
+                else
+                    rigidbody.AddForce(0, jumpForce, 0);
                 //velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
                 doublejump = true;
                 if (isSlide)

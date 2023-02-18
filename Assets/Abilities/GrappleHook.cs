@@ -10,15 +10,17 @@ public class GrappleHook : MonoBehaviour
     private GameObject line;
     public GameObject player;
 
-    private bool hookActive;
+    private bool hookActive = false;
     private Vector3 hookPosition;
 
-    public float grappleDuration = 2;
+    public float grappleDuration = 5;
     public float grapplePullForce = 15;
 
     // Once the player enters this radius, the grapple will unhook if they exit it. It is so that the player can be slingshot without having to cancel the grapple hook themselves
     public float grappleMaintainDistance = 1;
     private bool grappleMaintainEntered = false;
+    private double grappleMaintainElapsed = 0;
+    public float grappleMaintainDuration = 0.2f;
 
     private double grappleElapsed = 0;
     void Start()
@@ -39,34 +41,57 @@ public class GrappleHook : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if ((player.transform.position - hookPosition).magnitude <= grappleMaintainDistance)
-        {
-            grappleMaintainEntered = true;
-        }
-        else if (grappleMaintainEntered)
-        {
-            grappleMaintainEntered = false;
-            hookActive = false;
-        }
-
-
-        grappleElapsed += Time.deltaTime;
-        if (grappleElapsed >= grappleDuration)
-        {
-            hookActive = false;
-        }
+        Debug.DrawRay(camera.transform.position, camera.transform.forward, Color.red);
+        //if ((player.transform.position - hookPosition).magnitude <= grappleMaintainDistance)
+        //{
+        //    grappleMaintainEntered = true;
+        //}
+        //else if (grappleMaintainEntered)
+        //{
+        //    grappleMaintainEntered = false;
+        //    hookActive = false;
+        //}
 
         hook.transform.position = hookPosition;
 
+        // Deactiveate grapple after a certain period of time
+        grappleElapsed += Time.deltaTime;
+        if (grappleElapsed >= grappleDuration)
+        {
+            SetHookActive(false);
+        }
+
+        // Deactiveate grapple after player starts moving away from it
+        Vector3 playerToHook = (hookPosition - player.transform.position).normalized;
+        float dotProduct = Vector3.Dot(player.GetComponent<Rigidbody>().velocity.normalized, playerToHook);
+
+        // Player is moving towards
+        if (dotProduct > -0.3)
+        {
+            grappleMaintainElapsed = 0;
+            grappleMaintainEntered = true;
+        }
+        else
+        {
+            grappleMaintainElapsed += Time.deltaTime;
+            if (grappleMaintainElapsed > grappleMaintainDuration)
+            {
+                SetHookActive(false);
+            }
+        }
+     
+
+        // Deactivate hook once player is close to it
         if ((hook.transform.position - player.transform.position).magnitude <= 1)
         {
-            hookActive = false;
+            SetHookActive(false);
         }
-        if(Input.GetKeyDown(KeyCode.Q))
+
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             if (hookActive)
             {
-                hookActive = false;
+                SetHookActive(false);
             }
             else
             {
@@ -78,17 +103,12 @@ public class GrappleHook : MonoBehaviour
                 if (Physics.Raycast(laserRayCast, out RaycastHit hit, 100))
                 {
                     hookPosition = hit.point;
-                    hookActive = true;
+                    SetHookActive(true);
                     grappleElapsed = 0;
-                    grappleMaintainEntered = false;
 
                 }
             }
-          
         }
-
-      
-
     }
 
     void LateUpdate()
@@ -111,4 +131,19 @@ public class GrappleHook : MonoBehaviour
             line.SetActive(false);
         }
     }
+
+    private void SetHookActive(bool active)
+    {
+        hookActive = active;
+        player.GetComponent<FPS>().isGrapple = active;  
+        if(active == true)
+        {
+            grappleMaintainElapsed = 0;
+            grappleMaintainEntered = false;
+            //if(player.GetComponent<FPS>().GetIsGrounded())
+                //player.GetComponent<Rigidbody>().AddForce(0,100,0);
+
+        }
+    }
+
 }
