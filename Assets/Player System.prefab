@@ -265,7 +265,7 @@ MonoBehaviour:
   dashMetreRate: 30
   slideMultiplier: 3
   tpMarkerPrefab: {fileID: 8623884177538578183, guid: 0d094d82fe2465a4e9199cee4d5d9432, type: 3}
-  canWallrun: 0
+  canWallrun: 1
   isWallrunning: 0
 --- !u!54 &4912592111111457368
 Rigidbody:
