@@ -25,7 +25,7 @@ public class Rocket : ProjectileBase
         if (collision != null && collision.gameObject != creator)
         {
             explosion.Explode();
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
     }
 }

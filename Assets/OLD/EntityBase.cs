@@ -18,7 +18,7 @@ public class EntityBase : MonoBehaviour
         if (Health < 0)
             Health = 0;
     }
-    public virtual void TakeDamage(float hp)
+    public virtual void TakeDamage(float hp, Vector3 dir)
     {
         SetHealth(GetHealth() - hp);
 

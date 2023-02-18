@@ -252,14 +252,9 @@ public class FPS : NetworkBehaviour
         camera.transform.rotation = Quaternion.Euler(pitch, yaw, roll);
         //transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
 
-        
-
         camera.transform.position = transform.position;
-        Sniper sniper = transform.parent.GetComponentInChildren<Sniper>();
-        if (sniper != null && sniper.Scoped.enabled)
-        {
-            camera.transform.position += camera.transform.up * (Mathf.Sin(sniper.stablizeElasped * 2) / 2) * 0.4f + camera.transform.right * Mathf.Cos(sniper.stablizeElasped) * 0.4f;
-        }
+
+
         if (canTeleport) UpdateTeleport();
 
         currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
