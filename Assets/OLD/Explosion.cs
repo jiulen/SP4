@@ -2,10 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class Explosion : MonoBehaviour
 {
+    private AudioSource explodeAudio;
+    public AudioClip clip;
     public float radius, explosionForce;
     public float damage;
+    private void Start()
+    {
+        explodeAudio = GetComponent<AudioSource>();
+    }
     public void Explode()
     {
         Collider[] colliders = Physics.OverlapSphere(transform.position, radius);
@@ -13,7 +20,10 @@ public class Explosion : MonoBehaviour
         {
             EntityBase entity = collider.gameObject.GetComponent<EntityBase>();
             if (entity != null)
-                entity.TakeDamage(damage);
+            {
+                Vector3 dir = entity.transform.position - transform.position;
+                entity.TakeDamage(damage, dir);
+            }
         }
 
         Collider[] collidersmove = Physics.OverlapSphere(transform.position, radius);
@@ -25,5 +35,6 @@ public class Explosion : MonoBehaviour
                 rb.AddExplosionForce(explosionForce, transform.position, radius);
             }
         }
+        AudioSource.PlayClipAtPoint(clip, transform.position);
     }
 }

@@ -20,8 +20,9 @@ public class WeaponBase : MonoBehaviour
     protected Camera camera;
     protected GameObject projectileManager;
     protected GameObject bulletEmitter;
-
+    public Sprite WeaponIcon;
     protected GameObject playerOwner;
+    private bool isLeftClickDown = false, isRightClickDown = false;
 
     public void Start()
     {
@@ -67,6 +68,37 @@ public class WeaponBase : MonoBehaviour
         {
             Fire2Once();
         }
+
+        if (!Input.GetButton("Fire1"))
+        {                  
+            Fire1Up();   
+        }                  
+                           
+        if (!Input.GetButton("Fire2"))
+        {
+            Fire2Up();
+        }
+
+        if (!isLeftClickDown && Input.GetButton("Fire1"))
+        {
+            isLeftClickDown = true;
+        }
+        else if (isLeftClickDown && !Input.GetButton("Fire1"))
+        {
+            Fire1UpOnce();
+            isLeftClickDown = false;
+        }
+
+
+        if (!isRightClickDown && Input.GetButton("Fire2"))
+        {
+            isRightClickDown = true;
+        }
+        else if (isRightClickDown && !Input.GetButton("Fire2"))
+        {
+            Fire2UpOnce();
+            isRightClickDown = false;
+        }
     }
 
     protected virtual void Fire1()
@@ -80,6 +112,24 @@ public class WeaponBase : MonoBehaviour
     }
 
     protected virtual void Fire1Once()
+    {
+
+    }
+
+    protected virtual void Fire1UpOnce()
+    {
+
+    }
+    protected virtual void Fire2UpOnce()
+    {
+
+    }
+
+    protected virtual void Fire1Up()
+    {
+
+    }
+    protected virtual void Fire2Up()
     {
 
     }

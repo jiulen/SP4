@@ -43,19 +43,8 @@ public class Sniper : WeaponBase
     //Update is called once per frame
     void Update()
     {
-        FPS player = transform.root.GetComponentInChildren<FPS>();
-
         base.Update();
 
-        if (!Input.GetButton("Fire2")) // scope
-        {
-            Scoped.enabled = false;
-            PlayOnce = false;
-            camaim.ZoomOut();
-            desiredPositionAnimation = new Vector3(0.25f, -0.2f, 0.75f);
-            player.candash = true;
-            SniperModel.SetActive(true);
-        }
         transform.localPosition = Vector3.SmoothDamp(transform.localPosition, desiredPositionAnimation, ref velocity, AnimationRate);
 
         if ((transform.localPosition - temp).magnitude <= 0.01f)
@@ -67,7 +56,24 @@ public class Sniper : WeaponBase
 
     }
 
-    override protected void Fire1() // right click press and hold
+    private void LateUpdate()
+    {
+        if (Scoped.enabled)
+            camera.transform.position += camera.transform.up * (Mathf.Sin(stablizeElasped * 2) / 2) * 0.4f + camera.transform.right * Mathf.Cos(stablizeElasped) * 0.4f;
+    }
+
+    protected override void Fire2Up()
+    {
+        FPS player = transform.root.GetComponentInChildren<FPS>();
+        Scoped.enabled = false;
+        PlayOnce = false;
+        camaim.ZoomOut();
+        desiredPositionAnimation = new Vector3(0.25f, -0.2f, 0.75f);
+        player.candash = true;
+        SniperModel.SetActive(true);
+    }
+
+    override protected void Fire1Once()
     {
         if (CheckCanFire(1))
         {
@@ -80,7 +86,8 @@ public class Sniper : WeaponBase
                 EntityBase entity = hit.transform.gameObject.GetComponent<EntityBase>();
                 if (entity != null)
                 {
-                    entity.TakeDamage(1);
+                    Vector3 dir = -front;
+                    entity.TakeDamage(1, dir);
                 }
             }
             fireAudio.Play();

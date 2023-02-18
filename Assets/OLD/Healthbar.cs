@@ -10,12 +10,14 @@ public class Healthbar : MonoBehaviour
     [SerializeField] Text hbartext;
     [SerializeField] Image hBarFill;
     private EntityBase player;
+   // private Image Injured;
     // Start is called before the first frame update
     void Start()
     {
         slider = GetComponentInChildren<Slider>();
-        player = transform.parent.GetComponentInChildren<EntityBase>();
+        player = transform.parent.GetComponentInChildren<PlayerEntity>();
         slider.maxValue = slider.value = player.MaxHealth;
+        //Injured = transform.parent.Find("Injured").GetComponent<Image>();
     }
 
     // Update is called once per frame
