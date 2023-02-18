@@ -8,19 +8,22 @@ public class GrappleHook : MonoBehaviour
     private GameObject grappleBody;
     private GameObject hook;
     private GameObject line;
-    public GameObject player;
+    private GameObject player;
 
     private bool hookActive = false;
     private Vector3 hookPosition;
 
     public float grappleDuration = 5;
-    public float grapplePullForce = 15;
+    public float grapplePullForce = 5;
 
-    // Once the player enters this radius, the grapple will unhook if they exit it. It is so that the player can be slingshot without having to cancel the grapple hook themselves
-    public float grappleMaintainDistance = 1;
-    private bool grappleMaintainEntered = false;
+    
+    // Keeps track of how long the player has moved in the opposite direction of the hook
     private double grappleMaintainElapsed = 0;
     public float grappleMaintainDuration = 0.2f;
+    // Keeps track of if the player has been moving in the opposite direction of the hook since the start of the grapple.
+    // As in, it will only be true once the player has move towards the hook for the first frame of each grapple.
+    // This is so that the hook will not break if the player was already moving away from the hookPosition from the start of each grapple
+    private bool grappleMaintainStarted = false;
 
     private double grappleElapsed = 0;
     void Start()
@@ -40,18 +43,7 @@ public class GrappleHook : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        Debug.DrawRay(camera.transform.position, camera.transform.forward, Color.red);
-        //if ((player.transform.position - hookPosition).magnitude <= grappleMaintainDistance)
-        //{
-        //    grappleMaintainEntered = true;
-        //}
-        //else if (grappleMaintainEntered)
-        //{
-        //    grappleMaintainEntered = false;
-        //    hookActive = false;
-        //}
-
+    {    
         hook.transform.position = hookPosition;
 
         // Deactiveate grapple after a certain period of time
@@ -65,13 +57,19 @@ public class GrappleHook : MonoBehaviour
         Vector3 playerToHook = (hookPosition - player.transform.position).normalized;
         float dotProduct = Vector3.Dot(player.GetComponent<Rigidbody>().velocity.normalized, playerToHook);
 
+        
         // Player is moving towards
-        if (dotProduct > -0.3)
+        if(dotProduct > 0)
+        {
+            grappleMaintainStarted = true;
+        }
+        // Player is moving towards, plus some leeway to allow the player to pivot around the hook point
+        else if (dotProduct > -0.3) 
         {
             grappleMaintainElapsed = 0;
-            grappleMaintainEntered = true;
         }
-        else
+        // Only deactivate the hook when the player is going away from the hookPosition IF the player had already been moving towards the hook since the beginning
+        else if (grappleMaintainStarted)
         {
             grappleMaintainElapsed += Time.deltaTime;
             if (grappleMaintainElapsed > grappleMaintainDuration)
@@ -139,7 +137,7 @@ public class GrappleHook : MonoBehaviour
         if(active == true)
         {
             grappleMaintainElapsed = 0;
-            grappleMaintainEntered = false;
+            grappleMaintainStarted = false;
             //if(player.GetComponent<FPS>().GetIsGrounded())
                 //player.GetComponent<Rigidbody>().AddForce(0,100,0);
 
