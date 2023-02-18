@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
 using System.Threading;
+using UnityEngine.SceneManagement;
 
 public class FPS : NetworkBehaviour
 {
@@ -94,6 +95,11 @@ public class FPS : NetworkBehaviour
 
     void Awake()
     {
+        Init();
+    }
+
+    void Init()
+    {
         uiCanvas = transform.Find("Canvas").GetComponent<Canvas>();
 
         head = transform.Find("Head").gameObject;
@@ -102,15 +108,15 @@ public class FPS : NetworkBehaviour
         //body = transform.Find("Body").gameObject;
         capsuleCollider = head.GetComponent<CapsuleCollider>(); //set in editor
 
-        headHeight = head.transform.position.y - body.transform.position.y + (body.GetComponent<CapsuleCollider>().height * head.transform.localScale.y * body.transform.localScale.y)/2;
+        headHeight = head.transform.position.y - body.transform.position.y + (body.GetComponent<CapsuleCollider>().height * head.transform.localScale.y * body.transform.localScale.y) / 2;
 
         // bodyHeight refers to its relative y position, not the height of the collider
-        bodyHeight = (body.GetComponent<CapsuleCollider>().height * head.transform.localScale.y * body.transform.localScale.y)/ 2;
+        bodyHeight = (body.GetComponent<CapsuleCollider>().height * head.transform.localScale.y * body.transform.localScale.y) / 2;
         bodyRadius = (body.GetComponent<CapsuleCollider>().radius * head.transform.localScale.y * body.transform.localScale.y);
         //Set dash progress to more than dash so dash isn't activated on start
         dashProgress = dashDuration + 1;
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
-        pitch = yaw = roll =  0f;
+        pitch = yaw = roll = 0f;
         CamSen = 220f;
         tpMarker = Instantiate(tpMarkerPrefab);
         tpMarkerMR = tpMarker.GetComponent<MeshRenderer>();
@@ -124,6 +130,25 @@ public class FPS : NetworkBehaviour
 
 
         tpLayerMask = 1 << LayerMask.NameToLayer("Terrain"); //use later when got structures in level
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("Scene Loaded : " + scene.name);
+        if (scene.name == "Game")
+        {
+            Init();
+        }
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
 
@@ -255,7 +280,7 @@ public class FPS : NetworkBehaviour
 
 
         camera.transform.position = head.transform.position;
-        Sniper sniper = transform.parent.GetComponentInChildren<Sniper>();
+        Sniper sniper = transform.GetComponent<Sniper>();
         if (sniper != null && sniper.Scoped.enabled)
         {
             camera.transform.position += camera.transform.up * (Mathf.Sin(sniper.stablizeElasped * 2) / 2) * 0.4f + camera.transform.right * Mathf.Cos(sniper.stablizeElasped) * 0.4f;
