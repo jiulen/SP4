@@ -37,7 +37,9 @@ public class WeaponBase : MonoBehaviour
         fireAudio = GameObject.Find("SampleFire").GetComponent<AudioSource>();
         projectileManager = GameObject.Find("Projectile Manager");
         bulletEmitter = GameObject.Find("Bullet emitter");
-        playerOwner = transform.parent.transform.parent.Find("Player Entity").gameObject;
+        //playerOwner = transform.parent.transform.parent.Find("Player Entity").gameObject;
+        playerOwner = transform.parent.transform.parent.gameObject;
+
     }
 
     // Update is called once per frame

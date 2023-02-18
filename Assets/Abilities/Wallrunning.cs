@@ -34,7 +34,7 @@ public class Wallrunning : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        playerBody = transform.Find("Body pivot").GetChild(0);
+        playerBody = transform.Find("Head/Body pivot").GetChild(0);
         playerFPSScript = GetComponent<FPS>();
         playerCamera = GameObject.Find("Main Camera").GetComponent<Camera>(); //might change to use a game object else to determine orientation
 

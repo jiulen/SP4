@@ -21,10 +21,10 @@ public class GrappleHook : MonoBehaviour
         body = GameObject.Find("Body");
         hook = GameObject.Find("Hook");
         line = GameObject.Find("Line");
-        player = transform.parent.transform.parent.transform.Find("Player Entity").gameObject;
-        GameObject test = transform.parent.gameObject;
-        GameObject test2 = test.transform.parent.gameObject;
-        GameObject test3 = test2.transform.Find("Player Entity").gameObject;
+        player = transform.parent.transform.parent.gameObject;
+        //GameObject test = transform.parent.gameObject;
+        //GameObject test2 = test.transform.parent.gameObject;
+        //GameObject test3 = test2.transform.Find("Player Entity").gameObject;
         //Debug.Log("Hello everynyan" + test3.name);
    
     }

@@ -36,7 +36,7 @@ public class StormBlast : ProjectileBase
 
         foreach (Transform child in playerManager.transform)
         {
-            Vector3 difference = child.Find("Player Entity").transform.position - transform.position;
+            Vector3 difference = child.transform.position - transform.position;
             float distance = difference.magnitude;
             if (distance > upperExplosionRadius)
             {
@@ -45,8 +45,8 @@ public class StormBlast : ProjectileBase
 
             Vector3 direction = difference.normalized;
 
-            Rigidbody childRB = child.transform.GetChild(0).GetComponent<Rigidbody>();
-            FPS childFPS = child.transform.GetChild(0).GetComponent<FPS>();
+            Rigidbody childRB = child.transform.GetComponent<Rigidbody>();
+            FPS childFPS = child.transform.GetComponent<FPS>();
 
             if (distance < innerExplosionRadius)
             {

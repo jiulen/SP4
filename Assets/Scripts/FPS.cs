@@ -19,7 +19,7 @@ public class FPS : NetworkBehaviour
     private Rigidbody rigidbody;
     // general
     private GameObject body;
-    //private GameObject head;
+    private GameObject head;
     private GameObject bodyPivot;
     // General
     public float airMovementMultiplier = 2.5f;
@@ -28,6 +28,7 @@ public class FPS : NetworkBehaviour
     private float headHeight = 1;
     private float bodyHeight = 1;
     private float bodyRadius = 1;
+    private double airTimer = 0;
 
     // Jump
     private bool doublejump = false;
@@ -46,8 +47,8 @@ public class FPS : NetworkBehaviour
 
     // Slide
     public float slideMultiplier = 2;
-    private Vector3 storeSlideDir;
     private bool isSlide = false;
+    private Vector3 storeSlideVelocity;
 
     Canvas uiCanvas;
 
@@ -93,18 +94,19 @@ public class FPS : NetworkBehaviour
 
     void Start()
     {
-        uiCanvas = GameObject.Find("Player System/Canvas").GetComponent<Canvas>();
+        uiCanvas = transform.Find("Canvas").GetComponent<Canvas>();
 
-        bodyPivot = transform.Find("Body pivot").gameObject;
+        head = transform.Find("Head").gameObject;
+        bodyPivot = transform.Find("Head/Body pivot").gameObject;
         body = bodyPivot.transform.GetChild(0).gameObject;
         //body = transform.Find("Body").gameObject;
-        capsuleCollider = this.GetComponent<CapsuleCollider>(); //set in editor
+        capsuleCollider = head.GetComponent<CapsuleCollider>(); //set in editor
 
-        headHeight = this.transform.position.y - body.transform.position.y + (body.GetComponent<CapsuleCollider>().height * this.transform.localScale.y * body.transform.localScale.y)/2;
+        headHeight = head.transform.position.y - body.transform.position.y + (body.GetComponent<CapsuleCollider>().height * head.transform.localScale.y * body.transform.localScale.y)/2;
 
         // bodyHeight refers to its relative y position, not the height of the collider
-        bodyHeight = (body.GetComponent<CapsuleCollider>().height * this.transform.localScale.y * body.transform.localScale.y)/ 2;
-        bodyRadius = (body.GetComponent<CapsuleCollider>().radius * this.transform.localScale.y * body.transform.localScale.y);
+        bodyHeight = (body.GetComponent<CapsuleCollider>().height * head.transform.localScale.y * body.transform.localScale.y)/ 2;
+        bodyRadius = (body.GetComponent<CapsuleCollider>().radius * head.transform.localScale.y * body.transform.localScale.y);
         //Set dash progress to more than dash so dash isn't activated on start
         dashProgress = dashDuration + 1;
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
@@ -115,7 +117,7 @@ public class FPS : NetworkBehaviour
         tpMarkerMR.enabled = false;
         tpVerticalOffset = capsuleCollider.height * 0.5f - tpMarker.transform.localScale.y; //do this whenever player rigidbody scale changes
 
-        currentEquipped = transform.parent.Find("Equipped");
+        currentEquipped = transform.Find("Equipped");
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
         rigidbody = this.GetComponent<Rigidbody>();
         rigidbody.velocity.Set(0, 0, 0);
@@ -198,18 +200,22 @@ public class FPS : NetworkBehaviour
                     else
                     {
                         isSlide = true;
-                        storeSlideDir = moveVector;
+                        if (moveVector.magnitude == 0)
+                        {
+                            storeSlideVelocity = camera.transform.forward.normalized * speed * slideMultiplier;
 
+                        }
+                        else
+                        {
+                            storeSlideVelocity = moveVector * speed * slideMultiplier;
+                        }
                     }
                 }
                 else
-                    dropKickActive = true;
-            }
-
-            // Drop kick
-            if (Input.GetKeyDown(KeyCode.LeftControl))
-            {
-                dropKickActive = true;
+                {
+                    if(!isSlide)
+                       dropKickActive = true;
+                }
             }
 
             if (dropKickActive)
@@ -235,18 +241,6 @@ public class FPS : NetworkBehaviour
             //this.GetComponent<Rigidbody>().velocity = moveVector;
 
             Jump();
-
-            // Limit speed
-            //Vector3 velocityWithoutY = rigidbody.velocity;
-            //velocityWithoutY.y = 0;
-            //if ( rigidbody.velocity.magnitude >= speed)
-            //{
-            //    velocityWithoutY = velocityWithoutY.normalized * speed;
-            //    velocityWithoutY.y = rigidbody.velocity.y;
-            //    //rigidbody.velocity = velocityWithoutY.normalized * 5;
-            //    rigidbody.velocity = velocityWithoutY;
-            //}
-
             UpdateDash();
             UpdateSlide();
             //velocity.y += gravity * Time.deltaTime;
@@ -278,23 +272,26 @@ public class FPS : NetworkBehaviour
     {
         //if (!IsOwner) return;
 
+        // Apply air resistance
+        if(!isGround)
+        {
+            rigidbody.AddForce(-rigidbody.velocity);
+        }
+
+        // Limit speed
+        //Vector3 velocityWithoutY = rigidbody.velocity;
+        //velocityWithoutY.y = 0;
+        //if ( rigidbody.velocity.magnitude >= speed)
+        //{
+        //    velocityWithoutY = velocityWithoutY.normalized * speed;
+        //    velocityWithoutY.y = rigidbody.velocity.y;
+        //    //rigidbody.velocity = velocityWithoutY.normalized * 5;
+        //    rigidbody.velocity = velocityWithoutY;
+        //}
     }
 
     private void Jump()
-    {
-        //Ground now has a dedicated function called at the beginning of Update()
-
-        //RaycastHit raycasthit;
-        //Ray ray = new Ray(transform.position, -transform.up);
-
-        //if (Physics.Raycast(ray, out raycasthit, (GetComponent<CapsuleCollider>().height / 2) + 0.1f))
-        //{
-        //    isGround = true;
-        //}
-        //else
-        //{
-        //    isGround = false;
-        //}
+    { 
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -304,15 +301,16 @@ public class FPS : NetworkBehaviour
                 rigidbody.AddForce(0, jumpForce, 0);
                 //velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
                 doublejump = true;
-                //if(isSlide)
-                //{
-                //    isSlide = false;
-                //    this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
-                //}
+                if (isSlide)
+                {
+                    isSlide = false;
+                    this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
+                }
             }
             else if (doublejump)
             {
                 rigidbody.AddForce(0, jumpForce, 0);
+
                 //velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
                 doublejump = false;
             }
@@ -475,16 +473,30 @@ public class FPS : NetworkBehaviour
     {
         if (isSlide)
         {
-            Vector3 newVel = storeSlideDir.normalized * speed * slideMultiplier; ;
+            
+            if (airTimer >= 0.5)
+            {
+                isSlide = false;
+                return;
+            }
+            // Change the vel.y so player maintains vertical momentum
+            Vector3 newVel = storeSlideVelocity;
             newVel.y = rigidbody.velocity.y;
             rigidbody.velocity = newVel;
-            this.transform.localRotation = Quaternion.Euler( -45, this.transform.localRotation.y, this.transform.localRotation.z);
-            bodyPivot.transform.localRotation = Quaternion.Euler(-45, bodyPivot.transform.localRotation.y, bodyPivot.transform.localRotation.z);
+            //rigidbody.AddForce(-storeVelocityForSlide.normalized );
+            float yAngle = Mathf.Atan2(storeSlideVelocity.x,storeSlideVelocity.z) * Mathf.Rad2Deg; // Convert the vector to an angle in degrees
+            if (yAngle < 0)
+            {
+                yAngle += 360;
+            }
 
+            head.transform.LookAt(newVel);
+            head.transform.localRotation = Quaternion.Euler( -45, yAngle, head.transform.localRotation.z);
+            bodyPivot.transform.localRotation = Quaternion.Euler(-45, bodyPivot.transform.localRotation.y, bodyPivot.transform.localRotation.z);
         }
         else
         {
-            this.transform.localRotation = Quaternion.Euler(0, this.transform.localRotation.y, this.transform.localRotation.z);
+            head.transform.localRotation = Quaternion.Euler(0, head.transform.localRotation.y, head.transform.localRotation.z);
             bodyPivot.transform.localRotation = Quaternion.Euler(0, bodyPivot.transform.localRotation.y, bodyPivot.transform.localRotation.z);
         }
     }
@@ -514,15 +526,17 @@ public class FPS : NetworkBehaviour
             valueToUse = bodyRadius;
         else
             valueToUse = bodyHeight;
-
+        valueToUse = bodyHeight;
         Ray laserRayCast = new Ray(body.transform.position, new Vector3(0, -1, 0));
-        Debug.DrawRay(body.transform.position, new Vector3(0, -valueToUse - 0.01f, 0 ), Color.red);
+        Debug.DrawRay(this.transform.position, new Vector3(0, -valueToUse - 0.01f, 0 ), Color.red);
         if (Physics.Raycast(laserRayCast, out RaycastHit hit, valueToUse + 0.01f))
         {
             isGround = true;
+            airTimer = 0;
             return;
         }
         isGround = false;
+        airTimer += Time.deltaTime;
     }
 
     //Camera functions
