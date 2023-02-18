@@ -8,8 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class FPS : NetworkBehaviour
 {
-    public CharacterController con;
-    [SerializeField] CapsuleCollider capsuleCollider;
+    CapsuleCollider capsuleCollider;
     public Camera camera; // Main camera
     Vector3 moveVector;
     private bool isGround = false;
@@ -23,9 +22,10 @@ public class FPS : NetworkBehaviour
     public bool debugBelongsToPlayer = false;
 
     // General
-    private GameObject body;
-    private GameObject head;
-    private GameObject bodyPivot;
+    public GameObject body;
+    public GameObject head;
+    [SerializeField] GameObject bodyPivot;
+    [SerializeField] GameObject headPivot;
     Canvas uiCanvas;
     public float airMovementMultiplier = 2.5f;
 
@@ -109,11 +109,7 @@ public class FPS : NetworkBehaviour
     {
         uiCanvas = transform.Find("Canvas").GetComponent<Canvas>();
 
-        head = transform.Find("Head").gameObject;
-        bodyPivot = transform.Find("Head/Body pivot").gameObject;
-        body = bodyPivot.transform.GetChild(0).gameObject;
-        //body = transform.Find("Body").gameObject;
-        capsuleCollider = head.GetComponent<CapsuleCollider>(); //set in editor
+        capsuleCollider = head.GetComponent<CapsuleCollider>();
 
         headHeight = head.transform.position.y - body.transform.position.y + (body.GetComponent<CapsuleCollider>().height * head.transform.localScale.y * body.transform.localScale.y) / 2;
 
@@ -292,8 +288,8 @@ public class FPS : NetworkBehaviour
         float targetAngle = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
         camera.transform.rotation = Quaternion.Euler(pitch, yaw, roll);
         transform.rotation = Quaternion.Euler(0f, targetAngle, roll);
-        //head.transform.rotation = Quaternion.Euler(pitch, targetAngle, roll); //rotate head to face same dir as camera - uncomment
-        //help make body not rotate upwards with head
+        head.transform.localRotation = Quaternion.Euler(pitch, 0, 0); //rotate head to face same dir as camera
+        headPivot.transform.localRotation = Quaternion.Euler(-pitch, 0, 0); //rotate body to reverse head rotation
 
         camera.transform.position = head.transform.position;
         Sniper sniper = transform.GetComponent<Sniper>();

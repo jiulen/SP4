@@ -13,7 +13,7 @@ public class Wallrunning : MonoBehaviour
     bool wallRunningLeft = false; //check which direction wallrunning on - doesnt matter when not wallrunning
 
     //Wall jump
-    float wallJumpUpForce = 5, wallJumpSideForce = 25;
+    float wallJumpUpForce = 5, wallJumpSideForce = 20;
     float minJumpHeight = 1.5f;
 
     //Exit wall
@@ -23,8 +23,8 @@ public class Wallrunning : MonoBehaviour
 
     Rigidbody rb;
     Transform playerBody;
+    Transform playerHead;
     FPS playerFPSScript;
-    Camera playerCamera;
 
     //Camera effects
     Coroutine zoomInCoroutine, zoomOutCoroutine;
@@ -35,8 +35,8 @@ public class Wallrunning : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         playerFPSScript = GetComponent<FPS>();
-        playerBody = transform.Find("Head/Body pivot").GetChild(0);
-        playerCamera = GameObject.Find("Main Camera").GetComponent<Camera>(); //might change to use a game object else to determine orientation
+        playerBody = playerFPSScript.body.transform;
+        playerHead = playerFPSScript.head.transform;
 
         terrain = 1 << LayerMask.NameToLayer("Terrain");
     }
@@ -172,7 +172,7 @@ public class Wallrunning : MonoBehaviour
 
         Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
 
-        if ((playerCamera.transform.forward - wallForward).magnitude > (playerCamera.transform.forward + wallForward).magnitude)
+        if ((playerHead.transform.forward - wallForward).magnitude > (playerHead.transform.forward + wallForward).magnitude)
             wallForward = new Vector3(-wallForward.x, wallForward.y, -wallForward.z);
 
         //forward force
@@ -180,9 +180,9 @@ public class Wallrunning : MonoBehaviour
 
         float playerVertSpeed = 0;
 
-        if (playerCamera.transform.forward.y > 0)
+        if (playerHead.transform.forward.y > 0)
             playerVertSpeed = 2;
-        else if (playerCamera.transform.forward.y > 0)
+        else if (playerHead.transform.forward.y > 0)
             playerVertSpeed = -2;
 
         rb.velocity = new Vector3(rb.velocity.x, playerVertSpeed, rb.velocity.z);
