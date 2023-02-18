@@ -92,7 +92,7 @@ public class FPS : NetworkBehaviour
     public bool canWallrun = true;
     public bool isWallrunning = false;
 
-    void Start()
+    void Awake()
     {
         uiCanvas = transform.Find("Canvas").GetComponent<Canvas>();
 
