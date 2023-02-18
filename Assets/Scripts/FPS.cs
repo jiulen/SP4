@@ -254,7 +254,7 @@ public class FPS : NetworkBehaviour
 
         
 
-        camera.transform.position = transform.position;
+        camera.transform.position = head.transform.position;
         Sniper sniper = transform.parent.GetComponentInChildren<Sniper>();
         if (sniper != null && sniper.Scoped.enabled)
         {
