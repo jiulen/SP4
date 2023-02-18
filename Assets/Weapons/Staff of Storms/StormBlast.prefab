@@ -128,6 +128,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 0
   duration: 1
+  upperExplosionRadius: 10
+  innerExplosionRadius: 1
+  explosionForce: 2000
+  verticalExplosionForce: 200
 --- !u!1 &7370315941263411732
 GameObject:
   m_ObjectHideFlags: 0

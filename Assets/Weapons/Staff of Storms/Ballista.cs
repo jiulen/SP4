@@ -25,13 +25,19 @@ public class Ballista : WeaponBase
     {
         if (CheckCanFire(1))
         {
-            Ray laserRayCast = new Ray(camera.transform.position, camera.transform.forward);
+            Ray laserRayCast = new Ray(camera.transform.position + camera.transform.forward * 0.5f, camera.transform.forward);
             GameObject laser = Instantiate(ballistaLaserPF, projectileManager.transform);
             BallistaLaser laserScript = laser.GetComponent<BallistaLaser>();
+            
             if (Physics.Raycast(laserRayCast, out RaycastHit hit, 1000))
             {
+                
                 Vector3 direction = hit.point - bulletEmitter.transform.position;
                 laserScript.InitParticleSystem(bulletEmitter.transform.position, direction, hit.distance);
+                if(hit.collider.transform.tag == "PlayerHitBox")
+                {
+
+                }
             }
             else
             {
@@ -47,7 +53,7 @@ public class Ballista : WeaponBase
             Vector3 knockBackDirection = camera.transform.forward;
             knockBackDirection.y = 0;
             knockBackDirection.Normalize();
-            playerOwner.GetComponent<Rigidbody>().AddForce(-knockBackDirection * fire1KnockbackForce);
+            owner.GetComponent<Rigidbody>().AddForce(-knockBackDirection * fire1KnockbackForce);
         }
 
     }
@@ -61,7 +67,7 @@ public class Ballista : WeaponBase
             Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
             blast.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[1];
             blast.transform.SetParent(projectileManager.transform);
-            blast.GetComponent<StormBlast>().SetCreator(playerOwner);
+            blast.GetComponent<StormBlast>().SetCreator(owner);
             fireAudio.Play();
         }
     }

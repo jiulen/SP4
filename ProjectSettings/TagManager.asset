@@ -7,6 +7,7 @@ TagManager:
   - Bullet
   - Collectibles
   - Crates
+  - PlayerHitBox
   layers:
   - Default
   - TransparentFX
@@ -16,7 +17,7 @@ TagManager:
   - UI
   - Bullet
   - Terrain
-  - PlayerBody
+  - PlayerHitBox
   - 
   - 
   - 
@@ -43,4 +44,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: New Layer
+    uniqueID: 3368545009
     locked: 0

@@ -633,13 +633,15 @@ MonoBehaviour:
   - 10
   projectileVel:
   - -1
-  - 10
+  - 50
   WeaponIcon: {fileID: 21300000, guid: eb16de1480696f042aa8ded8cb07d8a9, type: 3}
   DICKDistance: 3
   currentRotate: 0
   numPortals: 5
   steamRate: 20
   SCATBulletPF: {fileID: 4136986527977053402, guid: 7fe315266963d914284057486c11b524, type: 3}
+  bloodEffect: {fileID: 2305821162208844719, guid: 042f5cddfa0450d45b346081207b21bf, type: 3}
+  sparkEffect: {fileID: 2907902898773258639, guid: 7b77a91ec9a07a2468091790b6471b8e, type: 3}
 --- !u!1 &4111673377979742001
 GameObject:
   m_ObjectHideFlags: 0

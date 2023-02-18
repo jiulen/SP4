@@ -62,7 +62,7 @@ public class RPG : WeaponBase
             Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
             GameObject go = Instantiate(Rocket, bulletEmitter.transform);
             go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[1] * PowerCurrentScale;
-            Rocket.GetComponent<Rocket>().SetCreator(playerOwner);
+            Rocket.GetComponent<Rocket>().SetCreator(owner);
             go.transform.SetParent(projectileManager.transform);
             PowerCurrentScale = 1;
             fireAudio.Play();

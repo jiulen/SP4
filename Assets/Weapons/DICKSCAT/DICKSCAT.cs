@@ -30,7 +30,10 @@ public class DICKSCAT : WeaponBase
     GameObject portal1;
     GameObject DICKFocalPoint;
     GameObject bulletEmitterFront;
- 
+
+    public GameObject bloodEffect;
+    public GameObject sparkEffect;
+
     Slider steamGauge;
     TMP_Text modeText;
    
@@ -150,6 +153,7 @@ public class DICKSCAT : WeaponBase
                     {
                         Transform newTransform = camera.transform;
                         GameObject bullet = Instantiate(SCATBulletPF, bulletEmitter.transform);
+                        bullet.GetComponent<ProjectileBase>().SetProjectileManager(projectileManager);
                         Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
                         bullet.GetComponent<Rigidbody>().velocity = RandomSpray(front.normalized, inaccuracy[1]) * projectileVel[1];
                         bullet.transform.SetParent(projectileManager.transform);
@@ -212,8 +216,10 @@ public class DICKSCAT : WeaponBase
             }
             else
             {
-                laserLine.SetPosition(1, child.transform.position + (DICKFocalPoint.transform.position - child.transform.position) * 50);
-
+                //laserLine.SetPosition(1, child.transform.position + (DICKFocalPoint.transform.position - child.transform.position) * 50);
+                //GameObject effect = Instantiate(sparkEffect, particleManager.transform);
+                //Debug.Log(hit.transform.position);
+                //effect.transform.position = hit.transform.position;
             }
             //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         }

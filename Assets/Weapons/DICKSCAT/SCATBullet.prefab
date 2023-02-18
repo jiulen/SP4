@@ -50,6 +50,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 0
   duration: 10
+  bloodEffect: {fileID: 2305821162208844719, guid: 042f5cddfa0450d45b346081207b21bf, type: 3}
+  sparkEffect: {fileID: 2907902898773258639, guid: 7b77a91ec9a07a2468091790b6471b8e, type: 3}
 --- !u!33 &7827696258362912458
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -107,7 +109,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4136986527977053402}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5

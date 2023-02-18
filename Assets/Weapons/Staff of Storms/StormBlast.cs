@@ -31,9 +31,8 @@ public class StormBlast : ProjectileBase
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject == creator)
+        if (CheckIfCreator(other.gameObject))
             return;
-
         foreach (Transform child in playerManager.transform)
         {
             Vector3 difference = child.transform.position - transform.position;

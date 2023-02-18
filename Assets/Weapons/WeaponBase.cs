@@ -19,9 +19,10 @@ public class WeaponBase : MonoBehaviour
     protected AudioSource fireAudio;
     protected Camera camera;
     protected GameObject projectileManager;
+    protected GameObject particleManager;
     protected GameObject bulletEmitter;
     public Sprite WeaponIcon;
-    protected GameObject playerOwner;
+    protected GameObject owner;
     private bool isLeftClickDown = false, isRightClickDown = false;
 
     public void Start()
@@ -37,9 +38,10 @@ public class WeaponBase : MonoBehaviour
             camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         fireAudio = GameObject.Find("SampleFire").GetComponent<AudioSource>();
         projectileManager = GameObject.Find("Projectile Manager");
+        particleManager = GameObject.Find("Particle Manager");
         bulletEmitter = GameObject.Find("Bullet emitter");
         //playerOwner = transform.parent.transform.parent.Find("Player Entity").gameObject;
-        playerOwner = transform.parent.transform.parent.gameObject;
+        owner = transform.parent.transform.parent.gameObject;
 
     }
 
@@ -152,6 +154,23 @@ public class WeaponBase : MonoBehaviour
         }
         return false;
     }
+
+    // Checks if a hitscan collision with a hitbox that belongs to a player, and returns true if player is same as the weapon that did the hitscan
+    //public bool CheckIfCreator(GameObject other)
+    //{
+    //    Debug.LogError("HIT" + other.transform.name);
+
+    //    if (other.tag == "PlayerHitBox")
+    //    {
+    //        GameObject hitBoxOwner = other.GetComponent<PlayerHitBox>().owner;
+
+    //        if (hitBoxOwner == owner)
+    //            return true;
+    //        return false;
+    //    }
+    //    return false;
+    //}
+
 
     //public void UpdateWeaponBase()
     //{
