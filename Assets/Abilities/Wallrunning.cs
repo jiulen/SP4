@@ -34,8 +34,8 @@ public class Wallrunning : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        playerBody = transform.Find("Head/Body pivot").GetChild(0);
         playerFPSScript = GetComponent<FPS>();
+        playerBody = transform.Find("Head/Body pivot").GetChild(0);
         playerCamera = GameObject.Find("Main Camera").GetComponent<Camera>(); //might change to use a game object else to determine orientation
 
         terrain = 1 << LayerMask.NameToLayer("Terrain");
@@ -51,16 +51,6 @@ public class Wallrunning : MonoBehaviour
         }        
     }
 
-    private void OnDrawGizmos()
-    {
-        if (playerCamera)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawRay(playerBody.position, playerCamera.transform.right * wallCheckDist);
-            Gizmos.DrawRay(playerBody.position, -playerCamera.transform.right * wallCheckDist);
-        }
-    }
-
     private void FixedUpdate()
     {
         if (playerFPSScript.isWallrunning)
@@ -69,8 +59,8 @@ public class Wallrunning : MonoBehaviour
 
     void CheckForWall()
     {
-        wallRight = Physics.Raycast(playerBody.position, playerCamera.transform.right, out rightWallHit, wallCheckDist, terrain);
-        wallLeft = Physics.Raycast(playerBody.position, -playerCamera.transform.right, out leftWallHit, wallCheckDist, terrain);
+        wallRight = Physics.Raycast(playerBody.position, playerBody.transform.right, out rightWallHit, wallCheckDist, terrain);
+        wallLeft = Physics.Raycast(playerBody.position, -playerBody.transform.right, out leftWallHit, wallCheckDist, terrain);
     }
 
     bool CheckAboveGround()
