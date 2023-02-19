@@ -49,7 +49,7 @@ public class ProjectileBase : MonoBehaviour
     // Checks if a collision with a hitbox that belongs to a player, and returns true if player is same as the one who created that projectile
     public bool CheckIfCreator(GameObject other)
     {
-        Debug.LogError("HIT" + other.transform.name);
+        //Debug.LogError("HIT" + other.transform.name);
 
         if (other.tag == "PlayerHitBox")
         {
@@ -62,7 +62,7 @@ public class ProjectileBase : MonoBehaviour
         return false;
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected void OnTriggerEnter(Collider other)
     {
         Vector3 vel = this.GetComponent<Rigidbody>().velocity;
         debugOnTriggerBackwardsPosition = this.transform.position - vel.normalized * 1;

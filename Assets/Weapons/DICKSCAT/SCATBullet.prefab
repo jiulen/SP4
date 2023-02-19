@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 451486800284940350}
-  - component: {fileID: -6227796767925812221}
+  - component: {fileID: -3670300912090566876}
   - component: {fileID: 7827696258362912458}
   - component: {fileID: 6431610993829450511}
   - component: {fileID: 6500111037245834352}
@@ -36,7 +36,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-6227796767925812221
+--- !u!114 &-3670300912090566876
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,11 +45,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4136986527977053402}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1efc50c7797922a49ac255ef2c62e777, type: 3}
+  m_Script: {fileID: 11500000, guid: 0bde95fcc467ce54890f0e51e63b63e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 0
-  duration: 10
+  duration: 1
   bloodEffect: {fileID: 2305821162208844719, guid: 042f5cddfa0450d45b346081207b21bf, type: 3}
   sparkEffect: {fileID: 2907902898773258639, guid: 7b77a91ec9a07a2468091790b6471b8e, type: 3}
 --- !u!33 &7827696258362912458
