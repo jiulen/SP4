@@ -198,20 +198,22 @@ public class WeaponBase : MonoBehaviour
     public static Vector3 RandomSpray(Vector3 front, float maxInnacuracy, float bloomProgress, float bloomMax)
     {
         float newMaxInaccuracy = maxInnacuracy * (bloomProgress / bloomMax);
-        float randomAngle = Random.Range(-newMaxInaccuracy / 2, newMaxInaccuracy / 2);
-        Vector3 finalVector = Quaternion.AngleAxis(randomAngle, Vector3.right) * front;
-        randomAngle = Random.Range(-newMaxInaccuracy / 2, newMaxInaccuracy / 2);
+        float randomPitch = Random.Range(-newMaxInaccuracy / 2, newMaxInaccuracy / 2);
+        float randomYaw = Random.Range(-newMaxInaccuracy / 2, newMaxInaccuracy / 2);
+        Quaternion pitchYawAdjustment = Quaternion.Euler(randomPitch, randomYaw, 0);
+        Vector3 finalVector = pitchYawAdjustment * front;
 
-        return Quaternion.AngleAxis(randomAngle, Vector3.up) * finalVector;
+        return finalVector.normalized;
     }
 
     public static Vector3 RandomSpray(Vector3 front, float maxInnacuracy)
     {
-        float randomAngle = Random.Range(-maxInnacuracy / 2, maxInnacuracy / 2);
-        Vector3 finalVector = Quaternion.AngleAxis(randomAngle, Vector3.right) * front;
-        randomAngle = Random.Range(-maxInnacuracy / 2, maxInnacuracy / 2);
+        float randomPitch = Random.Range(-maxInnacuracy / 2, maxInnacuracy / 2);
+        float randomYaw = Random.Range(-maxInnacuracy / 2, maxInnacuracy / 2);
+        Quaternion pitchYawAdjustment = Quaternion.Euler(randomPitch, randomYaw, 0);
+        Vector3 finalVector = pitchYawAdjustment * front;
 
-        return Quaternion.AngleAxis(randomAngle, Vector3.up) * finalVector;
+        return finalVector.normalized;
     }
 
 }
