@@ -9,8 +9,9 @@ public class PlayerEntity : EntityBase
     private int currentIdx;
     public Image CurrentWeaponIcon;
     public Image DamageIndicator;
-    public GameObject DamageUIManager;
-    public Image Injured;
+    public GameObject CameraEffectsUIManager;
+    public Image Injured, BloodEffect;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -61,7 +62,9 @@ public class PlayerEntity : EntityBase
     {
         Image dmgImg = Instantiate(DamageIndicator) as Image;
         dmgImg.GetComponentInChildren<DamageIndicator>().SetSourcePos(dir);
-        dmgImg.transform.SetParent(DamageUIManager.transform, false);
+        dmgImg.transform.SetParent(CameraEffectsUIManager.transform, false);
+
+        BloodEffect.GetComponent<BloodEffects>().ResetStartDuration();
 
         SetHealth(GetHealth() - hp);
 
