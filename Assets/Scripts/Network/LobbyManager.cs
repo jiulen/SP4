@@ -46,8 +46,8 @@ public class LobbyManager : NetworkBehaviour {
         }
     }
     public enum GameMode {
-        CaptureTheFlag,
-        Conquest
+        DUEL,
+        FFA
     }
 
     public enum PlayerCharacter {
@@ -184,11 +184,11 @@ public class LobbyManager : NetworkBehaviour {
 
             switch (gameMode) {
                 default:
-                case GameMode.CaptureTheFlag:
-                    gameMode = GameMode.Conquest;
+                case GameMode.DUEL:
+                    gameMode = GameMode.FFA;
                     break;
-                case GameMode.Conquest:
-                    gameMode = GameMode.CaptureTheFlag;
+                case GameMode.FFA:
+                    gameMode = GameMode.DUEL;
                     break;
             }
 
