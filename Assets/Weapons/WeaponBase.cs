@@ -35,7 +35,7 @@ public class WeaponBase : MonoBehaviour
             elapsedSinceLastShot[i] = 0;
             elapsedBetweenEachShot[i] = 1 / fireRate[i];
         }
-            camera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         fireAudio = GameObject.Find("SampleFire").GetComponent<AudioSource>();
         projectileManager = GameObject.Find("Projectile Manager");
         particleManager = GameObject.Find("Particle Manager");
