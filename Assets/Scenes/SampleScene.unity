@@ -527,7 +527,7 @@ GameObject:
   - component: {fileID: 574019142}
   - component: {fileID: 574019141}
   - component: {fileID: 574019140}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -825,6 +825,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1550782216}
     m_Modifications:
     - target: {fileID: 464341549499799659, guid: b81b0b0421e7b8a4bb256c2aed46551e, type: 3}
+      propertyPath: fireRate.Array.data[1]
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 464341549499799659, guid: b81b0b0421e7b8a4bb256c2aed46551e, type: 3}
       propertyPath: inaccuracy.Array.data[1]
       value: 10
       objectReference: {fileID: 0}
@@ -1072,7 +1076,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2254604634308537280, guid: 2232980f7eea36f4c91e13178d2bd301, type: 3}
       propertyPath: grapplePullForce
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4958376354580128602, guid: 2232980f7eea36f4c91e13178d2bd301, type: 3}
       propertyPath: m_Parameters.textureMode
@@ -1609,7 +1613,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 183
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0

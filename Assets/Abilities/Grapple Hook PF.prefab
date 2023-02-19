@@ -128,8 +128,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 0}
-  grappleDuration: 2
-  grapplePullForce: 5
+  grappleDuration: 5
+  grapplePullForce: 10
   grappleMaintainDuration: 0.2
 --- !u!1 &1526777876906096453
 GameObject:
