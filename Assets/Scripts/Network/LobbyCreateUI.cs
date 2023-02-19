@@ -69,11 +69,11 @@ public class LobbyCreateUI : MonoBehaviour {
         gameModeButton.onClick.AddListener(() => {
             switch (gameMode) {
                 default:
-                case LobbyManager.GameMode.CaptureTheFlag:
-                    gameMode = LobbyManager.GameMode.Conquest;
+                case LobbyManager.GameMode.DUEL:
+                    gameMode = LobbyManager.GameMode.FFA;
                     break;
-                case LobbyManager.GameMode.Conquest:
-                    gameMode = LobbyManager.GameMode.CaptureTheFlag;
+                case LobbyManager.GameMode.FFA:
+                    gameMode = LobbyManager.GameMode.DUEL;
                     break;
             }
             UpdateText();
@@ -99,7 +99,7 @@ public class LobbyCreateUI : MonoBehaviour {
         lobbyName = "MyLobby";
         isPrivate = false;
         maxPlayers = 4;
-        gameMode = LobbyManager.GameMode.CaptureTheFlag;
+        gameMode = LobbyManager.GameMode.DUEL;
 
         UpdateText();
     }
