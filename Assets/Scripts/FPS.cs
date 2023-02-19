@@ -292,11 +292,11 @@ public class FPS : NetworkBehaviour
         headPivot.transform.localRotation = Quaternion.Euler(-pitch, 0, 0); //rotate body to reverse head rotation
 
         camera.transform.position = head.transform.position;
-        Sniper sniper = transform.GetComponent<Sniper>();
-        if (sniper != null && sniper.Scoped.enabled)
-        {
-            camera.transform.position += camera.transform.up * (Mathf.Sin(sniper.stablizeElasped * 2) / 2) * 0.4f + camera.transform.right * Mathf.Cos(sniper.stablizeElasped) * 0.4f;
-        }
+        //Sniper sniper = transform.GetComponent<Sniper>();
+        //if (sniper != null && sniper.Scoped.enabled)
+        //{
+        //    camera.transform.position += camera.transform.up * (Mathf.Sin(sniper.stablizeElasped * 2) / 2) * 0.4f + camera.transform.right * Mathf.Cos(sniper.stablizeElasped) * 0.4f;
+        //}
         if (canTeleport) UpdateTeleport();
 
         currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
