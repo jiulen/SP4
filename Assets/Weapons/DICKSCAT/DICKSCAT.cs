@@ -53,11 +53,11 @@ public class DICKSCAT : WeaponBase
         modeText = GameObject.Find("UI canvas/Mode text").GetComponent<TMP_Text>();
 
         // Set camera for canvas
-        GameObject.Find("UI canvas").GetComponent<Canvas>().worldCamera = camera;
-        GameObject.Find("UI canvas").GetComponent<Canvas>().planeDistance = 0.5f;
+        transform.Find("UI canvas").GetComponent<Canvas>().worldCamera = camera;
+        transform.Find("UI canvas").GetComponent<Canvas>().planeDistance = 0.5f;
 
    
-     
+
 
         Debug.Log(DICKFocalPoint);
         for(int i = 0; i != numPortals; i++)
@@ -121,6 +121,10 @@ public class DICKSCAT : WeaponBase
         base.Update();
 
         steamGauge.value = steamCurrent;
+
+        bloomProgress -= 200 * Time.deltaTime;
+        if (bloomProgress < 0)
+            bloomProgress = 0;
     }
 
     override protected void Fire1()
@@ -151,13 +155,18 @@ public class DICKSCAT : WeaponBase
                     }
                     if (CheckCanFire(2))
                     {
+                     
                         Transform newTransform = camera.transform;
                         GameObject bullet = Instantiate(SCATBulletPF, bulletEmitter.transform);
                         bullet.GetComponent<ProjectileBase>().SetProjectileManager(projectileManager);
                         Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
-                        bullet.GetComponent<Rigidbody>().velocity = RandomSpray(front.normalized, inaccuracy[1]) * projectileVel[1];
+                        bullet.GetComponent<Rigidbody>().velocity = RandomSpray(front.normalized, inaccuracy[1], bloomProgress, bloomMax) * projectileVel[1];
                         bullet.transform.SetParent(projectileManager.transform);
                         fireAudio.Play();
+
+                        bloomProgress += 400 * (float)elapsedBetweenEachShot[1];
+                        if (bloomProgress > bloomMax)
+                            bloomProgress = bloomMax;
                     }
                     break;
                 }

@@ -16,11 +16,16 @@ public class WeaponBase : MonoBehaviour
     protected double[] elapsedSinceLastShot;
     protected double[] elapsedBetweenEachShot;
 
+    protected float bloomProgress = 0;
+    protected float bloomMax = 100;
+
     protected AudioSource fireAudio;
     protected Camera camera;
     protected GameObject projectileManager;
     protected GameObject particleManager;
     protected GameObject bulletEmitter;
+    protected GameObject weaponModel;
+    protected Vector3 saveStartingWeaponPosition;
     public Sprite WeaponIcon;
     protected GameObject owner;
     private bool isLeftClickDown = false, isRightClickDown = false;
@@ -43,6 +48,8 @@ public class WeaponBase : MonoBehaviour
         //playerOwner = transform.parent.transform.parent.Find("Player Entity").gameObject;
         owner = transform.parent.transform.parent.gameObject;
 
+        weaponModel = transform.Find("Gun").gameObject;
+        saveStartingWeaponPosition = weaponModel.transform.localPosition;
     }
 
     // Update is called once per frame
@@ -57,11 +64,15 @@ public class WeaponBase : MonoBehaviour
         {
             Fire1();
         }
+        else
+            NotFire1();
 
         if (Input.GetButton("Fire2"))
         {
             Fire2();
         }
+        else
+            NotFire2();
 
         if (Input.GetButtonDown("Fire1"))
         {
@@ -103,6 +114,8 @@ public class WeaponBase : MonoBehaviour
             Fire2UpOnce();
             isRightClickDown = false;
         }
+
+    
     }
 
     protected virtual void Fire1()
@@ -114,34 +127,15 @@ public class WeaponBase : MonoBehaviour
     {
 
     }
+    protected virtual void NotFire1() { }
+    protected virtual void NotFire2() { }
+    protected virtual void Fire1Once() { }
+    protected virtual void Fire1UpOnce() { }
+    protected virtual void Fire2UpOnce() { }
+    protected virtual void Fire1Up() { }
+    protected virtual void Fire2Up() { }
+    protected virtual void Fire2Once() { }
 
-    protected virtual void Fire1Once()
-    {
-
-    }
-
-    protected virtual void Fire1UpOnce()
-    {
-
-    }
-    protected virtual void Fire2UpOnce()
-    {
-
-    }
-
-    protected virtual void Fire1Up()
-    {
-
-    }
-    protected virtual void Fire2Up()
-    {
-
-    }
-
-    protected virtual void Fire2Once()
-    {
-
-    }
 
     // Returns true and resets elapsedSinceLastShot if can be fired. Parameter chooses for which weapon fire
     protected bool CheckCanFire(int i)
@@ -201,6 +195,16 @@ public class WeaponBase : MonoBehaviour
 
     //    Equipped = false;
     //}
+    public static Vector3 RandomSpray(Vector3 front, float maxInnacuracy, float bloomProgress, float bloomMax)
+    {
+        float newMaxInaccuracy = maxInnacuracy * (bloomProgress / bloomMax);
+        float randomAngle = Random.Range(-newMaxInaccuracy / 2, newMaxInaccuracy / 2);
+        Vector3 finalVector = Quaternion.AngleAxis(randomAngle, Vector3.right) * front;
+        randomAngle = Random.Range(-newMaxInaccuracy / 2, newMaxInaccuracy / 2);
+
+        return Quaternion.AngleAxis(randomAngle, Vector3.up) * finalVector;
+    }
+
     public static Vector3 RandomSpray(Vector3 front, float maxInnacuracy)
     {
         float randomAngle = Random.Range(-maxInnacuracy / 2, maxInnacuracy / 2);

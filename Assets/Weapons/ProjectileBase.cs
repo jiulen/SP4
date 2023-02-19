@@ -73,9 +73,15 @@ public class ProjectileBase : MonoBehaviour
             effect.transform.position = hit.point;
             //Debug.LogError(DebugSavePosition);
             effect.transform.rotation = Quaternion.LookRotation(hit.normal);
+
+            //float dotProduct = Vector3.Dot(vel, hit.normal);
+            //Vector3 reflectionVector = 2 * dotProduct * hit.normal;
+            //Vector3 reflectedVector = vel - reflectionVector;
+            //this.GetComponent<Rigidbody>().velocity = reflectedVector.normalized * this.GetComponent<Rigidbody>().velocity.magnitude;
         }
-        this.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
-        this.GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
+
+        //this.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+        //this.GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
 
         Destroy(gameObject);
 
