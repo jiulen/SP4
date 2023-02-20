@@ -126,7 +126,7 @@ public class FPS : NetworkBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("Scene Loaded : " + scene.name);
-        if (scene.name == "Game")
+        if (scene.name == "Parallel_Pillars")
         {
             Init();
         }
