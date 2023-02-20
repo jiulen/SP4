@@ -13,9 +13,10 @@ public class DICKSCAT : WeaponBase
     }
 
     public float DICKDistance = 1;
-    
-    public float currentRotate = 0;
-    public int numPortals =5;
+
+    // Starting angle of 0 is Vec2(1, 0), starting angle of 45 is Vec2(0.5, 0.5)
+    public float portalStartingAngle = 45;
+    public int numPortals =4;
 
     private bool portalsActive = false;
     private float steamMax = 100;
@@ -44,6 +45,8 @@ public class DICKSCAT : WeaponBase
     void Start()
     {
         base.Start();
+        fireAnimation = weaponModel.transform.Find("M2").GetComponent<Animator>();
+        fireAnimation.speed = 1/ (float)elapsedBetweenEachShot[1];
 
         portalParent = GameObject.Find("Portal Parent");
         portal1 = GameObject.Find("Portal Parent/Portal");
@@ -59,11 +62,11 @@ public class DICKSCAT : WeaponBase
 
         muzzleFlashLight = muzzleFlash.transform.Find("Light").GetComponent<ParticleSystem>();
 
-        Debug.Log(DICKFocalPoint);
-        for(int i = 0; i != numPortals; i++)
-        {
+        float arc = 180 + portalStartingAngle * 2;
 
-            float angle = (180 / (numPortals - 1)) * i;
+        for (int i = 0; i != numPortals; i++)
+        {
+            float angle = portalStartingAngle + (arc / (numPortals - 1)) * i;
             float portalDistance = 1;
             Vector2 vec2 = MyMath.DegreeToVector2(angle);
             Vector3 vec3 = new Vector3(vec2.x, vec2.y, 0);
@@ -122,9 +125,11 @@ public class DICKSCAT : WeaponBase
 
         steamGauge.value = steamCurrent;
 
-        bloomProgress -= 200 * Time.deltaTime;
+        bloomProgress -= 100 * Time.deltaTime;
         if (bloomProgress < 0)
             bloomProgress = 0;
+
+       
     }
 
     override protected void Fire1()
@@ -155,9 +160,13 @@ public class DICKSCAT : WeaponBase
                     }
                     if (CheckCanFire(2))
                     {
+                        fireAnimation.enabled = true;
+
+                        fireAnimation.Play("Fire Weapon");
 
                         muzzleFlash.GetComponent<ParticleSystem>().Stop();
                         muzzleFlash.GetComponent<ParticleSystem>().Play();
+
                         //muzzleFlashLight
 
                         Transform newTransform = camera.transform;
@@ -168,7 +177,7 @@ public class DICKSCAT : WeaponBase
                         bullet.transform.SetParent(projectileManager.transform);
                         fireAudio.Play();
 
-                        bloomProgress += 400 * (float)elapsedBetweenEachShot[1];
+                        bloomProgress += 200 * (float)elapsedBetweenEachShot[1];
                         if (bloomProgress > bloomMax)
                             bloomProgress = bloomMax;
                     }
@@ -177,9 +186,24 @@ public class DICKSCAT : WeaponBase
         }
     }
 
+    override protected void Fire1Up()
+    {
+        if (CheckCanFire(2))
+        {
+            fireAnimation.enabled = false;
+        }
+    }
+
     override protected void Fire2()
     {
-        
+     
+    }
+
+    override protected void Fire1Once()
+    {
+        Debug.LogError("SEx");
+        //fireAnimation.Play("Fire Weapon");
+        fireAnimation.enabled = false;
     }
 
     override protected void Fire2Once()

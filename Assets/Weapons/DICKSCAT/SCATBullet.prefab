@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 4136986527977053402}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 0
-  duration: 1
+  duration: 5
   bloodEffect: {fileID: 2305821162208844719, guid: 042f5cddfa0450d45b346081207b21bf, type: 3}
   sparkEffect: {fileID: 2907902898773258639, guid: 7b77a91ec9a07a2468091790b6471b8e, type: 3}
 --- !u!33 &7827696258362912458
@@ -174,7 +174,7 @@ TrailRenderer:
   m_Time: 0.2
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.02
+    widthMultiplier: 0.05
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -183,6 +183,15 @@ TrailRenderer:
         value: 1
         inSlope: 0
         outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.22189373
+        value: 1
+        inSlope: -1.4921005
+        outSlope: -1.4921005
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334

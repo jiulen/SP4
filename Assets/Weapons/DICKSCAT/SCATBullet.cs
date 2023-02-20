@@ -11,7 +11,7 @@ public class SCATBullet : ProjectileBase
 
     void Update()
     {
-        
+        base.Update();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -24,7 +24,7 @@ public class SCATBullet : ProjectileBase
         Ray laserRayCast = new Ray(debugOnTriggerBackwardsPosition, vel);
         if (Physics.Raycast(laserRayCast, out RaycastHit hit, 1))
         {
-            Debug.LogError(hit.collider.name);
+            //Debug.LogError(hit.collider.name);
             GameObject effect;
             if (hit.collider.tag == "PlayerHitBox")
             {

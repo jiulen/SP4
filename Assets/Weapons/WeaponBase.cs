@@ -31,6 +31,7 @@ public class WeaponBase : MonoBehaviour
     private bool isLeftClickDown = false, isRightClickDown = false;
 
     protected ParticleSystem muzzleFlash;
+    protected Animator fireAnimation;
 
     public void Start()
     {
