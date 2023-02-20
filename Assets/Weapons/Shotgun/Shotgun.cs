@@ -41,9 +41,8 @@ public class Shotgun : WeaponBase
 
                     //Do bullet tracer (if hit)
                     trail = Instantiate(bulletTrail, bulletEmitter.transform.position, Quaternion.identity);
-
                     //Spawn bullet tracer
-                    StartCoroutine(SpawnTrail(trail, hit.point, hit.normal, true));
+                    StartCoroutine(SpawnTrail(trail, hit.point, hit.normal, hit.collider, true));
                 }
                 else
                 {
@@ -51,7 +50,7 @@ public class Shotgun : WeaponBase
                     trail = Instantiate(bulletTrail, bulletEmitter.transform.position, Quaternion.identity);
 
                     //Spawn bullet tracer
-                    StartCoroutine(SpawnTrail(trail, bulletEmitter.transform.position + bulletDir * 200, Vector3.zero, false));
+                    StartCoroutine(SpawnTrail(trail, bulletEmitter.transform.position + bulletDir * 200, Vector3.zero, null, false));
                 }
             }
             //shootingSystem.Play();
@@ -59,7 +58,7 @@ public class Shotgun : WeaponBase
         }
     }
 
-    IEnumerator SpawnTrail(TrailRenderer trail, Vector3 hitPoint, Vector3 hitNormal, bool madeImpact)
+    IEnumerator SpawnTrail(TrailRenderer trail, Vector3 hitPoint, Vector3 hitNormal, Collider hitCollider, bool madeImpact)
     {
         Vector3 startPos = trail.transform.position;
 
@@ -76,9 +75,8 @@ public class Shotgun : WeaponBase
 
         trail.transform.position = hitPoint;
 
-        if (madeImpact)
+        if (madeImpact && hitCollider)
         {
-            //Instantiate(impactParticleSystem, hitPoint, Quaternion.LookRotation(hitNormal));
         }
 
         Destroy(trail.gameObject, trail.time);
