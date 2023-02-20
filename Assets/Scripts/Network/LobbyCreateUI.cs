@@ -15,16 +15,19 @@ public class LobbyCreateUI : MonoBehaviour {
     [SerializeField] private Button publicPrivateButton;
     [SerializeField] private Button maxPlayersButton;
     [SerializeField] private Button gameModeButton;
+    [SerializeField] private Button mapSelectButton;
     [SerializeField] private TextMeshProUGUI lobbyNameText;
     [SerializeField] private TextMeshProUGUI publicPrivateText;
     [SerializeField] private TextMeshProUGUI maxPlayersText;
     [SerializeField] private TextMeshProUGUI gameModeText;
+    [SerializeField] private TextMeshProUGUI mapSelectText;
 
 
     private string lobbyName;
     private bool isPrivate;
     private int maxPlayers;
     private LobbyManager.GameMode gameMode;
+    private LobbyManager.MapSelect mapSelect;
 
     private void Awake() {
         Instance = this;
@@ -34,7 +37,8 @@ public class LobbyCreateUI : MonoBehaviour {
                 lobbyName,
                 maxPlayers,
                 isPrivate,
-                gameMode
+                gameMode,
+                mapSelect
             );
             Hide();
         });
@@ -79,6 +83,20 @@ public class LobbyCreateUI : MonoBehaviour {
             UpdateText();
         });
 
+        mapSelectButton.onClick.AddListener(() => {
+            switch (mapSelect)
+            {
+                default:
+                case LobbyManager.MapSelect.Parallel_Pillars:
+                    mapSelect = LobbyManager.MapSelect.Placeholder;
+                    break;
+                case LobbyManager.MapSelect.Placeholder:
+                    mapSelect = LobbyManager.MapSelect.Parallel_Pillars;
+                    break;
+            }
+            UpdateText();
+        });
+
         Hide();
     }
 
@@ -87,6 +105,7 @@ public class LobbyCreateUI : MonoBehaviour {
         publicPrivateText.text = isPrivate ? "Private" : "Public";
         maxPlayersText.text = maxPlayers.ToString();
         gameModeText.text = gameMode.ToString();
+        mapSelectText.text = mapSelect.ToString();
     }
 
     private void Hide() {
@@ -100,6 +119,7 @@ public class LobbyCreateUI : MonoBehaviour {
         isPrivate = false;
         maxPlayers = 4;
         gameMode = LobbyManager.GameMode.DUEL;
+        mapSelect = LobbyManager.MapSelect.Parallel_Pillars;
 
         UpdateText();
     }

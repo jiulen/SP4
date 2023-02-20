@@ -18,6 +18,7 @@ public class LobbyManager : NetworkBehaviour {
     public const string KEY_PLAYER_NAME = "PlayerName";
     public const string KEY_PLAYER_CHARACTER = "Character";
     public const string KEY_GAME_MODE = "GameMode";
+    public const string KEY_MAP_SELECT = "Map";
     public const string KEY_START_GAME = "0";
 
 
@@ -28,6 +29,7 @@ public class LobbyManager : NetworkBehaviour {
     public event EventHandler<LobbyEventArgs> OnJoinedLobbyUpdate;
     public event EventHandler<LobbyEventArgs> OnKickedFromLobby;
     public event EventHandler<LobbyEventArgs> OnLobbyGameModeChanged;
+    public event EventHandler<LobbyEventArgs> OnLobbyMapChanged;
     public event EventHandler<EventArgs> OnGameStarted;
     public class LobbyEventArgs : EventArgs {
         public Lobby lobby;
@@ -50,6 +52,11 @@ public class LobbyManager : NetworkBehaviour {
         FFA
     }
 
+    public enum MapSelect
+    {
+        Parallel_Pillars,
+        Placeholder
+    }
     public enum PlayerCharacter {
         Marine,
         Ninja,
@@ -196,7 +203,29 @@ public class LobbyManager : NetworkBehaviour {
         }
     }
 
-    public async void CreateLobby(string lobbyName, int maxPlayers, bool isPrivate, GameMode gameMode) {
+    public void ChangeMap()
+    {
+        if (IsLobbyHost())
+        {
+            MapSelect mapSelect =
+                EnumUtils.Parse<MapSelect>(joinedLobby.Data[KEY_MAP_SELECT].Value);
+
+            switch (mapSelect)
+            {
+                default:
+                case MapSelect.Parallel_Pillars:
+                    mapSelect = MapSelect.Placeholder;
+                    break;
+                case MapSelect.Placeholder:
+                    mapSelect = MapSelect.Parallel_Pillars;
+                    break;
+            }
+
+            UpdateLobbyMap(mapSelect);
+        }
+    }
+
+    public async void CreateLobby(string lobbyName, int maxPlayers, bool isPrivate, GameMode gameMode, MapSelect mapSelect) {
         Unity.Services.Lobbies.Models.Player player = GetPlayer();
 
         CreateLobbyOptions options = new CreateLobbyOptions {
@@ -204,6 +233,7 @@ public class LobbyManager : NetworkBehaviour {
             IsPrivate = isPrivate,
             Data = new Dictionary<string, DataObject> {
                 { KEY_GAME_MODE, new DataObject(DataObject.VisibilityOptions.Public, gameMode.ToString()) },
+                { KEY_MAP_SELECT, new DataObject(DataObject.VisibilityOptions.Public, mapSelect.ToString()) },
                 { KEY_START_GAME, new DataObject(DataObject.VisibilityOptions.Member, "0") }
             }
         };
@@ -374,6 +404,29 @@ public class LobbyManager : NetworkBehaviour {
         }
     }
 
+    public async void UpdateLobbyMap(MapSelect mapSelect)
+    {
+        try
+        {
+            Debug.Log("UpdateLobbyMap " + mapSelect);
+
+            Lobby lobby = await Lobbies.Instance.UpdateLobbyAsync(joinedLobby.Id, new UpdateLobbyOptions
+            {
+                Data = new Dictionary<string, DataObject> {
+                    { KEY_MAP_SELECT, new DataObject(DataObject.VisibilityOptions.Public, mapSelect.ToString()) }
+                }
+            });
+
+            joinedLobby = lobby;
+
+            OnLobbyMapChanged?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+        }
+        catch (LobbyServiceException e)
+        {
+            Debug.Log(e);
+        }
+    }
+
     public async void StartGame()
     {
         if(IsLobbyHost())
@@ -390,7 +443,7 @@ public class LobbyManager : NetworkBehaviour {
                     }
                 });
                 joinedLobby = lobby;
-                NetworkManager.SceneManager.LoadScene("Game", LoadSceneMode.Single);
+                NetworkManager.SceneManager.LoadScene(joinedLobby.Data[KEY_MAP_SELECT].Value, LoadSceneMode.Single);
             }
             catch (LobbyServiceException e)
             {
