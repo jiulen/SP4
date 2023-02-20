@@ -70,6 +70,14 @@ public class FPS : NetworkBehaviour
 
     private Transform currentEquipped;
 
+    //Dash
+    private bool forcedash = false;
+    public bool isDashing = false;
+    public void SetForcedash(bool force)
+    {
+        forcedash = force;
+    }
+
     enum Dash
     {
         NONE,
