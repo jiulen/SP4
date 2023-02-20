@@ -19,6 +19,7 @@ public class Teleport : MonoBehaviour
     LayerMask terrain;
 
     Transform playerHead;
+    Transform playerBody;
     FPS playerFPSScript;
 
     // Start is called before the first frame update
@@ -27,6 +28,7 @@ public class Teleport : MonoBehaviour
         tpMarker = Instantiate(tpMarkerPrefab);
         playerFPSScript = GetComponent<FPS>();
         playerHead = playerFPSScript.head.transform;
+        playerBody = playerFPSScript.body.transform;
 
         terrain = 1 << LayerMask.NameToLayer("Terrain");
     }
@@ -35,14 +37,17 @@ public class Teleport : MonoBehaviour
     void Update()
     {
         if (playerFPSScript.canTeleport)
-        {
-
             UpdateTeleport();
-        }
     }
 
     private void UpdateTeleport()
     {
+        if (Input.GetButtonDown("Fire2"))
+        {
+            teleportState = TeleportStates.NONE;
+            tpMarker.SetActive(false);
+        }
+        
         switch (teleportState)
         {
             case TeleportStates.NONE:
@@ -58,9 +63,17 @@ public class Teleport : MonoBehaviour
                 {
                     if (Physics.Raycast(playerHead.position, playerHead.forward, out RaycastHit raycastForwardHit, teleportDistance, terrain))
                     {
-                        if (Physics.Raycast(raycastForwardHit.point + new Vector3(0, 1.5f, 0), Vector3.down, out RaycastHit raycastDownHit, 3f, terrain))
+                        if (Physics.Raycast(raycastForwardHit.point + new Vector3(0, 2.5f, 0), Vector3.down, out RaycastHit raycastDownHit, 5f, terrain))
                         {
-                            tpMarker.transform.position = raycastDownHit.point + new Vector3(0, tpMarker.transform.localScale.y * 0.5f, 0);
+                            if (raycastForwardHit.point == raycastDownHit.point)
+                            {
+                                tpMarker.transform.position = raycastDownHit.point + new Vector3(0, tpMarker.transform.localScale.y * 0.5f, 0);
+                            }
+                            else
+                            {
+                                tpMarker.transform.position = raycastDownHit.point + new Vector3(0, tpMarker.transform.localScale.y * 0.5f, 0) + playerHead.forward * playerBody.localScale.x * 0.5f;
+                            }
+                            
                             tpMarker.SetActive(true);
                             if (Input.GetKeyDown(KeyCode.Alpha1))
                             {
