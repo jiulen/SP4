@@ -10,6 +10,7 @@ public class Rocket : ProjectileBase
     {
         explosion = GetComponent<Explosion>();
         explosion.damage = damage;
+        explosion.SetCreator(creator);
         base.Start();
     }
 

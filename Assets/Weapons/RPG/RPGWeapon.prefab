@@ -150,7 +150,7 @@ MonoBehaviour:
   fireRate:
   - -1
   - 2
-  damage: 
+  damage: 14000000
   bulletsPerShot: 
   inaccuracy: []
   projectileVel:

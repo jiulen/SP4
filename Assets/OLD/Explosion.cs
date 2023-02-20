@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public class Explosion : MonoBehaviour
+public class Explosion : ProjectileBase
 {
     private AudioSource explodeAudio;
     public AudioClip clip;
     public float radius, explosionForce;
-    public float damage;
+
     private void Start()
     {
         explodeAudio = GetComponent<AudioSource>();
@@ -21,8 +21,11 @@ public class Explosion : MonoBehaviour
             EntityBase entity = collider.gameObject.GetComponent<EntityBase>();
             if (entity != null)
             {
-                Vector3 dir = entity.transform.position - transform.position;
-                entity.TakeDamage(damage, dir);
+                //if (entity.gameObject != creator) // if the explosion is not the creator
+                //{
+                    Vector3 dir = entity.transform.position - transform.position;
+                    entity.TakeDamage(damage, dir);
+                //}
             }
         }
 
