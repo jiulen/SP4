@@ -7,7 +7,7 @@ public class SwordStatsInfo : MonoBehaviour
     private int damage;
 
     Sword sword;
-        private void Start()
+    private void Start()
     {
         sword = transform.parent.GetComponent<Sword>();
         damage = sword.damage[0];

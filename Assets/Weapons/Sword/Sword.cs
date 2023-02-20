@@ -1,3 +1,4 @@
+using Photon.Pun.Demo.Asteroids;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
@@ -35,20 +36,23 @@ public class Sword : WeaponBase
     {
         base.Update();
 
-        minStrength = animator.GetCurrentAnimatorStateInfo(0).length;
-        currentStrength = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
-
-        if ((AnimatorIsPlaying("Throw") && animator.GetBool("TrThrow")) || (AnimatorIsPlaying("Slash") && animator.GetBool("TrSlice")))
+        if (animator != null)
         {
-            animator.SetBool("TrHold", false);
-            animator.SetBool("TrThrow", false);
-            animator.SetBool("TrSlice", false);
-        }
+            minStrength = animator.GetCurrentAnimatorStateInfo(0).length;
+            currentStrength = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
 
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
-        {
-            transform.GetChild(0).localPosition = storeOGPosition;
-            transform.GetChild(0).localRotation = storeOGRotation;
+            if ((AnimatorIsPlaying("Throw") && animator.GetBool("TrThrow")) || (AnimatorIsPlaying("Slash") && animator.GetBool("TrSlice")))
+            {
+                animator.SetBool("TrHold", false);
+                animator.SetBool("TrThrow", false);
+                animator.SetBool("TrSlice", false);
+            }
+
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
+            {
+                transform.GetChild(0).localPosition = storeOGPosition;
+                transform.GetChild(0).localRotation = storeOGRotation;
+            }
         }
     }
 
@@ -102,6 +106,7 @@ public class Sword : WeaponBase
         Transform newTransform = camera.transform;
         Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
         GameObject go = Instantiate(KnifeProjectile, bulletEmitter.transform);
+        go.GetComponent<ProjectileBase>().SetProjectileManager(projectileManager);
         go.GetComponent<SwordProjectile>().damage = damage[0];
         go.GetComponent<SwordProjectile>().SetCreator(owner);
         go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[1];

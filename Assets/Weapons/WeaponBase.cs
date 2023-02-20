@@ -48,8 +48,8 @@ public class WeaponBase : MonoBehaviour
         //playerOwner = transform.parent.transform.parent.Find("Player Entity").gameObject;
         owner = transform.parent.transform.parent.gameObject;
 
-        weaponModel = transform.Find("Gun").gameObject;
-        saveStartingWeaponPosition = weaponModel.transform.localPosition;
+        //weaponModel = transform.Find("Gun").gameObject;
+        //saveStartingWeaponPosition = weaponModel.transform.localPosition;
     }
 
     // Update is called once per frame
@@ -65,14 +65,14 @@ public class WeaponBase : MonoBehaviour
             Fire1();
         }
         else
-            NotFire1();
+            Fire1Up();
 
         if (Input.GetButton("Fire2"))
         {
             Fire2();
         }
         else
-            NotFire2();
+            Fire2Up();
 
         if (Input.GetButtonDown("Fire1"))
         {
@@ -84,15 +84,6 @@ public class WeaponBase : MonoBehaviour
             Fire2Once();
         }
 
-        if (!Input.GetButton("Fire1"))
-        {                  
-            Fire1Up();   
-        }                  
-                           
-        if (!Input.GetButton("Fire2"))
-        {
-            Fire2Up();
-        }
 
         if (!isLeftClickDown && Input.GetButton("Fire1"))
         {
@@ -127,8 +118,6 @@ public class WeaponBase : MonoBehaviour
     {
 
     }
-    protected virtual void NotFire1() { }
-    protected virtual void NotFire2() { }
     protected virtual void Fire1Once() { }
     protected virtual void Fire1UpOnce() { }
     protected virtual void Fire2UpOnce() { }
