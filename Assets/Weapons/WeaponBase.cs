@@ -30,6 +30,8 @@ public class WeaponBase : MonoBehaviour
     protected GameObject owner;
     private bool isLeftClickDown = false, isRightClickDown = false;
 
+    protected ParticleSystem muzzleFlash;
+
     public void Start()
     {
         //elapsedBetweenEachShot = 1 / fireRate;
@@ -44,12 +46,14 @@ public class WeaponBase : MonoBehaviour
         fireAudio = GameObject.Find("SampleFire").GetComponent<AudioSource>();
         projectileManager = GameObject.Find("Projectile Manager");
         particleManager = GameObject.Find("Particle Manager");
-        bulletEmitter = GameObject.Find("Bullet emitter");
+        bulletEmitter = transform.Find("Gun/Bullet emitter").gameObject;
         //playerOwner = transform.parent.transform.parent.Find("Player Entity").gameObject;
         owner = transform.parent.transform.parent.gameObject;
 
-        //weaponModel = transform.Find("Gun").gameObject;
-        //saveStartingWeaponPosition = weaponModel.transform.localPosition;
+        weaponModel = transform.Find("Gun").gameObject;
+        saveStartingWeaponPosition = weaponModel.transform.localPosition;
+
+        muzzleFlash = bulletEmitter.transform.GetChild(0).GetComponent<ParticleSystem>();
     }
 
     // Update is called once per frame
@@ -106,7 +110,7 @@ public class WeaponBase : MonoBehaviour
             isRightClickDown = false;
         }
 
-    
+
     }
 
     protected virtual void Fire1()

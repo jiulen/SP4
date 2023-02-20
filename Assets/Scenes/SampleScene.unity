@@ -826,7 +826,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 464341549499799659, guid: b81b0b0421e7b8a4bb256c2aed46551e, type: 3}
       propertyPath: fireRate.Array.data[1]
-      value: 25
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 464341549499799659, guid: b81b0b0421e7b8a4bb256c2aed46551e, type: 3}
       propertyPath: inaccuracy.Array.data[1]
