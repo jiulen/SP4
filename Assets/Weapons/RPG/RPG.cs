@@ -61,8 +61,9 @@ public class RPG : WeaponBase
             Transform newTransform = camera.transform;
             Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
             GameObject go = Instantiate(Rocket, bulletEmitter.transform);
+            go.GetComponent<Rocket>().damage = damage[0];
+            go.GetComponent<Rocket>().SetCreator(owner);
             go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[1] * PowerCurrentScale;
-            Rocket.GetComponent<Rocket>().SetCreator(owner);
             go.transform.SetParent(projectileManager.transform);
             PowerCurrentScale = 1;
             fireAudio.Play();

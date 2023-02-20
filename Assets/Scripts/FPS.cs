@@ -68,7 +68,12 @@ public class FPS : NetworkBehaviour
     // Teleport
     bool canTeleport = true;
 
-    
+    private bool forcedash = false;
+    public bool isDashing = false;
+    public void SetForcedash(bool force)
+    {
+        forcedash = force;
+    }
 
     enum TeleportStates
     {
@@ -457,10 +462,10 @@ public class FPS : NetworkBehaviour
             dashMetre = dashMetreMax;
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && dashMetre >= dashMetreMax / dashNum && candash)
+        if ((Input.GetKeyDown(KeyCode.LeftShift) || forcedash) && dashMetre >= dashMetreMax / dashNum && candash)
         {
             // If no keyboard input, use camera direction
-            if (moveVector.magnitude == 0)
+            if (moveVector.magnitude == 0 || forcedash)
             {
                 Vector3 forward = camera.transform.forward;
                 forward.y = 0;
@@ -468,6 +473,7 @@ public class FPS : NetworkBehaviour
                 storeDashDir = forward;
                 dashProgress = 0;
                 dashMetre -= (float)(dashMetreMax / dashNum);
+                forcedash = false;
             }
             // Otherwise, dash towards movement input
             else
@@ -489,7 +495,10 @@ public class FPS : NetworkBehaviour
                 newVelocity.y = rigidbody.velocity.y;
                 rigidbody.velocity = newVelocity;
             }
+            isDashing = true;
         }
+        else
+            isDashing = false;
 
         int i = 0;
         foreach (Transform child in uiCanvas.transform)
