@@ -77,6 +77,7 @@ public class Shotgun : WeaponBase
 
         if (madeImpact && hitCollider)
         {
+            //do hit effects here
         }
 
         Destroy(trail.gameObject, trail.time);
