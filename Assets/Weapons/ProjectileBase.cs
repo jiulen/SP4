@@ -83,6 +83,23 @@ public class ProjectileBase : MonoBehaviour
         //this.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
         //this.GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
 
+
+        //Vector3 vel = this.GetComponent<Rigidbody>().velocity;
+        //Ray laserRayCast = new Ray(this.transform.position + (-vel.normalized * 0.1f), vel);
+        //if (Physics.Raycast(laserRayCast, out RaycastHit hit, 50))
+        //{
+        //    GameObject effect = Instantiate(sparkEffect, particleManager.transform);
+        //    effect.transform.position = this.transform.position;
+        //    effect.transform.rotation = Quaternion.Euler(hit.normal);
+        //}
+
+        EntityBase entity = other.gameObject.GetComponent<EntityBase>();
+        if (entity != null)
+        {
+            Vector3 dir = entity.transform.position - transform.position;
+            entity.TakeDamage(damage, -dir);
+        }
+
         Destroy(gameObject);
 
     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Claims;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,12 +17,13 @@ public class Sniper : WeaponBase
     private bool animationdone = true;
     private AudioSource ScopeSound;
     private GameObject SniperModel;
-    private Vector3 temp;
     private float DmgReduction;
     public float stablizeElasped = 0;
     float StablizeDuration = 10f, StablizeProgress, AnimationRate = 0.1f;
     private bool PlayOnce = false;
     private Text DmgReductionTxt;
+    private Vector3 ScopeDesiredPosition;
+    FPS player;
 
     //public ParticleSystem hiteffect;
 
@@ -37,7 +39,8 @@ public class Sniper : WeaponBase
         StablizeProgress = StablizeDuration;
         slider.maxValue = slider.value = StablizeProgress;
         SniperModel = GameObject.Find("AWP");
-        DmgReductionTxt = GameObject.Find("DamageReductionTxt").GetComponent<Text>();
+        DmgReductionTxt = transform.Find("SniperUICanvas").GetComponentInChildren<Text>();
+        player = transform.root.GetComponentInChildren<FPS>();
     }
 
     //Update is called once per frame
@@ -47,7 +50,7 @@ public class Sniper : WeaponBase
 
         transform.localPosition = Vector3.SmoothDamp(transform.localPosition, desiredPositionAnimation, ref velocity, AnimationRate);
 
-        if ((transform.localPosition - temp).magnitude <= 0.01f)
+        if ((transform.localPosition - ScopeDesiredPosition).magnitude <= 0.01f)
             animationdone = true;
         else
             animationdone = false;
@@ -64,7 +67,6 @@ public class Sniper : WeaponBase
 
     protected override void Fire2Up()
     {
-        FPS player = transform.root.GetComponentInChildren<FPS>();
         Scoped.enabled = false;
         PlayOnce = false;
         camaim.ZoomOut();
@@ -87,20 +89,18 @@ public class Sniper : WeaponBase
                 if (entity != null)
                 {
                     Vector3 dir = -front;
-                    entity.TakeDamage(1, dir);
+                    entity.TakeDamage(damage[0], dir);
                 }
             }
             fireAudio.Play();
         }
-    }    
+    }
 
     override protected void Fire2() // right click press and hold
     {
-        FPS player = transform.root.GetComponentInChildren<FPS>();
-
         if (animationdone)
         {
-            Scoped.enabled = true; // change later
+            Scoped.enabled = true;
             if (!PlayOnce)
             {
                 ScopeSound.Play();
@@ -109,7 +109,7 @@ public class Sniper : WeaponBase
             camaim.ZoomIn();
             SniperModel.SetActive(false);
         }
-        temp = desiredPositionAnimation = new Vector3(0.0f, -0.15f, 0.58f);
+        ScopeDesiredPosition = desiredPositionAnimation = new Vector3(0.0f, -0.15f, 0.58f);
         player.candash = false;
     }
 
