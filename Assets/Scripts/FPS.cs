@@ -97,6 +97,9 @@ public class FPS : NetworkBehaviour
 
     void Init()
     {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
         uiCanvas = transform.Find("Canvas").GetComponent<Canvas>();
 
         capsuleCollider = head.GetComponent<CapsuleCollider>();
@@ -142,8 +145,7 @@ public class FPS : NetworkBehaviour
     void Update()
     {
         Debug.DrawRay(camera.transform.position, 100 *camera.transform.forward, Color.black);
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+
         // Reset position and velocity if player goes out of bounds for debugging
         if (transform.position.magnitude > 100 || transform.position.y <= -20)
         {
