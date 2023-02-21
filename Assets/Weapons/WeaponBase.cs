@@ -54,7 +54,9 @@ public class WeaponBase : MonoBehaviour
         weaponModel = transform.Find("Gun").gameObject;
         saveStartingWeaponPosition = weaponModel.transform.localPosition;
 
-        muzzleFlash = bulletEmitter.transform.GetChild(0).GetComponent<ParticleSystem>();
+        Transform tempTrans = bulletEmitter.transform.GetChild(0);
+        if (tempTrans != null)
+            muzzleFlash = tempTrans.GetComponent<ParticleSystem>();
     }
 
     // Update is called once per frame
