@@ -8,7 +8,7 @@ using UnityEngine;
 public class Sword : WeaponBase
 {
     // Start is called before the first frame update
-    public FPS player;
+    private FPS player;
     private float minStrength, currentStrength;
     public GameObject KnifeProjectile;
     Animator animator;
@@ -21,14 +21,14 @@ public class Sword : WeaponBase
     }
     private void Awake()
     {
-        storeOGPosition = transform.GetChild(0).localPosition;
-        storeOGRotation = transform.GetChild(0).localRotation;
+        storeOGPosition = transform.GetChild(0).GetChild(0).localPosition;
+        storeOGRotation = transform.GetChild(0).GetChild(0).localRotation;
     }
     void Start()
     {
         base.Start();
-        player = transform.parent.parent.GetComponent<FPS>();
-        animator = transform.GetChild(0).GetComponent<Animator>();
+        player = owner.GetComponent<FPS>();
+        animator = transform.GetChild(0).GetChild(0).GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -50,8 +50,8 @@ public class Sword : WeaponBase
 
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
             {
-                transform.GetChild(0).localPosition = storeOGPosition;
-                transform.GetChild(0).localRotation = storeOGRotation;
+                transform.GetChild(0).GetChild(0).localPosition = storeOGPosition;
+                transform.GetChild(0).GetChild(0).localRotation = storeOGRotation;
             }
         }
     }

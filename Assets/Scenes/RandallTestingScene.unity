@@ -261,6 +261,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1929289672521495563, guid: af90c249d13fdaa4ea30c63ce29d3fdf, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1929289672521495563, guid: af90c249d13fdaa4ea30c63ce29d3fdf, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2533275197760287315, guid: af90c249d13fdaa4ea30c63ce29d3fdf, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.37001845
@@ -395,11 +403,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4994889149493511697, guid: af90c249d13fdaa4ea30c63ce29d3fdf, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4994889149493511697, guid: af90c249d13fdaa4ea30c63ce29d3fdf, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5738327604714269807, guid: af90c249d13fdaa4ea30c63ce29d3fdf, type: 3}
+      propertyPath: projectileVel.Array.data[1]
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 6374310678602982703, guid: af90c249d13fdaa4ea30c63ce29d3fdf, type: 3}
       propertyPath: m_LocalRotation.w

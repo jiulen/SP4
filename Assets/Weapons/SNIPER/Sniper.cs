@@ -16,7 +16,6 @@ public class Sniper : WeaponBase
     private Vector3 desiredPositionAnimation;
     private bool animationdone = true;
     private AudioSource ScopeSound;
-    private GameObject SniperModel;
     private float DmgReduction;
     public float stablizeElasped = 0;
     float StablizeDuration = 10f, StablizeProgress, AnimationRate = 0.1f;
@@ -31,6 +30,7 @@ public class Sniper : WeaponBase
     void Start()
     {
         base.Start();
+        player = owner.GetComponent<FPS>();
         slider = GetComponentInChildren<Slider>();
         Scoped = transform.Find("SniperUICanvas").GetComponent<Canvas>();
         camaim = GetComponent<AimZoom>();
@@ -38,9 +38,7 @@ public class Sniper : WeaponBase
         ScopeSound = GameObject.Find("ScopeSound").GetComponent<AudioSource>();
         StablizeProgress = StablizeDuration;
         slider.maxValue = slider.value = StablizeProgress;
-        SniperModel = GameObject.Find("AWP");
         DmgReductionTxt = transform.Find("SniperUICanvas").GetComponentInChildren<Text>();
-        player = transform.root.GetComponentInChildren<FPS>();
     }
 
     //Update is called once per frame
@@ -72,7 +70,7 @@ public class Sniper : WeaponBase
         camaim.ZoomOut();
         desiredPositionAnimation = new Vector3(0.25f, -0.2f, 0.75f);
         player.candash = true;
-        SniperModel.SetActive(true);
+        weaponModel.SetActive(true);
     }
 
     override protected void Fire1Once()
@@ -107,7 +105,7 @@ public class Sniper : WeaponBase
                 PlayOnce = true;
             }
             camaim.ZoomIn();
-            SniperModel.SetActive(false);
+            weaponModel.SetActive(false);
         }
         ScopeDesiredPosition = desiredPositionAnimation = new Vector3(0.0f, -0.15f, 0.58f);
         player.candash = false;

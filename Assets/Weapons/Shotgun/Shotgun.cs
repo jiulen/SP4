@@ -14,7 +14,6 @@ public class Shotgun : WeaponBase
     void Start()
     {
         base.Start();
-        bulletEmitter = GameObject.Find("Gun/BulletEmitter");
     }
 
     override protected void Fire1Once()

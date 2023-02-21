@@ -312,7 +312,6 @@ MonoBehaviour:
   - 20
   projectileVel: []
   WeaponIcon: {fileID: 0}
-  impactParticleSystem: {fileID: 1690745058919031444, guid: 553b3d3db9deb0f44b003b3595bf5c30, type: 3}
   bulletTrail: {fileID: 7338455853520770129, guid: c8a74160b55dc8a429d2a617fc546e54, type: 3}
 --- !u!1 &8315617614453261876
 GameObject:
@@ -324,7 +323,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1252095917060806223}
   m_Layer: 0
-  m_Name: BulletEmitter
+  m_Name: Bullet emitter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
