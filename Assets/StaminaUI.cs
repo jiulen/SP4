@@ -75,7 +75,7 @@ public class StaminaUI : MonoBehaviour
         int i = 0;
         foreach (Transform child in this.transform)
         {
-            Debug.Log(i);
+            //Debug.Log(i);
             Slider slider = child.GetComponent<Slider>();
             if (slider != null)
             {
