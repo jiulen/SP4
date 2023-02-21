@@ -10,10 +10,12 @@ public class RPG : WeaponBase
     private Slider slider;
     float AnimationRate = 0.1f;
     public GameObject Rocket;
+    FPS player;
     // Start is called before the first frame update
     void Start()
     {
         base.Start();
+        player = owner.GetComponent<FPS>();
         slider = GetComponentInChildren<Slider>();
         slider.maxValue = PowerMaxScale;
         slider.minValue = slider.value = PowerCurrentScale;
@@ -31,15 +33,12 @@ public class RPG : WeaponBase
 
     protected override void Fire2Up()
     {
-        FPS player = transform.root.GetComponentInChildren<FPS>();
         desiredPositionAnimation = new Vector3(0.22f, -0.2f, 0.3f);
         player.candash = true;
     }
 
     protected override void Fire2()
     {
-        FPS player = transform.root.GetComponentInChildren<FPS>();
-
         desiredPositionAnimation = new Vector3(0.078f, -0.2f, 0.35f);
         player.candash = false;
     }
@@ -47,11 +46,11 @@ public class RPG : WeaponBase
     override protected void Fire1()
     {
         PowerCurrentScale += Time.deltaTime;
-        slider.gameObject.SetActive(true);
+        slider.enabled = true;
     }
     override protected void Fire1Up()
     {
-        slider.gameObject.SetActive(false);
+        slider.enabled = false;
     }
 
     override protected void Fire1UpOnce()
