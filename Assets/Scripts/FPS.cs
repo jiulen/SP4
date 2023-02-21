@@ -325,7 +325,7 @@ public class FPS : NetworkBehaviour
         else
         {
             float refillAmount = staminaRefillRate;
-            if (airTimer >= 0.5f)
+            if (airTimer >= 0.75f)
                 refillAmount = staminaRefillRate * 0.25f;
 
             staminaAmount += refillAmount * Time.deltaTime;

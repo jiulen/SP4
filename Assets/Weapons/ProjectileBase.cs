@@ -21,9 +21,15 @@ public class ProjectileBase : MonoBehaviour
         creator = _creator;
     }
 
-    public void SetProjectileManager(GameObject pm)
+    public void SetParticleManager(GameObject _particleManager)
     {
-        particleManager = pm;
+        particleManager = _particleManager;
+    }
+
+    public void SetObjectReferences(GameObject _creator, GameObject _particleManager)
+    {
+        creator = _creator;
+        particleManager = _particleManager;
     }
 
     public void Start()

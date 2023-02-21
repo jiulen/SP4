@@ -36,6 +36,21 @@ public class Ballista : WeaponBase
                 laserScript.InitParticleSystem(bulletEmitter.transform.position, direction, hit.distance);
                 if(hit.collider.transform.tag == "PlayerHitBox")
                 {
+                    if (hit.collider.name == "Head")
+                    {
+                        particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 45);
+                    }
+                    else
+                    {
+                        particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
+
+                    }
+                    particleManager.GetComponent<ParticleManager>().CreateEffect("ElectricExplosion_PE", hit.point, hit.normal);
+
+                }
+                else
+                {
+                    particleManager.GetComponent<ParticleManager>().CreateEffect("ElectricExplosion_PE", hit.point, hit.normal);
 
                 }
             }

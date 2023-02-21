@@ -80,11 +80,14 @@ public class StaminaUI : MonoBehaviour
             if (slider != null)
             {
                 float segmentedValue = currentAmount - i;
+
                 slider.value = segmentedValue;
-                if (segmentedValue > 0.5)
+                if (segmentedValue >= 1)
                     slider.transform.Find("Fill Area").GetChild(0).GetComponent<Image>().color = Color.green;
+                else if (segmentedValue > 0.5)
+                    slider.transform.Find("Fill Area").GetChild(0).GetComponent<Image>().color = new Color(255, 191, 0, 255); // Ornge
                 else
-                    slider.transform.Find("Fill Area").GetChild(0).GetComponent<Image>().color = new Color(255,191,0,255);
+                    slider.transform.Find("Fill Area").GetChild(0).GetComponent<Image>().color = Color.red;
 
                 i++;
             }

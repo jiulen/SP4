@@ -25,31 +25,42 @@ public class SCATBullet : ProjectileBase
         if (Physics.Raycast(laserRayCast, out RaycastHit hit, 1))
         {
             //Debug.LogError(hit.collider.name);
-            GameObject effect;
+            //GameObject effect;
             if (hit.collider.tag == "PlayerHitBox")
             {
-                effect = Instantiate(bloodEffect, particleManager.transform);
                 if(hit.collider.name == "Head")
                 {
-                    ParticleSystem particleSystem = effect.GetComponent<ParticleSystem>();
-                    particleSystem.Stop();
-                    var burst = particleSystem.emission;
-                    ParticleSystem.Burst newBurst = new ParticleSystem.Burst(0, 15);
-                    burst.SetBurst(0, newBurst);
-                    particleSystem.Play();
+                    particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
                 }
-            
+                else
+                {
+                    particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
+
+                }
+
+                //effect = Instantiate(bloodEffect, particleManager.transform);
+                //if(hit.collider.name == "Head")
+                //{
+                //    ParticleSystem particleSystem = effect.GetComponent<ParticleSystem>();
+                //    particleSystem.Stop();
+                //    var burst = particleSystem.emission;
+                //    ParticleSystem.Burst newBurst = new ParticleSystem.Burst(0, 15);
+                //    burst.SetBurst(0, newBurst);
+                //    particleSystem.Play();
+                //}
+
                 //hit.transform.GetComponent<PlayerHitBox>().owner.GetComponent<PlayerEntity>().TakeDamage(damage, new Vector3(0,0,1)); //Temporarily set as forward
             }
             else
             {
-                effect = Instantiate(sparkEffect, particleManager.transform);
+                //effect = Instantiate(sparkEffect, particleManager.transform);
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hit.point, hit.normal);
 
 
             }
 
-            effect.transform.position = hit.point;
-            effect.transform.rotation = Quaternion.LookRotation(hit.normal);
+            //effect.transform.position = hit.point;
+            //effect.transform.rotation = Quaternion.LookRotation(hit.normal);
 
 
             //Debug.LogError(DebugSavePosition);

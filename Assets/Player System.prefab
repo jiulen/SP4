@@ -115,10 +115,11 @@ MonoBehaviour:
   staminaDashCost: 1
   staminaGrappleCost: 1
   staminaTeleportCost: 2
-  staminaWallrunRate: 1
-  staminaSlideRate: 1
-  staminaMax: 3
-  staminaRefillRate: 1
+  staminaWallrunRate: 0.5
+  staminaSlideRate: 0.5
+  staminaAmount: 0
+  staminaMax: 5
+  staminaRefillRate: 2
   StaminaUIPF: {fileID: 7545810131014022935, guid: 33dfa1fc9ca59f34b87ad309d1060843, type: 3}
   jumpForce: 250
   dashDuration: 0.2

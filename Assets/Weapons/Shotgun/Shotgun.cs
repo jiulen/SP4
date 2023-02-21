@@ -42,6 +42,22 @@ public class Shotgun : WeaponBase
                     trail = Instantiate(bulletTrail, bulletEmitter.transform.position, Quaternion.identity);
                     //Spawn bullet tracer
                     StartCoroutine(SpawnTrail(trail, hit.point, hit.normal, hit.collider, true));
+
+                    if (hit.collider.tag == "PlayerHitBox")
+                    {
+                        if (hit.collider.name == "Head")
+                        {
+                            particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
+                        }
+                        else
+                        {
+                            particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
+
+                        }
+                    }
+                    else
+                        particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hit.point, hit.normal);
+
                 }
                 else
                 {

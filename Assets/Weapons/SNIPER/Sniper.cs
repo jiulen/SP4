@@ -89,6 +89,21 @@ public class Sniper : WeaponBase
                     Vector3 dir = -front;
                     entity.TakeDamage(damage[0], dir);
                 }
+
+                if (hit.collider.tag == "PlayerHitBox")
+                {
+                    if (hit.collider.name == "Head")
+                    {
+                        particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
+                    }
+                    else
+                    {
+                        particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
+
+                    }
+                }
+                else
+                    particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hit.point, hit.normal);
             }
             fireAudio.Play();
         }

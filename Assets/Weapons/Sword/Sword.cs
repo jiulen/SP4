@@ -106,9 +106,8 @@ public class Sword : WeaponBase
         Transform newTransform = camera.transform;
         Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
         GameObject go = Instantiate(KnifeProjectile, bulletEmitter.transform);
-        go.GetComponent<ProjectileBase>().SetProjectileManager(projectileManager);
+        go.GetComponent<ProjectileBase>().SetObjectReferences(owner, particleManager);
         go.GetComponent<SwordProjectile>().damage = damage[0];
-        go.GetComponent<SwordProjectile>().SetCreator(owner);
         go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[1];
         go.transform.SetParent(projectileManager.transform);
         //fireAudio.Play();

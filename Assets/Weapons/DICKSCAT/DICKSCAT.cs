@@ -163,31 +163,31 @@ public class DICKSCAT : WeaponBase
                         if (Physics.Raycast(laserRayCast, out RaycastHit hit, 200))
                         {
                             laserLine.SetPosition(1, hit.point);
-                            GameObject effect;
                             if (hit.collider.tag == "PlayerHitBox")
                             {
-                                effect = Instantiate(bloodEffect, particleManager.transform);
+                                //effect = Instantiate(bloodEffect, particleManager.transform);
                                 if (hit.collider.name == "Head")
                                 {
-                                    ParticleSystem particleSystem = effect.GetComponent<ParticleSystem>();
-                                    particleSystem.Stop();
-                                    var burst = particleSystem.emission;
-                                    ParticleSystem.Burst newBurst = new ParticleSystem.Burst(0, 15);
-                                    burst.SetBurst(0, newBurst);
-                                    particleSystem.Play();
+                                    particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
+                                    //ParticleSystem particleSystem = effect.GetComponent<ParticleSystem>();
+                                    //particleSystem.Stop();
+                                    //var burst = particleSystem.emission;
+                                    //ParticleSystem.Burst newBurst = new ParticleSystem.Burst(0, 15);
+                                    //burst.SetBurst(0, newBurst);
+                                    //particleSystem.Play();
+                                }
+                                else
+                                {
+                                    particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
+
                                 }
 
                                 //hit.transform.GetComponent<PlayerHitBox>().owner.GetComponent<PlayerEntity>().TakeDamage(damage, new Vector3(0,0,1)); //Temporarily set as forward
                             }
                             else
                             {
-                                effect = Instantiate(sparkEffect, particleManager.transform);
-
-
+                                particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hit.point, hit.normal);
                             }
-
-                            effect.transform.position = hit.point;
-                            effect.transform.rotation = Quaternion.LookRotation(hit.normal);
                         }
                         else
                         {
@@ -226,7 +226,7 @@ public class DICKSCAT : WeaponBase
 
                         Transform newTransform = camera.transform;
                         GameObject bullet = Instantiate(SCATBulletPF, bulletEmitter.transform);
-                        bullet.GetComponent<ProjectileBase>().SetProjectileManager(projectileManager);
+                        bullet.GetComponent<ProjectileBase>().SetObjectReferences(this.gameObject, particleManager);
                         Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
                         bullet.GetComponent<Rigidbody>().velocity = RandomSpray(front.normalized, inaccuracy[1], bloomProgress, bloomMax) * projectileVel[1];
                         bullet.transform.SetParent(projectileManager.transform);
