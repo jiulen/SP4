@@ -101,6 +101,12 @@ public class Wallrunning : MonoBehaviour
 
                     wallRunningLeft = true;
                 }
+
+                //Use stamina while wallrunning
+                playerFPSScript.staminaAmount -= playerFPSScript.staminaWallrunRate * Time.deltaTime;
+                //Kick player out of wallrunning when stamina depleted
+                if (playerFPSScript.staminaAmount <= 0)
+                    StopWallRun();
             }
         }
         else if (exitingWall)

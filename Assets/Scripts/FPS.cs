@@ -202,13 +202,6 @@ public class FPS : NetworkBehaviour
 
         if (isWallrunning)
         {
-            //staminaAmount -= staminaWallrunRate * Time.deltaTime;
-            //if (staminaAmount < 0)
-            //{
-            //    staminaAmount = 0;
-            //    isWallrunning = false;
-            //    return;
-            //}
         }
         else
         {
