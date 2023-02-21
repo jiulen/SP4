@@ -11,7 +11,6 @@ public class Sword : WeaponBase
     private FPS player;
     private float minStrength, currentStrength;
     public GameObject KnifeProjectile;
-    Animator animator;
     private Vector3 storeOGPosition;
     private Quaternion storeOGRotation;
 
@@ -21,14 +20,14 @@ public class Sword : WeaponBase
     }
     private void Awake()
     {
-        storeOGPosition = transform.GetChild(0).GetChild(0).localPosition;
-        storeOGRotation = transform.GetChild(0).GetChild(0).localRotation;
+        storeOGPosition = transform.Find("Gun/sword").localPosition;
+        storeOGRotation = transform.Find("Gun/sword").localRotation;
     }
     void Start()
     {
         base.Start();
         player = owner.GetComponent<FPS>();
-        animator = transform.GetChild(0).GetChild(0).GetComponent<Animator>();
+        animator = transform.Find("Gun/sword").GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -50,8 +49,8 @@ public class Sword : WeaponBase
 
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
             {
-                transform.GetChild(0).GetChild(0).localPosition = storeOGPosition;
-                transform.GetChild(0).GetChild(0).localRotation = storeOGRotation;
+                transform.Find("Gun/sword").localPosition = storeOGPosition;
+                transform.Find("Gun/sword").localRotation = storeOGRotation;
             }
         }
     }
@@ -109,18 +108,8 @@ public class Sword : WeaponBase
         go.GetComponent<ProjectileBase>().SetProjectileManager(projectileManager);
         go.GetComponent<SwordProjectile>().damage = damage[0];
         go.GetComponent<SwordProjectile>().SetCreator(owner);
-        go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[1];
+        go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[0];
         go.transform.SetParent(projectileManager.transform);
         //fireAudio.Play();
-    }
-
-    bool AnimatorIsPlaying(string stateName)
-    {
-        return AnimatorIsPlaying() && animator.GetCurrentAnimatorStateInfo(0).IsName(stateName);
-    }
-
-    bool AnimatorIsPlaying()
-    {
-        return animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f;
     }
 }

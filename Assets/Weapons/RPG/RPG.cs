@@ -10,7 +10,16 @@ public class RPG : WeaponBase
     private Slider slider;
     float AnimationRate = 0.1f;
     public GameObject Rocket;
+    private GameObject RocketMuzzle;
+    private Vector3 storeOGPosition;
+    private Quaternion storeOGRotation;
     FPS player;
+    private void Awake()
+    {
+        storeOGPosition = transform.Find("Gun/RPG7").localPosition;
+        storeOGRotation = transform.Find("Gun/RPG7").localRotation;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -19,12 +28,25 @@ public class RPG : WeaponBase
         slider = GetComponentInChildren<Slider>();
         slider.maxValue = PowerMaxScale;
         slider.minValue = slider.value = PowerCurrentScale;
+        animator = transform.Find("Gun/RPG7").GetComponent<Animator>();
+        RocketMuzzle = transform.Find("Gun/RPG7/Rocket").gameObject;
     }
 
     // Update is called once per frame
     void Update()
     {
         base.Update();
+
+        if ((AnimatorIsPlaying("RPGRecoil") && animator.GetBool("isActive")))
+        {
+            RocketMuzzle.SetActive(true);
+            animator.SetBool("isActive", false);
+        }
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
+        {
+            transform.Find("Gun/RPG7").localPosition = storeOGPosition;
+            transform.Find("Gun/RPG7").localRotation = storeOGRotation;
+        }
 
         transform.localPosition = Vector3.SmoothDamp(transform.localPosition, desiredPositionAnimation, ref velocity, AnimationRate);
 
@@ -55,17 +77,22 @@ public class RPG : WeaponBase
 
     override protected void Fire1UpOnce()
     {
-        if (CheckCanFire(1))
+        if (!animator.GetBool("isActive"))
         {
-            Transform newTransform = camera.transform;
-            Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
-            GameObject go = Instantiate(Rocket, bulletEmitter.transform);
-            go.GetComponent<Rocket>().damage = damage[0];
-            go.GetComponent<Rocket>().SetCreator(owner);
-            go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[1] * PowerCurrentScale;
-            go.transform.SetParent(projectileManager.transform);
-            PowerCurrentScale = 1;
-            fireAudio.Play();
+            if (CheckCanFire(1))
+            {
+                Transform newTransform = camera.transform;
+                Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
+                GameObject go = Instantiate(Rocket, bulletEmitter.transform);
+                go.GetComponent<Rocket>().damage = damage[0];
+                go.GetComponent<Rocket>().SetCreator(owner);
+                go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[0] * PowerCurrentScale;
+                go.transform.SetParent(projectileManager.transform);
+                PowerCurrentScale = 1;
+                fireAudio.Play();
+                RocketMuzzle.SetActive(false);
+                animator.SetBool("isActive", true);
+            }
         }
     }
 
@@ -73,4 +100,5 @@ public class RPG : WeaponBase
     {
         slider.value = PowerCurrentScale;
     }
+
 }
