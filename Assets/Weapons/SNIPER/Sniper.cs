@@ -22,7 +22,15 @@ public class Sniper : WeaponBase
     private bool PlayOnce = false;
     private Text DmgReductionTxt;
     private Vector3 ScopeDesiredPosition;
+    private Vector3 storeOGPosition;
+    private Quaternion storeOGRotation;
     FPS player;
+
+    private void Awake()
+    {
+        storeOGPosition = transform.Find("Gun/AWP").localPosition;
+        storeOGRotation = transform.Find("Gun/AWP").localRotation;
+    }
 
     //public ParticleSystem hiteffect;
 
@@ -39,6 +47,7 @@ public class Sniper : WeaponBase
         StablizeProgress = StablizeDuration;
         slider.maxValue = slider.value = StablizeProgress;
         DmgReductionTxt = transform.Find("SniperUICanvas").GetComponentInChildren<Text>();
+        animator = transform.Find("Gun/AWP").GetComponent<Animator>();
     }
 
     //Update is called once per frame
@@ -46,6 +55,15 @@ public class Sniper : WeaponBase
     {
         base.Update();
 
+        if ((AnimatorIsPlaying("SniperRecoil") && animator.GetBool("isActive")))
+        {
+            animator.SetBool("isActive", false);
+        }
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
+        {
+            transform.Find("Gun/AWP").localPosition = storeOGPosition;
+            transform.Find("Gun/AWP").localRotation = storeOGRotation;
+        }
         transform.localPosition = Vector3.SmoothDamp(transform.localPosition, desiredPositionAnimation, ref velocity, AnimationRate);
 
         if ((transform.localPosition - ScopeDesiredPosition).magnitude <= 0.01f)
@@ -75,22 +93,26 @@ public class Sniper : WeaponBase
 
     override protected void Fire1Once()
     {
-        if (CheckCanFire(1))
+        if (!animator.GetBool("isActive"))
         {
-            Transform newTransform = camera.transform;
-            front = newTransform.forward * 1000 - bulletEmitter.transform.position;
-
-            // new
-            if (Physics.Raycast(bulletEmitter.transform.position, front, out RaycastHit hit))
+            if (CheckCanFire(1))
             {
-                EntityBase entity = hit.transform.gameObject.GetComponent<EntityBase>();
-                if (entity != null)
+                Transform newTransform = camera.transform;
+                front = newTransform.forward * 1000 - bulletEmitter.transform.position;
+
+                // new
+                if (Physics.Raycast(bulletEmitter.transform.position, front, out RaycastHit hit))
                 {
-                    Vector3 dir = -front;
-                    entity.TakeDamage(damage[0], dir);
+                    EntityBase entity = hit.transform.gameObject.GetComponent<EntityBase>();
+                    if (entity != null)
+                    {
+                        Vector3 dir = -front;
+                        entity.TakeDamage(damage[0], dir);
+                    }
                 }
+                animator.SetBool("isActive", true);
+                fireAudio.Play();
             }
-            fireAudio.Play();
         }
     }
 

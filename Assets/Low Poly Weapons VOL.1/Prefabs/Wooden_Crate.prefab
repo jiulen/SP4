@@ -130,8 +130,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxHealth: 2
   destructcrates: {fileID: 7173136001693520582, guid: 5e359e9c313bd994faf39491600b4a00, type: 3}
-  HealthPack: {fileID: 8288899645475317960, guid: 8b4d4e6b15c85714eab4124f0b18f773, type: 3}
-  Ammo: {fileID: 8288899645475317960, guid: 8b4d4e6b15c85714eab4124f0b18f773, type: 3}
+  HealthPack: {fileID: 3396464878224509550, guid: a21ec6961206fdb48aea010aaa409fc0, type: 3}
+  Ammo: {fileID: 3396464878224509550, guid: a21ec6961206fdb48aea010aaa409fc0, type: 3}
 --- !u!114 &7729243466542843898
 MonoBehaviour:
   m_ObjectHideFlags: 0

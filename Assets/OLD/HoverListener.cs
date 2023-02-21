@@ -10,6 +10,7 @@ public class HoverListener : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public int idx;
     public PlayerEntity player;
     public Text Weapontext;
+
     void Start()
     {
         Weapontext.text = "";

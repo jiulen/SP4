@@ -147,13 +147,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireRate:
-  - -1
   - 2
   damage: 14000000
   bulletsPerShot: 
   inaccuracy: []
   projectileVel:
-  - -1
   - 15
   WeaponIcon: {fileID: 21300000, guid: 45eec8595d054e34b86510b9796f7451, type: 3}
   Rocket: {fileID: 6011158359209759673, guid: aeb286dfa3312594889f03175f3d7cce, type: 3}
@@ -519,6 +517,7 @@ GameObject:
   - component: {fileID: 5977296198942648836}
   - component: {fileID: 4769641218218128035}
   - component: {fileID: 1997264469378169035}
+  - component: {fileID: 5739920702330347205}
   m_Layer: 0
   m_Name: RPG7
   m_TagString: Untagged
@@ -591,6 +590,25 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!95 &5739920702330347205
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7060941312537775259}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 3098e5d9f02eda048b61e4746ad768f3, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 1
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &7405256231354697891
 GameObject:
   m_ObjectHideFlags: 0
