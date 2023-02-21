@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
-
 public class WeaponBase : MonoBehaviour
 {
     public float[] fireRate;
@@ -29,9 +29,10 @@ public class WeaponBase : MonoBehaviour
     public Sprite WeaponIcon;
     protected GameObject owner;
     private bool isLeftClickDown = false, isRightClickDown = false;
-
+    protected Animator animator;
     protected ParticleSystem muzzleFlash;
     protected Animator fireAnimation;
+    private GameObject WheelManagerUI;
 
     public void Start()
     {
@@ -53,7 +54,7 @@ public class WeaponBase : MonoBehaviour
 
         weaponModel = transform.Find("Gun").gameObject;
         saveStartingWeaponPosition = weaponModel.transform.localPosition;
-
+        WheelManagerUI = transform.parent.parent.Find("Canvas/WeaponWheelUIManager").gameObject;
         if (bulletEmitter.transform.childCount > 0)
             muzzleFlash = bulletEmitter.transform.GetChild(0).GetComponent<ParticleSystem>();
     }   
@@ -66,52 +67,54 @@ public class WeaponBase : MonoBehaviour
             elapsedSinceLastShot[i] += Time.deltaTime;
         }
 
-        if (Input.GetButton("Fire1"))
+        if (!WheelManagerUI.activeSelf)
         {
-            Fire1();
-        }
-        else
-            Fire1Up();
+            if (Input.GetButton("Fire1"))
+            {
+                Fire1();
+            }
+            else
+                Fire1Up();
 
-        if (Input.GetButton("Fire2"))
-        {
-            Fire2();
-        }
-        else
-            Fire2Up();
+            if (Input.GetButton("Fire2"))
+            {
+                Fire2();
+            }
+            else
+                Fire2Up();
 
-        if (Input.GetButtonDown("Fire1"))
-        {
-            Fire1Once();
-        }
+            if (Input.GetButtonDown("Fire1"))
+            {
+                Fire1Once();
+            }
 
-        if (Input.GetButtonDown("Fire2"))
-        {
-            Fire2Once();
-        }
-
-
-        if (!isLeftClickDown && Input.GetButton("Fire1"))
-        {
-            isLeftClickDown = true;
-        }
-        else if (isLeftClickDown && !Input.GetButton("Fire1"))
-        {
-            Fire1UpOnce();
-            isLeftClickDown = false;
-        }
+            if (Input.GetButtonDown("Fire2"))
+            {
+                Fire2Once();
+            }
 
 
-        if (!isRightClickDown && Input.GetButton("Fire2"))
-        {
-            isRightClickDown = true;
-        }
-        else if (isRightClickDown && !Input.GetButton("Fire2"))
-        {
-            Fire2UpOnce();
-            isRightClickDown = false;
-        }
+            if (!isLeftClickDown && Input.GetButton("Fire1"))
+            {
+                isLeftClickDown = true;
+            }
+            else if (isLeftClickDown && !Input.GetButton("Fire1"))
+            {
+                Fire1UpOnce();
+                isLeftClickDown = false;
+            }
 
+
+            if (!isRightClickDown && Input.GetButton("Fire2"))
+            {
+                isRightClickDown = true;
+            }
+            else if (isRightClickDown && !Input.GetButton("Fire2"))
+            {
+                Fire2UpOnce();
+                isRightClickDown = false;
+            }
+        }
 
     }
 
@@ -211,4 +214,13 @@ public class WeaponBase : MonoBehaviour
         return finalVector.normalized;
     }
 
+    public bool AnimatorIsPlaying(string stateName)
+    {
+        return AnimatorIsPlaying() && animator.GetCurrentAnimatorStateInfo(0).IsName(stateName);
+    }
+
+    bool AnimatorIsPlaying()
+    {
+        return animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f;
+    }
 }

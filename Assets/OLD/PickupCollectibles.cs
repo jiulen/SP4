@@ -14,7 +14,7 @@ public class PickupCollectibles : MonoBehaviour
     {
         if (collision.gameObject.tag == "Collectibles")
         {
-            if (collision.gameObject.name == "HealthPack(Clone)")
+            if (collision.gameObject.name == "med(Clone)")
             {
                 player.SetHealth(player.GetHealth() + 20f);
             }
