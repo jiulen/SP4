@@ -334,6 +334,9 @@ public class FPS : NetworkBehaviour
                 staminaAmount = staminaMax;
             }
         }
+
+        uiCanvas.GetComponent<StaminaUI>().UpdateStamina(staminaAmount);
+
     }
 
     // Update is called once per frame
@@ -374,8 +377,11 @@ public class FPS : NetworkBehaviour
                 
                 if (isSlide)
                 {
-                    isSlide = false;
-                    this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
+                    //this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
+                    rigidbody.AddForce(0, jumpForce, 0);
+
+                    //rigidbody.AddForce(rigidbody.velocity);
+
                 }
             }
             else if(staminaAmount >= staminaJumpCost)
