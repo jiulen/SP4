@@ -46,6 +46,7 @@ public class Wallrunning : MonoBehaviour
     {
         if (playerFPSScript.canWallrun)
         {
+           
             CheckForWall();
             StateMachine();
         }        

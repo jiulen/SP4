@@ -77,8 +77,12 @@ public class Teleport : MonoBehaviour
                             tpMarker.SetActive(true);
                             if (Input.GetKeyDown(KeyCode.Alpha1))
                             {
-                                teleportProgress = 0.0f;
-                                teleportState = TeleportStates.TELEPORT_CHANNEL;
+                                if (playerFPSScript.staminaAmount >= playerFPSScript.staminaTeleportCost)
+                                {
+                                    playerFPSScript.staminaAmount -= playerFPSScript.staminaTeleportCost;
+                                    teleportProgress = 0.0f;
+                                    teleportState = TeleportStates.TELEPORT_CHANNEL;
+                                }
                             }
                         }
                         else
