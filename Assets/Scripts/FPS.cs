@@ -26,8 +26,24 @@ public class FPS : NetworkBehaviour
     public GameObject head;
     [SerializeField] GameObject bodyPivot;
     [SerializeField] GameObject headPivot;
-    Canvas uiCanvas;
+    GameObject uiCanvas;
     public float airMovementMultiplier = 2.5f;
+
+    // Stamina
+    public float staminaJumpCost = 0.5f;
+    public float staminaDashCost = 1.0f;
+    public float staminaGrappleCost = 1.0f;
+    public float staminaTeleportCost = 2.0f;
+    public float staminaWallrunRate = 1.0f;
+    public float staminaSlideRate = 1.0f;
+
+    public float staminaAmount = 0;
+    public int staminaMax = 3;
+
+    public float staminaRefillRate = 1.0f;
+
+    // Stamina UI
+    public GameObject StaminaUIPF;
 
     // Grounded check
     private float headHeight = 1;
@@ -35,8 +51,8 @@ public class FPS : NetworkBehaviour
     private float bodyRadius = 1;
     private double airTimer = 0;
 
+
     // Jump
-    private bool doublejump = false;
     public float jumpForce = 250;
 
     // Dash
@@ -44,10 +60,6 @@ public class FPS : NetworkBehaviour
     float dashProgress = 0.2f;
     public bool candash = true;
     public int dashNum = 3;
-
-    private float dashMetre = 0;
-    public float dashMetreRate = 30;
-    private float dashMetreMax = 100;
     private Vector3 storeDashDir;
 
     // Slide
@@ -100,7 +112,8 @@ public class FPS : NetworkBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
-        uiCanvas = transform.Find("Canvas").GetComponent<Canvas>();
+
+
 
         capsuleCollider = head.GetComponent<CapsuleCollider>();
 
@@ -119,6 +132,12 @@ public class FPS : NetworkBehaviour
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
         rigidbody = this.GetComponent<Rigidbody>();
         rigidbody.velocity.Set(0, 0, 0);
+
+        if (!IsOwner && !debugBelongsToPlayer) return;
+       
+        uiCanvas = Instantiate(StaminaUIPF, this.transform);
+        uiCanvas.GetComponent<StaminaUI>().InitBars();
+        
     }
 
     private void OnEnable()
@@ -144,6 +163,8 @@ public class FPS : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+       
+
         Debug.DrawRay(camera.transform.position, 100 *camera.transform.forward, Color.black);
 
         // Reset position and velocity if player goes out of bounds for debugging
@@ -155,6 +176,14 @@ public class FPS : NetworkBehaviour
         UpdateGrounded();
 
         if (!IsOwner && !debugBelongsToPlayer) return;
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            Debug.LogError("RESETTING UI");
+            Destroy(uiCanvas);
+            uiCanvas = Instantiate(StaminaUIPF, this.transform);
+            uiCanvas.GetComponent<StaminaUI>().InitBars();
+        }
 
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
@@ -171,7 +200,17 @@ public class FPS : NetworkBehaviour
         yaw += mouseX * CamSen * Time.deltaTime;
         pitch -= mouseY * CamSen * Time.deltaTime;
 
-        if (!isWallrunning)
+        if (isWallrunning)
+        {
+            //staminaAmount -= staminaWallrunRate * Time.deltaTime;
+            //if (staminaAmount < 0)
+            //{
+            //    staminaAmount = 0;
+            //    isWallrunning = false;
+            //    return;
+            //}
+        }
+        else
         {
             //Disable movement while wallrunning
 
@@ -284,8 +323,24 @@ public class FPS : NetworkBehaviour
         //}
 
         currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
-        currentEquipped.transform.position = this.transform.position;
+        currentEquipped.transform.position = head.transform.position;
         //Debug.Log(targetAngle);
+        if (isSlide || isWallrunning)
+        {
+
+        }
+        else
+        {
+            float refillAmount = staminaRefillRate;
+            if (airTimer >= 0.5f)
+                refillAmount = staminaRefillRate * 0.25f;
+
+            staminaAmount += refillAmount * Time.deltaTime;
+            if (staminaAmount > staminaMax)
+            {
+                staminaAmount = staminaMax;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -323,19 +378,18 @@ public class FPS : NetworkBehaviour
                 else
                     rigidbody.AddForce(0, jumpForce, 0);
                 //velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
-                doublejump = true;
+                
                 if (isSlide)
                 {
                     isSlide = false;
                     this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
                 }
             }
-            else if (doublejump)
+            else if(staminaAmount >= staminaJumpCost)
             {
                 rigidbody.AddForce(0, jumpForce, 0);
-
-                //velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
-                doublejump = false;
+                staminaAmount -= staminaJumpCost;
+               
             }
         }
 
@@ -348,13 +402,9 @@ public class FPS : NetworkBehaviour
         //Debug.Log(dashNum);
         dashProgress += Time.deltaTime;
 
-        dashMetre += dashMetreRate * Time.deltaTime;
-        if(dashMetre > dashMetreMax)
-        {
-            dashMetre = dashMetreMax;
-        }
+       
 
-        if ((Input.GetKeyDown(KeyCode.LeftShift) || forcedash) && dashMetre >= dashMetreMax / dashNum && candash)
+        if ((Input.GetKeyDown(KeyCode.LeftShift) || forcedash) && staminaAmount >= staminaDashCost && candash)
         {
             // If no keyboard input, use camera direction
             if (moveVector.magnitude == 0 || forcedash)
@@ -364,7 +414,7 @@ public class FPS : NetworkBehaviour
                 forward.Normalize();
                 storeDashDir = forward;
                 dashProgress = 0;
-                dashMetre -= (float)(dashMetreMax / dashNum);
+                staminaAmount -= staminaDashCost;
                 forcedash = false;
             }
             // Otherwise, dash towards movement input
@@ -372,7 +422,7 @@ public class FPS : NetworkBehaviour
             {
                 storeDashDir = moveVector;
                 dashProgress = 0;
-                dashMetre -= (float)(dashMetreMax / dashNum);
+                staminaAmount -= staminaDashCost;
             }
         }
         if (dashProgress < dashDuration)
@@ -392,19 +442,7 @@ public class FPS : NetworkBehaviour
         else
             isDashing = false;
 
-        int i = 0;
-        foreach (Transform child in uiCanvas.transform)
-        {
-            Slider slider = child.GetComponent<Slider>();
-            if (slider != null)
-            {
-                slider.maxValue = dashMetreMax / dashNum;
-                float segmentedValue = dashMetre - (dashMetreMax / dashNum) * i;
-                slider.value = segmentedValue;
-                i++;
-            }
-
-        }
+        uiCanvas.GetComponent<StaminaUI>().UpdateStamina(staminaAmount);
 
         return;
     }
@@ -416,6 +454,14 @@ public class FPS : NetworkBehaviour
 
             if (airTimer >= 0.5)
             {
+                isSlide = false;
+                return;
+            }
+
+            staminaAmount -= staminaSlideRate * Time.deltaTime;
+            if (staminaAmount < 0)
+            {
+                staminaAmount = 0;
                 isSlide = false;
                 return;
             }

@@ -9,6 +9,7 @@ public class GrappleHook : MonoBehaviour
     private GameObject hook;
     private GameObject line;
     private GameObject player;
+    private FPS playerScript;
 
     private bool hookActive = false;
     private Vector3 hookPosition;
@@ -29,6 +30,7 @@ public class GrappleHook : MonoBehaviour
     void Start()
     {
         player = transform.parent.transform.parent.gameObject;
+        playerScript = player.GetComponent<FPS>();
         camera = player.GetComponent<FPS>().camera;
         grappleBody = this.transform.Find("Grapple Body").gameObject;
         hook = this.transform.Find("Hook").gameObject;
@@ -91,15 +93,17 @@ public class GrappleHook : MonoBehaviour
             {
                 SetHookActive(false);
             }
-            else
+            else if(playerScript.staminaAmount >= playerScript.staminaGrappleCost)
             {
-                Debug.DrawRay(grappleBody.transform.position, 5 * (hook.transform.position - grappleBody.transform.position), Color.red);
+              
 
                 //Ray laserRayCast = new Ray(body.transform.position, 5 * (hook.transform.position - body.transform.position));
                 Ray laserRayCast = new Ray(camera.transform.position,camera.transform.forward);
                 Debug.DrawRay(camera.transform.position, 50 * (camera.transform.forward), Color.blue);
                 if (Physics.Raycast(laserRayCast, out RaycastHit hit, 100))
                 {
+                    playerScript.staminaAmount -= playerScript.staminaGrappleCost;
+                    Debug.DrawRay(grappleBody.transform.position, 5 * (hook.transform.position - grappleBody.transform.position), Color.red);
                     hookPosition = hit.point;
                     SetHookActive(true);
                     grappleElapsed = 0;
