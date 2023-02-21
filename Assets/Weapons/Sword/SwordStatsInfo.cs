@@ -9,7 +9,7 @@ public class SwordStatsInfo : MonoBehaviour
     Sword sword;
     private void Start()
     {
-        sword = transform.parent.GetComponent<Sword>();
+        sword = transform.parent.parent.GetComponent<Sword>();
         damage = sword.damage[0];
     }
     // Start is called before the first frame update
