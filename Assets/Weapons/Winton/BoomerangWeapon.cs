@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class BoomerangWeapon : WeaponBase
 {
-    public Transform boomerang;
+    [SerializeField] Transform boomerang;
+    public float spinRate;
 
     enum BoomererangWeaponState
     {
@@ -41,10 +42,12 @@ public class BoomerangWeapon : WeaponBase
     {
         if (boomererangWeaponState == BoomererangWeaponState.NONE)
         {
-
-            boomerang.GetComponent<Boomerang>().dir = camera.transform.forward;
+            Rigidbody rb = boomerang.GetComponent<Rigidbody>();
             boomerang.GetComponent<ProjectileBase>().SetCreator(owner);
             boomerang.GetComponent<Boomerang>().boomererangState = Boomerang.BoomererangState.THROW;
+            boomerang.GetComponent<MeshCollider>().enabled = true;
+            rb.isKinematic = false;
+            rb.AddForce(camera.transform.forward * 25f, ForceMode.Impulse);
             boomerang.parent = null;
             boomererangWeaponState = BoomererangWeaponState.THROW;
         }

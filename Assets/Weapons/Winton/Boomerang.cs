@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class Boomerang : ProjectileBase
 {
-    public Vector3 dir;
-    private float rotationSpeed, speed;
+    private float rotationElaspe;
+    public float rotationSpeed;
+    private float speed;
     private Rigidbody rb;
     [SerializeField] BoomerangWeapon boomerangWeapon;
     public enum BoomererangState
@@ -21,32 +22,31 @@ public class Boomerang : ProjectileBase
     {
         speed = 1000f;
         damage = boomerangWeapon.damage[0];
-        rotationSpeed = 100f;
-        boomererangState = BoomererangState.NONE;
         rb = GetComponent<Rigidbody>();
-        GetComponent<MeshCollider>().enabled = false;
+        boomererangState = BoomererangState.NONE;
+        duration = 1.2f;
     }
 
     void Update()
     {
         if (transform.parent == null)
         {
-            GetComponent<MeshCollider>().enabled = true;
-            rb.isKinematic = false;
             switch (boomererangState)
             {
                 case BoomererangState.THROW:
-                    if (elapsed > 5)
+                    if (elapsed > duration)
                     {
                         elapsed = 0;
                         boomererangState = BoomererangState.RECOIL;
                     }
-                    rb.velocity = dir * speed * Time.deltaTime;
                     break;
                 case BoomererangState.RECOIL:
                     rb.velocity = (creator.transform.position - rb.position).normalized * speed * Time.deltaTime;
                     break;
             }
+
+            transform.localRotation = Quaternion.AngleAxis(rotationElaspe * rotationSpeed, transform.up);
+            rotationElaspe += Time.deltaTime;
             elapsed += Time.deltaTime;
         }
     }

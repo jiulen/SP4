@@ -300,6 +300,9 @@ MonoBehaviour:
   bloodEffect: {fileID: 0}
   sparkEffect: {fileID: 0}
   clip: {fileID: 8300000, guid: 6c0250a072e034d4f82d1df4412e97a6, type: 3}
+  HitLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
   radius: 5
   explosionForce: 500
 --- !u!54 &1707330375358534301

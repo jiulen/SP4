@@ -144,7 +144,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51f7d89280324bb4caec7932d09901cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 0
+  duration: 1
+  bloodEffect: {fileID: 0}
+  sparkEffect: {fileID: 0}
   clip: {fileID: 8300000, guid: 6c0250a072e034d4f82d1df4412e97a6, type: 3}
+  HitLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
   radius: 3
   explosionForce: 800
 --- !u!82 &7595136744234808230
