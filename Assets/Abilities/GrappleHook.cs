@@ -9,10 +9,11 @@ public class GrappleHook : MonoBehaviour
     private GameObject hook;
     private GameObject line;
     private GameObject player;
+    private Rigidbody grappledRigidBody;
     private FPS playerScript;
+    private Rigidbody playerRigidBody;
 
     private bool hookActive = false;
-    private Vector3 hookPosition;
 
     public float grappleDuration = 5;
     public float grapplePullForce = 5;
@@ -20,17 +21,26 @@ public class GrappleHook : MonoBehaviour
     
     // Keeps track of how long the player has moved in the opposite direction of the hook
     private double grappleMaintainElapsed = 0;
-    public float grappleMaintainDuration = 0.2f;
+    public float grappleMaintainDuration = 0.4f;
     // Keeps track of if the player has been moving in the opposite direction of the hook since the start of the grapple.
     // As in, it will only be true once the player has move towards the hook for the first frame of each grapple.
     // This is so that the hook will not break if the player was already moving away from the hookPosition from the start of each grapple
     private bool grappleMaintainStarted = false;
 
     private double grappleElapsed = 0;
+
+    private enum GrappleType
+    {
+        PULLUSER,
+        PULLGRAPPLED,
+    }
+    private GrappleType grappleType = GrappleType.PULLUSER;
+
     void Start()
     {
         player = transform.parent.transform.parent.gameObject;
         playerScript = player.GetComponent<FPS>();
+        playerRigidBody = player.GetComponent<Rigidbody>();
         camera = player.GetComponent<FPS>().camera;
         grappleBody = this.transform.Find("Grapple Body").gameObject;
         hook = this.transform.Find("Hook").gameObject;
@@ -46,7 +56,6 @@ public class GrappleHook : MonoBehaviour
     // Update is called once per frame
     void Update()
     {    
-        hook.transform.position = hookPosition;
 
         // Deactiveate grapple after a certain period of time
         grappleElapsed += Time.deltaTime;
@@ -56,7 +65,7 @@ public class GrappleHook : MonoBehaviour
         }
 
         // Deactiveate grapple after player starts moving away from it
-        Vector3 playerToHook = (hookPosition - player.transform.position).normalized;
+        Vector3 playerToHook = (hook.transform.position - player.transform.position).normalized;
         float dotProduct = Vector3.Dot(player.GetComponent<Rigidbody>().velocity.normalized, playerToHook);
 
         
@@ -102,11 +111,27 @@ public class GrappleHook : MonoBehaviour
                 Debug.DrawRay(camera.transform.position, 50 * (camera.transform.forward), Color.blue);
                 if (Physics.Raycast(laserRayCast, out RaycastHit hit, 100))
                 {
+                    Debug.LogWarning(hit.rigidbody);
+                    hook.transform.SetParent(hit.transform, true);
+                    hook.transform.position = hit.point;
+
                     playerScript.staminaAmount -= playerScript.staminaGrappleCost;
                     Debug.DrawRay(grappleBody.transform.position, 5 * (hook.transform.position - grappleBody.transform.position), Color.red);
-                    hookPosition = hit.point;
+                    hook.transform.position = hit.point;
                     SetHookActive(true);
                     grappleElapsed = 0;
+
+                    if (hit.transform.tag == "Player")
+                    {
+                        grappleType = GrappleType.PULLGRAPPLED;
+                        grappledRigidBody = hit.rigidbody;
+
+                    }
+                    else
+                    {
+                        grappleType = GrappleType.PULLUSER;
+                        
+                    }
 
                 }
             }
@@ -119,13 +144,28 @@ public class GrappleHook : MonoBehaviour
         {
             hook.SetActive(true);
             line.SetActive(true);
+
             //player.GetComponent<Rigidbody>().velocity = ((hook.transform.position - player.transform.position).normalized * 30 );
-            player.GetComponent<Rigidbody>().AddForce((hook.transform.position - player.transform.position).normalized * grapplePullForce);
 
             LineRenderer grappleLine = line.GetComponent<LineRenderer>();
             grappleLine.positionCount = 2;
             grappleLine.SetPosition(0, grappleBody.transform.position);
             grappleLine.SetPosition(1, hook.transform.position);
+
+            Vector3 playerToHookDirection = (hook.transform.position - player.transform.position).normalized;
+            if (grappleType == GrappleType.PULLUSER)
+            {
+                playerRigidBody.AddForce(playerToHookDirection * grapplePullForce);
+                
+
+            }
+            else if (grappleType == GrappleType.PULLGRAPPLED)
+            { 
+                playerRigidBody.AddForce(playerToHookDirection * grapplePullForce / 2);
+                grappledRigidBody.AddForce(-playerToHookDirection * grapplePullForce/2);
+                grappledRigidBody.useGravity = false;
+            }
+
         }
         else
         {
@@ -144,6 +184,13 @@ public class GrappleHook : MonoBehaviour
             grappleMaintainStarted = false;
             //if(player.GetComponent<FPS>().GetIsGrounded())
                 //player.GetComponent<Rigidbody>().AddForce(0,100,0);
+
+        }
+        else
+        {
+            hook.transform.parent = this.transform;
+            if (grappledRigidBody != null)
+                grappledRigidBody.useGravity = true;
 
         }
     }

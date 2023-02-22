@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class BoomerangWeapon : WeaponBase
 {
-    [SerializeField] Transform boomerang;
+    public Transform boomerang;
+
     enum BoomererangWeaponState
     {
         NONE,
