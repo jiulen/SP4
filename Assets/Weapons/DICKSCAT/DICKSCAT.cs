@@ -127,7 +127,7 @@ public class DICKSCAT : WeaponBase
 
         steamGauge.value = steamCurrent;
 
-        bloomProgress -= 100 * Time.deltaTime;
+        bloomProgress -= 200 * Time.deltaTime;
         if (bloomProgress < 0)
             bloomProgress = 0;
 
@@ -226,13 +226,13 @@ public class DICKSCAT : WeaponBase
 
                         Transform newTransform = camera.transform;
                         GameObject bullet = Instantiate(SCATBulletPF, bulletEmitter.transform);
-                        bullet.GetComponent<ProjectileBase>().SetObjectReferences(this.gameObject, particleManager);
+                        bullet.GetComponent<ProjectileBase>().SetObjectReferences(owner, particleManager);
                         Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
                         bullet.GetComponent<Rigidbody>().velocity = RandomSpray(front.normalized, inaccuracy[1], bloomProgress, bloomMax) * projectileVel[1];
                         bullet.transform.SetParent(projectileManager.transform);
                         fireAudio.Play();
 
-                        bloomProgress += 200 * (float)elapsedBetweenEachShot[1];
+                        bloomProgress += 25;
                         if (bloomProgress > bloomMax)
                             bloomProgress = bloomMax;
                     }

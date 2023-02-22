@@ -13,6 +13,8 @@ public class CustomCrosshair : MonoBehaviour
     public float circleThickness = 3;
     public bool enableCircle = false;
     public bool enableLines = true;
+    public bool enableCentre = true;
+    public bool dynamic = true;
 
     public Color color = Color.green;
 
@@ -27,7 +29,7 @@ public class CustomCrosshair : MonoBehaviour
 
     private Transform circle;
     private ProudLlama.CircleGenerator.StrokeCircleGenerator circleScript;
-
+    private Canvas canvas;
 
     void Start()
     {
@@ -39,6 +41,10 @@ public class CustomCrosshair : MonoBehaviour
 
         circle = this.transform.Find("Circle");
         circleScript = circle.GetComponent<ProudLlama.CircleGenerator.StrokeCircleGenerator>();
+
+        canvas = this.GetComponent<Canvas>();
+        canvas.worldCamera = this.GetComponentInParent<FPS>().camera;
+        canvas.planeDistance = 0.1f;
     }
 
     void Update()
@@ -47,8 +53,8 @@ public class CustomCrosshair : MonoBehaviour
             return;
         doUpdate = false;
 
-        float xOffset = centreGap + xLineLength / 2 + circleThickness -0.1f;
-        float yOffset = centreGap + yLineLength / 2 + circleThickness -0.1f;
+        float xOffset = centreGap + xLineLength / 2 + circleThickness - 0.1f;
+        float yOffset = centreGap + yLineLength / 2 + circleThickness - 0.1f;
 
         lineXP.sizeDelta = new Vector2(xLineLength, xLineThickness);
         lineXP.anchoredPosition = new Vector3(xOffset, 0);
@@ -80,6 +86,26 @@ public class CustomCrosshair : MonoBehaviour
         lineYN.gameObject.SetActive(enableLines);
 
         circle.gameObject.SetActive(enableCircle);
+
+        lineCentre.gameObject.SetActive(enableCentre);
+    }
+
+    public void UpdateBloom(float bloom, float bloomMax)
+    {
+        if (!dynamic)
+            return;
+
+        float bloomAmount = centreGap * bloom / bloomMax;
+        float xOffset = centreGap + xLineLength / 2 + circleThickness - 0.1f + bloomAmount;
+        float yOffset = centreGap + yLineLength / 2 + circleThickness - 0.1f + bloomAmount;
+
+        lineXP.anchoredPosition = new Vector3(xOffset, 0);
+        lineXN.anchoredPosition = new Vector3(-xOffset, 0);
+        lineYP.anchoredPosition = new Vector3(0, yOffset);
+        lineYN.anchoredPosition = new Vector3(0, -yOffset);
+        circleScript.CircleData = new ProudLlama.CircleGenerator.CircleData(centreGap + bloomAmount, 360, 0, 64, true);
+        circleScript.Generate();
+
 
     }
 }

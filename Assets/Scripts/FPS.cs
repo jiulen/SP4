@@ -14,7 +14,6 @@ public class FPS : NetworkBehaviour
     private bool isGround = false;
     private float pitch, yaw, roll;
     private float CamSen;
-    private float speed = 5f;
 
     private Rigidbody rigidbody;
 
@@ -28,6 +27,7 @@ public class FPS : NetworkBehaviour
     [SerializeField] GameObject headPivot;
     GameObject uiCanvas;
     public float airMovementMultiplier = 2.5f;
+    public float runSpeed = 10f;
 
     // Stamina
     public float staminaJumpCost = 0.5f;
@@ -56,6 +56,7 @@ public class FPS : NetworkBehaviour
     public float jumpForce = 250;
 
     // Dash
+    public float dashSpeed = 5;
     public float dashDuration = 0.2f;
     float dashProgress = 0.2f;
     public bool candash = true;
@@ -223,13 +224,13 @@ public class FPS : NetworkBehaviour
             {
                 //moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
                 //moveVector.Normalize();
-                Vector3 newDirection = moveVector * speed;
+                Vector3 newDirection = moveVector * runSpeed;
                 newDirection.y = rigidbody.velocity.y;
                 rigidbody.velocity = newDirection;
-                if (rigidbody.velocity.magnitude >= speed)
-                {
-                    rigidbody.velocity = rigidbody.velocity.normalized * speed;
-                }
+                //if (rigidbody.velocity.magnitude >= runSpeed)
+                //{
+                //    rigidbody.velocity = rigidbody.velocity.normalized * runSpeed;
+                //}
             }
             else
             {
@@ -256,12 +257,12 @@ public class FPS : NetworkBehaviour
                         isSlide = true;
                         if (moveVector.magnitude == 0)
                         {
-                            storeSlideVelocity = camera.transform.forward.normalized * speed * slideMultiplier;
+                            storeSlideVelocity = camera.transform.forward.normalized * runSpeed * slideMultiplier;
 
                         }
                         else
                         {
-                            storeSlideVelocity = moveVector * speed * slideMultiplier;
+                            storeSlideVelocity = moveVector * runSpeed * slideMultiplier;
                         }
                     }
                 }
@@ -283,7 +284,7 @@ public class FPS : NetworkBehaviour
             //if (isGround && moveVector.magnitude == 0)
             //{
             //    //rigidbody.velocity = new Vector3(0, 0, 0);
-            //    rigidbody.AddForce(-rigidbody.velocity.normalized * speed);
+            //    rigidbody.AddForce(-rigidbody.velocity.normalized * runSpeed);
 
             //}
             //else
@@ -353,9 +354,9 @@ public class FPS : NetworkBehaviour
         // Limit speed
         //Vector3 velocityWithoutY = rigidbody.velocity;
         //velocityWithoutY.y = 0;
-        //if ( rigidbody.velocity.magnitude >= speed)
+        //if ( rigidbody.velocity.magnitude >= runSpeed)
         //{
-        //    velocityWithoutY = velocityWithoutY.normalized * speed;
+        //    velocityWithoutY = velocityWithoutY.normalized * runSpeed;
         //    velocityWithoutY.y = rigidbody.velocity.y;
         //    //rigidbody.velocity = velocityWithoutY.normalized * 5;
         //    rigidbody.velocity = velocityWithoutY;
@@ -428,11 +429,11 @@ public class FPS : NetworkBehaviour
         {
             // If the player is falling, cancel their vertical velocity
             if (rigidbody.velocity.y < 0)
-                rigidbody.velocity = storeDashDir * speed * 3;
+                rigidbody.velocity = storeDashDir * dashSpeed * 3;
             // If the player is jumping, maintain that velocity
             else
             {
-                Vector3 newVelocity = storeDashDir * speed * 3;
+                Vector3 newVelocity = storeDashDir * dashSpeed * 3;
                 newVelocity.y = rigidbody.velocity.y;
                 rigidbody.velocity = newVelocity;
             }

@@ -85,7 +85,7 @@ public class RPG : WeaponBase
                 Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
                 GameObject go = Instantiate(Rocket, bulletEmitter.transform);
                 go.GetComponent<Rocket>().damage = damage[0];
-                go.GetComponent<Rocket>().SetCreator(owner);
+                go.GetComponent<Rocket>().SetObjectReferences(owner, particleManager);
                 go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[0] * PowerCurrentScale;
                 go.transform.SetParent(projectileManager.transform);
                 PowerCurrentScale = 1;

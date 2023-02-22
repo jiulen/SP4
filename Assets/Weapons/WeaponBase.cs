@@ -32,6 +32,7 @@ public class WeaponBase : MonoBehaviour
     protected Animator animator;
     protected ParticleSystem muzzleFlash;
     protected Animator fireAnimation;
+    protected CustomCrosshair crosshair;
     private GameObject WheelManagerUI;
 
     public void Start()
@@ -54,14 +55,18 @@ public class WeaponBase : MonoBehaviour
 
         weaponModel = transform.Find("Gun").gameObject;
         saveStartingWeaponPosition = weaponModel.transform.localPosition;
-        WheelManagerUI = transform.parent.parent.Find("Canvas/WeaponWheelUIManager").gameObject;
         if (bulletEmitter.transform.childCount > 0)
             muzzleFlash = bulletEmitter.transform.GetChild(0).GetComponent<ParticleSystem>();
-    }   
+
+        crosshair = owner.transform.Find("Custom Crosshair").GetComponent<CustomCrosshair>();
+        WheelManagerUI = transform.parent.parent.Find("Canvas/WeaponWheelUIManager").gameObject;
+
+    }
 
     // Update is called once per frame
     public void Update()
     {
+
         for (int i = 0; i != elapsedSinceLastShot.Length; i++)
         {
             elapsedSinceLastShot[i] += Time.deltaTime;
@@ -115,6 +120,8 @@ public class WeaponBase : MonoBehaviour
                 isRightClickDown = false;
             }
         }
+
+        crosshair.UpdateBloom(bloomProgress, bloomMax);
 
     }
 
