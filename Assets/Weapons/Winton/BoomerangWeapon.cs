@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BoomerangWeapon : WeaponBase
 {
-    public * boomerang;
+    [SerializeField] Transform boomerang;
     enum BoomererangWeaponState
     {
         NONE,
@@ -26,8 +26,6 @@ public class BoomerangWeapon : WeaponBase
 
         switch (boomererangWeaponState)
         {
-            case BoomererangWeaponState.NONE:
-                break;
             case BoomererangWeaponState.THROW:
                 if (boomerang.parent != null)
                 {
@@ -42,7 +40,8 @@ public class BoomerangWeapon : WeaponBase
     {
         if (boomererangWeaponState == BoomererangWeaponState.NONE)
         {
-            boomerang.GetComponent<Boomerang>().dir = camera.transform.forward * 100;
+
+            boomerang.GetComponent<Boomerang>().dir = camera.transform.forward;
             boomerang.GetComponent<ProjectileBase>().SetCreator(owner);
             boomerang.GetComponent<Boomerang>().boomererangState = Boomerang.BoomererangState.THROW;
             boomerang.parent = null;
