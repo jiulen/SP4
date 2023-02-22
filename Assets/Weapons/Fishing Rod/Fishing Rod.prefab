@@ -551,6 +551,7 @@ MonoBehaviour:
   fishingLine: {fileID: 4159853816640352201}
   hookPivot: {fileID: 8325342635959248888}
   hookParent: {fileID: 232826171868354169}
+  hookedRigidbody: {fileID: 0}
   hookVelocity: {x: 0, y: 0, z: 0}
   hookState: 0
 --- !u!1001 &6360273192767502694

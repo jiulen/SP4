@@ -532,7 +532,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2433933939539184634
 Transform:
   m_ObjectHideFlags: 0
@@ -569,6 +569,12 @@ MonoBehaviour:
   WeaponIcon: {fileID: 0}
   uiChamberList: []
   uiImageChamberList: []
+  bulletColors:
+  - {r: 0, g: 0, b: 0, a: 1}
+  - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  - {r: 255, g: 60, b: 0, a: 1}
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0, g: 0, b: 1, a: 1}
   cylinder: 00000000010000000200000002000000000000000000000000000000
 --- !u!1 &6245500581402153876
 GameObject:
