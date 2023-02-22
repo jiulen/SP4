@@ -18,7 +18,13 @@ public class Rocket : ProjectileBase
     void Update()
     {
         transform.rotation = Quaternion.LookRotation(transform.forward);
-        base.Update();
+        elapsed += Time.deltaTime;
+        if (elapsed >= duration)
+        {
+            RocketExplode();
+            Destroy(gameObject);
+        }
+
     }
 
     private void OnCollisionEnter(Collision collision)
