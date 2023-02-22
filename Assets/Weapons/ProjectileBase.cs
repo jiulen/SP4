@@ -55,11 +55,11 @@ public class ProjectileBase : MonoBehaviour
     // Checks if a collision with a hitbox that belongs to a player, and returns true if player is same as the one who created that projectile
     public bool CheckIfCreator(GameObject other)
     {
-        //Debug.LogError("HIT" + other.transform.name);
 
         if (other.tag == "PlayerHitBox")
         {
             GameObject hitBoxOwner = other.GetComponent<PlayerHitBox>().owner;
+            //Debug.LogWarning("HIT" + hitBoxOwner + "GAY" + creator);
 
             if (hitBoxOwner == creator)
                 return true;
