@@ -129,7 +129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: -1
-  duration: 3
+  duration: 2
   bloodEffect: {fileID: 0}
   sparkEffect: {fileID: 0}
 --- !u!114 &416668422356109525
@@ -144,10 +144,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51f7d89280324bb4caec7932d09901cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: -1
-  duration: 1
-  bloodEffect: {fileID: 0}
-  sparkEffect: {fileID: 0}
   clip: {fileID: 8300000, guid: 6c0250a072e034d4f82d1df4412e97a6, type: 3}
   radius: 3
   explosionForce: 800

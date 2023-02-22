@@ -13,6 +13,12 @@ public class Explosion : ProjectileBase
     {
         explodeAudio = GetComponent<AudioSource>();
     }
+
+    private void Update()
+    {
+
+    }
+
     public void Explode()
     {
         Collider[] colliders = Physics.OverlapSphere(transform.position, radius);

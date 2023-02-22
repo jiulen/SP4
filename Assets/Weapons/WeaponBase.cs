@@ -59,7 +59,7 @@ public class WeaponBase : MonoBehaviour
             muzzleFlash = bulletEmitter.transform.GetChild(0).GetComponent<ParticleSystem>();
 
         crosshair = owner.transform.Find("Custom Crosshair").GetComponent<CustomCrosshair>();
-        WheelManagerUI = transform.parent.parent.Find("Canvas/WeaponWheelUIManager").gameObject;
+        WheelManagerUI = owner.transform.Find("Canvas/WeaponWheelUIManager").gameObject;
 
     }
 

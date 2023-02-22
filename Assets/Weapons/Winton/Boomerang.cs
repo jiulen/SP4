@@ -1,52 +1,61 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Boomerang : WeaponBase
+public class Boomerang : ProjectileBase
 {
-    private Vector3 shootVelocity;
-    private float timetotravel, currenttimeelaspe = 0;
-    enum BoomererangState
+    public Vector3 dir;
+    private float rotationSpeed;
+    private Rigidbody rb;
+    [SerializeField] BoomerangWeapon boomerangWeapon;
+    public enum BoomererangState
     {
         NONE,
         THROW,
-        RECOIL
+        RECOIL,
     }
-    BoomererangState boomererangState;
+    public BoomererangState boomererangState;
 
-    // Start is called before the first frame update
     void Start()
     {
-        timetotravel = 0.9f;
+        rotationSpeed = 100f;
         boomererangState = BoomererangState.NONE;
+        rb = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        switch(boomererangState)
+        if (transform.parent == null)
         {
-            case BoomererangState.THROW:
-
-                if (currenttimeelaspe > timetotravel)
-                {
-                    currenttimeelaspe = 0;
-                    boomererangState = BoomererangState.RECOIL;
-                }
-                currenttimeelaspe += Time.deltaTime;
-                break;
-            case BoomererangState.RECOIL:
-                break;
+            switch(boomererangState)
+            {
+                case BoomererangState.THROW:
+                    if (elapsed > 1)
+                    {
+                        elapsed = 0;
+                        boomererangState = BoomererangState.RECOIL;
+                    }
+                    rb.velocity = dir * Time.deltaTime;
+                    break;
+                case BoomererangState.RECOIL:
+                    rb.velocity = (creator.transform.position - rb.position).normalized * 100 * Time.deltaTime;
+                    break;
+            }
+            elapsed += Time.deltaTime;
         }
     }
 
-    protected override void Fire1Once()
+    private void OnCollisionEnter(Collision collision)
     {
-        if (boomererangState == BoomererangState.NONE)
+        if (boomererangState != BoomererangState.NONE && collision.gameObject != creator)
+            boomererangState = BoomererangState.RECOIL;
+
+        if (boomererangState == BoomererangState.RECOIL && collision.gameObject == creator)
         {
-            shootVelocity = camera.transform.forward * 100;
-            transform.parent = null;
-            boomererangState = BoomererangState.THROW;
+            transform.parent = boomerangWeapon.gameObject.transform;
+            boomererangState = BoomererangState.NONE;
+            elapsed = 0;
         }
     }
 }

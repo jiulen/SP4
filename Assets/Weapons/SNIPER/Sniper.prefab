@@ -572,6 +572,7 @@ MonoBehaviour:
   SCATBulletPF: {fileID: 4136986527977053402, guid: 7fe315266963d914284057486c11b524, type: 3}
   Scoped: {fileID: 0}
   stablizeElasped: 0
+  bulletTrail: {fileID: 7338455853520770129, guid: c8a74160b55dc8a429d2a617fc546e54, type: 3}
 --- !u!114 &9107404262379298849
 MonoBehaviour:
   m_ObjectHideFlags: 0
