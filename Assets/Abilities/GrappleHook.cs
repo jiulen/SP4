@@ -158,8 +158,7 @@ public class GrappleHook : MonoBehaviour
                 playerRigidBody.AddForce(playerToHookDirection * grapplePullForce);
             }
             else if (grappleType == GrappleType.PULLGRAPPLED)
-            {
-                Debug.LogWarning("SHE FLIES");
+            { 
                 playerRigidBody.AddForce(playerToHookDirection * grapplePullForce / 2);
                 grappledRigidBody.AddForce(-playerToHookDirection * grapplePullForce/2);
 
