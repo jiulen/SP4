@@ -39,7 +39,6 @@ public class ProjectileBase : MonoBehaviour
     public void Update()
     {
         //Debug.DrawRay(this.transform.position, (debugOnTriggerBackwardsPosition - this.transform.position), Color.green);
-
         elapsed += Time.deltaTime;
         if(elapsed >= duration)
         {
