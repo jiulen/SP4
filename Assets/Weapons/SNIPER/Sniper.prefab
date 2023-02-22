@@ -562,7 +562,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireRate:
-  - 5
+  - 0.9
   damage: 05000000
   bulletsPerShot: 
   inaccuracy: []

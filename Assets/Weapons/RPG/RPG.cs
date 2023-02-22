@@ -67,8 +67,11 @@ public class RPG : WeaponBase
 
     override protected void Fire1()
     {
-        PowerCurrentScale += Time.deltaTime;
-        slider.enabled = true;
+        if (!animator.GetBool("isActive"))
+        {
+            PowerCurrentScale += Time.deltaTime;
+            slider.enabled = true;
+        }
     }
     override protected void Fire1Up()
     {

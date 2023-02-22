@@ -25,9 +25,15 @@ public class Rocket : ProjectileBase
     {
         if (collision != null && collision.gameObject != creator)
         {
-            explosion.Explode();
-            particleManager.GetComponent<ParticleManager>().CreateEffect("Explosion_PE", this.transform.position, this.transform.forward);
+            RocketExplode();
             Destroy(this.gameObject);
         }
     }
+
+    private void RocketExplode()
+    {
+        explosion.Explode();
+        particleManager.GetComponent<ParticleManager>().CreateEffect("Explosion_PE", this.transform.position, this.transform.forward);
+    }
+
 }
