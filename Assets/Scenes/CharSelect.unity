@@ -700,6 +700,8 @@ GameObject:
   - component: {fileID: 525397638}
   - component: {fileID: 525397637}
   - component: {fileID: 525397636}
+  - component: {fileID: 525397640}
+  - component: {fileID: 525397641}
   m_Layer: 5
   m_Name: CharSelectCanvas
   m_TagString: Untagged
@@ -791,6 +793,53 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &525397640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525397635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 510153512
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+--- !u!114 &525397641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525397635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ba3c87641bd60b41be53195bc40ca3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CharBtn: {fileID: 0}
+  PrimaryBtn: {fileID: 0}
+  SecondaryBtn: {fileID: 0}
+  SpecialBtn: {fileID: 0}
+  RhinoBtn: {fileID: 0}
+  BeastBtn: {fileID: 0}
+  AnglerBtn: {fileID: 0}
+  WintonBtn: {fileID: 0}
+  LockBtn: {fileID: 628242185}
+  characterDatabase: {fileID: 0}
+  charactersHolder: {fileID: 0}
+  playerCards:
+  - {fileID: 1756159851}
+  - {fileID: 1156834899}
+  - {fileID: 1673228435}
+  - {fileID: 1420894419}
+  characterInfoPanel: {fileID: 0}
+  characterNameText: {fileID: 0}
+  introSpawnPoint: {fileID: 0}
 --- !u!1 &615706687
 GameObject:
   m_ObjectHideFlags: 0
@@ -903,7 +952,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -195}
+  m_AnchoredPosition: {x: 0, y: -194.5}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &628242185
@@ -949,7 +998,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 628242186}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 525397641}
+        m_TargetAssemblyTypeName: CharSelectUI, Assembly-CSharp
+        m_MethodName: LockIn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &628242186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1323,10 +1384,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterDatabase: {fileID: 0}
-  visuals: {fileID: 0}
   characterIconImage: {fileID: 0}
-  playerNameText: {fileID: 0}
-  characterNameText: {fileID: 0}
+  Locked: {fileID: 1238458326}
+  playerNameText: {fileID: 1393265072}
 --- !u!1 &1199253512
 GameObject:
   m_ObjectHideFlags: 0
@@ -1546,7 +1606,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1296634240}
   m_Layer: 5
-  m_Name: PlayerSeats
+  m_Name: PlayerCards
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2030,10 +2090,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterDatabase: {fileID: 0}
-  visuals: {fileID: 0}
   characterIconImage: {fileID: 0}
-  playerNameText: {fileID: 0}
-  characterNameText: {fileID: 0}
+  Locked: {fileID: 700795006}
+  playerNameText: {fileID: 1548999445}
 --- !u!1 &1548999443
 GameObject:
   m_ObjectHideFlags: 0
@@ -2219,10 +2278,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterDatabase: {fileID: 0}
-  visuals: {fileID: 0}
   characterIconImage: {fileID: 0}
-  playerNameText: {fileID: 0}
-  characterNameText: {fileID: 0}
+  Locked: {fileID: 821352096}
+  playerNameText: {fileID: 1755291947}
 --- !u!1 &1675050348
 GameObject:
   m_ObjectHideFlags: 0
@@ -2529,10 +2587,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterDatabase: {fileID: 0}
-  visuals: {fileID: 0}
   characterIconImage: {fileID: 0}
-  playerNameText: {fileID: 0}
-  characterNameText: {fileID: 0}
+  Locked: {fileID: 1852470485}
+  playerNameText: {fileID: 298018751}
 --- !u!1 &1810561329
 GameObject:
   m_ObjectHideFlags: 0

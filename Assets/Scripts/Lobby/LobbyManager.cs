@@ -74,6 +74,7 @@ public class LobbyManager : NetworkBehaviour {
 
     private void Awake() {
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Update() {
