@@ -21,7 +21,7 @@ public class GrappleHook : MonoBehaviour
     
     // Keeps track of how long the player has moved in the opposite direction of the hook
     private double grappleMaintainElapsed = 0;
-    public float grappleMaintainDuration = 0.2f;
+    public float grappleMaintainDuration = 0.4f;
     // Keeps track of if the player has been moving in the opposite direction of the hook since the start of the grapple.
     // As in, it will only be true once the player has move towards the hook for the first frame of each grapple.
     // This is so that the hook will not break if the player was already moving away from the hookPosition from the start of each grapple
@@ -112,7 +112,7 @@ public class GrappleHook : MonoBehaviour
                 if (Physics.Raycast(laserRayCast, out RaycastHit hit, 100))
                 {
                     Debug.LogWarning(hit.rigidbody);
-                    hook.transform.SetParent(hit.transform,true);
+                    hook.transform.SetParent(hit.transform, true);
                     hook.transform.position = hit.point;
 
                     playerScript.staminaAmount -= playerScript.staminaGrappleCost;
@@ -156,12 +156,14 @@ public class GrappleHook : MonoBehaviour
             if (grappleType == GrappleType.PULLUSER)
             {
                 playerRigidBody.AddForce(playerToHookDirection * grapplePullForce);
+                
+
             }
             else if (grappleType == GrappleType.PULLGRAPPLED)
             { 
                 playerRigidBody.AddForce(playerToHookDirection * grapplePullForce / 2);
                 grappledRigidBody.AddForce(-playerToHookDirection * grapplePullForce/2);
-
+                grappledRigidBody.useGravity = false;
             }
 
         }
@@ -187,6 +189,9 @@ public class GrappleHook : MonoBehaviour
         else
         {
             hook.transform.parent = this.transform;
+            if (grappledRigidBody != null)
+                grappledRigidBody.useGravity = true;
+
         }
     }
 

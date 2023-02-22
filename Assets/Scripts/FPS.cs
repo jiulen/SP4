@@ -218,10 +218,12 @@ public class FPS : NetworkBehaviour
                 moveVectorWithY = (playerVerticalInput * camera.transform.forward) + (playerHorizontalInput * camera.transform.right);
                 moveVectorWithY.Normalize();
                 rigidbody.AddForce(moveVectorWithY * airMovementMultiplier);
-
+                rigidbody.useGravity = false;
             }
             else if (isGround)
             {
+                rigidbody.useGravity = true;
+
                 //moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
                 //moveVector.Normalize();
                 Vector3 newDirection = moveVector * runSpeed;
@@ -234,7 +236,8 @@ public class FPS : NetworkBehaviour
             }
             else
             {
-            
+                rigidbody.useGravity = true;
+
                 rigidbody.AddForce(moveVector * airMovementMultiplier);
                 //isSlide = false;
                 //this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
@@ -348,7 +351,7 @@ public class FPS : NetworkBehaviour
         // Apply air resistance
         if(!isGround)
         {
-            rigidbody.AddForce(-rigidbody.velocity);
+            rigidbody.AddForce(-rigidbody.velocity/1.5f);
         }
 
         // Limit speed
