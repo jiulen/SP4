@@ -9,6 +9,7 @@ using System;
 public class PlayerEntity : EntityBase
 {
     public GameObject[] Weapons;
+    private float respawncountdown = 5, currentrespawnelaspe;
     private int currentIdx;
     public Image CurrentWeaponIcon;
     public Image DamageIndicator;
@@ -16,6 +17,7 @@ public class PlayerEntity : EntityBase
     public Image Injured, BloodEffect;
     public GameObject WheelManagerUI;
 
+    private GameObject DeathUI;
     // Start is called before the first frame update
     void Start()
     {
@@ -39,6 +41,8 @@ public class PlayerEntity : EntityBase
             entry.callback.AddListener((eventData) => { OnPointerExitDelegate(eventData, items, index); });
             trigger.triggers.Add(entry);
         }
+        DeathUI = transform.Find("Canvas/DeathUI").gameObject;
+        currentrespawnelaspe = respawncountdown;
     }
 
     private void OnPointerEnterDelegate(BaseEventData eventData, Button items, int idx)
@@ -65,18 +69,6 @@ public class PlayerEntity : EntityBase
     {
         base.Update();
 
-        //if (Input.GetKeyDown(KeyCode.M))
-        //{
-        //    currentIdx++;
-        //    if (currentIdx > Weapons.Length - 1)
-        //        currentIdx = 0;
-        //}
-        //if (Input.GetKeyDown(KeyCode.N))
-        //{
-        //    currentIdx--;
-        //    if (currentIdx < 0)
-        //        currentIdx = Weapons.Length - 1;
-        //}
 
         if (Input.GetKey(KeyCode.E))
         {
@@ -95,7 +87,7 @@ public class PlayerEntity : EntityBase
 
         foreach (GameObject weapon in Weapons)
         {
-            if (Weapons[currentIdx] == weapon)
+            if (Weapons[currentIdx] == weapon && Health > 0)
             {
                 weapon.SetActive(true);
             }
@@ -105,6 +97,15 @@ public class PlayerEntity : EntityBase
             }
         }
 
+        if (Health <= 0)
+        {
+            UpdateDead();
+            DeathUI.SetActive(true);
+        }
+        else
+        {
+            DeathUI.SetActive(false);
+        }
 
         //weapon icon and inside the wheel
         if (Weapons[currentIdx].GetComponent<WeaponBase>() != null)
@@ -133,10 +134,28 @@ public class PlayerEntity : EntityBase
         BloodEffect.GetComponent<BloodEffects>().ResetStartDuration();
 
         SetHealth(GetHealth() - hp);
+    }
 
-        if (Health <= 0)
+    public void UpdateDead()
+    {
+        DeathUI.GetComponentInChildren<Text>().text = ((int)currentrespawnelaspe).ToString();
+        
+        if ((int)currentrespawnelaspe <= 0)
         {
-            //Destroy(transform.root.gameObject);
+            transform.GetComponent<FPS>().enabled = true;
+            transform.GetComponent<Teleport>().enabled = true;
+            transform.GetComponent<PickupCollectibles>().enabled = true;
+            transform.Find("Head").gameObject.SetActive(true);
+            SetHealth(MaxHealth);
+            currentrespawnelaspe = respawncountdown;
+        }
+        else
+        {
+            transform.GetComponent<FPS>().enabled = false;
+            transform.Find("Head").gameObject.SetActive(false);
+            transform.GetComponent<Teleport>().enabled = false;
+            transform.GetComponent<PickupCollectibles>().enabled = false;
+            currentrespawnelaspe -= Time.deltaTime;
         }
     }
 
