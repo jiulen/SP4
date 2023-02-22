@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BoomerangWeapon : WeaponBase
 {
-    public * boomerang;
+    public Transform boomerang;
     enum BoomererangWeaponState
     {
         NONE,
