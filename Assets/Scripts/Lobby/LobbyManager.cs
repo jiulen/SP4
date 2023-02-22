@@ -443,7 +443,8 @@ public class LobbyManager : NetworkBehaviour {
                     }
                 });
                 joinedLobby = lobby;
-                NetworkManager.SceneManager.LoadScene(joinedLobby.Data[KEY_MAP_SELECT].Value, LoadSceneMode.Single);
+                //NetworkManager.SceneManager.LoadScene(joinedLobby.Data[KEY_MAP_SELECT].Value, LoadSceneMode.Single);
+                NetworkManager.SceneManager.LoadScene("CharSelect", LoadSceneMode.Single);
             }
             catch (LobbyServiceException e)
             {
