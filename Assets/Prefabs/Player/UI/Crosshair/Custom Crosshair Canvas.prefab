@@ -389,7 +389,7 @@ GameObject:
   - component: {fileID: 3316442775851197802}
   - component: {fileID: 4833887450291650365}
   m_Layer: 0
-  m_Name: Custom Crosshair
+  m_Name: Custom Crosshair Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -12,6 +12,7 @@ public class DeRolo : WeaponBase
     public List<GameObject> uiChamberList = new List<GameObject>();
     public List<Image> uiImageChamberList = new List<Image>();
 
+    public GameObject bulletTrailPF; 
 
     public enum BulletTypes
     {
@@ -35,6 +36,7 @@ public class DeRolo : WeaponBase
     private int cylinderSize = 6;
     void Start()
     {
+        base.Start();
         for(int i = 0; i != cylinderSize; i++)
         {
             cylinder.Add(BulletTypes.NONE);
@@ -55,6 +57,8 @@ public class DeRolo : WeaponBase
 
     void Update()
     {
+        base.Update();
+
         for (int i = 0; i != cylinderSize; i++)
         {
             Debug.Log(i);
@@ -63,5 +67,58 @@ public class DeRolo : WeaponBase
             Color color = bulletColors[(int)cylinder[i]];
             uiImageChamberList[i].color = color;
         }
+    }
+
+    override protected void Fire1Once()
+    {
+        //if(CheckCanFire(1))
+        //{
+            Debug.LogError(cylinder[0]);
+            switch(cylinder[0])
+            {
+            case BulletTypes.NORMAL:
+                {
+                        Ray laserRayCast = new Ray(camera.transform.position + camera.transform.forward * 0.5f, camera.transform.forward);
+                        GameObject laser = Instantiate(bulletTrailPF, projectileManager.transform);
+                        BallistaLaser laserScript = laser.GetComponent<BallistaLaser>();
+
+                        if (Physics.Raycast(laserRayCast, out RaycastHit hit, 1000))
+                        {
+
+                            Vector3 direction = hit.point - bulletEmitter.transform.position;
+                            laserScript.InitParticleSystem(bulletEmitter.transform.position, direction, hit.distance);
+                            if (hit.collider.transform.tag == "PlayerHitBox")
+                            {
+                                if (hit.collider.name == "Head")
+                                {
+                                    particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 45);
+                                }
+                                else
+                                {
+                                    particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
+
+                                }
+                                particleManager.GetComponent<ParticleManager>().CreateEffect("ElectricExplosion_PE", hit.point, hit.normal);
+
+                            }
+                            else
+                            {
+                                particleManager.GetComponent<ParticleManager>().CreateEffect("ElectricExplosion_PE", hit.point, hit.normal);
+
+                            }
+                        }
+                        else
+                        {
+                         
+                            Vector3 direction = camera.transform.forward * 1000 - bulletEmitter.transform.position;
+                            laserScript.InitParticleSystem(bulletEmitter.transform.position, camera.transform.forward, 1000);
+
+                        }
+                        break;
+
+                }
+                    
+            }
+        //}
     }
 }

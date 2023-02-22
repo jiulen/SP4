@@ -6,6 +6,7 @@ using Unity.Netcode;
 using System.Threading;
 using UnityEngine.SceneManagement;
 
+// Player script for movement and abilities
 public class FPS : NetworkBehaviour
 {
     CapsuleCollider capsuleCollider;
@@ -25,7 +26,6 @@ public class FPS : NetworkBehaviour
     public GameObject head;
     [SerializeField] GameObject bodyPivot;
     [SerializeField] GameObject headPivot;
-    GameObject uiCanvas;
     public float airMovementMultiplier = 2.5f;
     public float runSpeed = 10f;
 
@@ -41,9 +41,6 @@ public class FPS : NetworkBehaviour
     public int staminaMax = 3;
 
     public float staminaRefillRate = 1.0f;
-
-    // Stamina UI
-    public GameObject StaminaUIPF;
 
     // Grounded check
     private float headHeight = 1;
@@ -125,7 +122,6 @@ public class FPS : NetworkBehaviour
         bodyRadius = (body.GetComponent<CapsuleCollider>().radius * head.transform.localScale.y * body.transform.localScale.y);
         //Set dash progress to more than dash so dash isn't activated on start
         dashProgress = dashDuration + 1;
-        camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         pitch = yaw = roll = 0f;
         CamSen = 220f;
 
@@ -135,10 +131,9 @@ public class FPS : NetworkBehaviour
         rigidbody.velocity.Set(0, 0, 0);
 
         if (!IsOwner && !debugBelongsToPlayer) return;
-       
-        uiCanvas = Instantiate(StaminaUIPF, this.transform);
-        uiCanvas.GetComponent<StaminaUI>().InitBars();
-        
+        camera = GameObject.Find("Main Camera").GetComponent<Camera>();
+
+        body.GetComponent<MeshRenderer>().enabled = false;
     }
 
     private void OnEnable()
@@ -166,7 +161,6 @@ public class FPS : NetworkBehaviour
     {
        
 
-        Debug.DrawRay(camera.transform.position, 100 *camera.transform.forward, Color.black);
 
         // Reset position and velocity if player goes out of bounds for debugging
         if (transform.position.magnitude > 100 || transform.position.y <= -20)
@@ -177,14 +171,9 @@ public class FPS : NetworkBehaviour
         UpdateGrounded();
 
         if (!IsOwner && !debugBelongsToPlayer) return;
+        Debug.DrawRay(camera.transform.position, 100 * camera.transform.forward, Color.black);
 
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            Debug.LogError("RESETTING UI");
-            Destroy(uiCanvas);
-            uiCanvas = Instantiate(StaminaUIPF, this.transform);
-            uiCanvas.GetComponent<StaminaUI>().InitBars();
-        }
+        
 
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
@@ -339,7 +328,6 @@ public class FPS : NetworkBehaviour
             }
         }
 
-        uiCanvas.GetComponent<StaminaUI>().UpdateStamina(staminaAmount);
 
     }
 
@@ -445,7 +433,6 @@ public class FPS : NetworkBehaviour
         else
             isDashing = false;
 
-        uiCanvas.GetComponent<StaminaUI>().UpdateStamina(staminaAmount);
 
         return;
     }

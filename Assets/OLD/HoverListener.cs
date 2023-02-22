@@ -18,7 +18,7 @@ public class HoverListener : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Weapontext.text = player.Weapons[idx].name;
+        Weapontext.text = player.GetWeaponName(idx);
     }
 
     public void OnPointerExit(PointerEventData eventData)

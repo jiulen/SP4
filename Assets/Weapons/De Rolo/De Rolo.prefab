@@ -561,7 +561,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85439a585f040464f92118daa555c8ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: []
+  fireRate:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
   damage: 
   bulletsPerShot: 
   inaccuracy: []
@@ -569,6 +574,13 @@ MonoBehaviour:
   WeaponIcon: {fileID: 0}
   uiChamberList: []
   uiImageChamberList: []
+  bulletTrailPF: {fileID: 8676091470326512184, guid: 13f964860fbd257408c5384d352a7198, type: 3}
+  bulletColors:
+  - {r: 0, g: 0, b: 0, a: 1}
+  - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  - {r: 255, g: 60, b: 0, a: 1}
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0, g: 0, b: 1, a: 1}
   cylinder: 00000000010000000200000002000000000000000000000000000000
 --- !u!1 &6245500581402153876
 GameObject:

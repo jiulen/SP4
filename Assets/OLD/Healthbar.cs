@@ -15,7 +15,7 @@ public class Healthbar : MonoBehaviour
     void Start()
     {
         slider = GetComponentInChildren<Slider>();
-        player = transform.parent.GetComponentInChildren<PlayerEntity>();
+        player = transform.parent.parent.GetComponent<PlayerEntity>();
         slider.maxValue = slider.value = player.MaxHealth;
         //Injured = transform.parent.Find("Injured").GetComponent<Image>();
     }
