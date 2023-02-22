@@ -28,6 +28,7 @@ public class WeaponBase : MonoBehaviour
     protected Vector3 saveStartingWeaponPosition;
     public Sprite WeaponIcon;
     protected GameObject owner;
+    protected PlayerEntity ownerPlayerEntityScript;
     private bool isLeftClickDown = false, isRightClickDown = false;
     protected Animator animator;
     protected ParticleSystem muzzleFlash;
@@ -51,15 +52,16 @@ public class WeaponBase : MonoBehaviour
         particleManager = GameObject.Find("Particle Manager");
         bulletEmitter = transform.Find("Gun/Bullet emitter").gameObject;
         //playerOwner = transform.parent.transform.parent.Find("Player Entity").gameObject;
-        owner = transform.parent.transform.parent.gameObject;
-
+        owner = transform.parent.parent.parent.gameObject;   // this > right hand > equipped > player
+        ownerPlayerEntityScript = owner.GetComponent<PlayerEntity>();
         weaponModel = transform.Find("Gun").gameObject;
         saveStartingWeaponPosition = weaponModel.transform.localPosition;
         if (bulletEmitter.transform.childCount > 0)
             muzzleFlash = bulletEmitter.transform.GetChild(0).GetComponent<ParticleSystem>();
 
-        crosshair = owner.transform.Find("Custom Crosshair").GetComponent<CustomCrosshair>();
-        WheelManagerUI = owner.transform.Find("Canvas/WeaponWheelUIManager").gameObject;
+        
+        crosshair = ownerPlayerEntityScript.GetCrosshairCanvas().GetComponent<CustomCrosshair>();
+        WheelManagerUI = ownerPlayerEntityScript.GetWeaponWheelCanvas().gameObject;
 
     }
 

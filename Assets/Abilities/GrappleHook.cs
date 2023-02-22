@@ -38,7 +38,7 @@ public class GrappleHook : MonoBehaviour
 
     void Start()
     {
-        player = transform.parent.transform.parent.gameObject;
+        player = transform.parent.parent.parent.gameObject; // this > left hand > equipped > player
         playerScript = player.GetComponent<FPS>();
         playerRigidBody = player.GetComponent<Rigidbody>();
         camera = player.GetComponent<FPS>().camera;
@@ -96,7 +96,7 @@ public class GrappleHook : MonoBehaviour
             SetHookActive(false);
         }
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             if (hookActive)
             {

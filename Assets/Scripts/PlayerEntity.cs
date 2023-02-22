@@ -6,28 +6,75 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
 
+// Player script for UI, playerstats 
 public class PlayerEntity : EntityBase
 {
-    public GameObject[] Weapons;
+    private FPS FPSScript;
+    public GameObject[] equippedWeaponList = new GameObject[3];
+    private GameObject equipped;
     private float respawncountdown = 5, currentrespawnelaspe;
     private int currentIdx;
-    public Image CurrentWeaponIcon;
-    public Image DamageIndicator;
-    public GameObject CameraEffectsUIManager;
-    public Image Injured, BloodEffect;
-    public GameObject WheelManagerUI;
+    private Image uiCurrentWeaponIcon;
+    private Image cameraEffectInjured, cameraEffectBlood;
+    private GameObject uiWeaponWheelCanvas;
+    private GameObject uiPlayerStatsCanvas;
+    private GameObject uiDeathCanvas;
+    private GameObject uiStaminaCanvas;
+    private GameObject crosshairCanvas;
+    private GameObject cameraEffectsCanvas;
+    private GameObject playerCanvasParent;
 
-    private GameObject DeathUI;
-    // Start is called before the first frame update
-    void Start()
+    public GameObject PlayerCanvasParentPF;
+    //public GameObject UIWeaponWheelPF;
+    //public GameObject PlayerStatsCanvasPF;
+    public GameObject StaminaCanvasPF;
+    //public GameObject CrosshairCanvasPF;
+    //public GameObject DeathCanvasPF;
+    //public GameObject CameraEffectsCanvasPF;
+    //public GameObject MiniMapPF;
+    public Image DamageIndicatorImagePF;
+
+    void Awake()
     {
+        FPSScript = this.GetComponent<FPS>();
+
         currentIdx = 0;
         base.Start();
+        equipped = transform.Find("Equipped").gameObject;
+        GameObject rightHand = equipped.transform.Find("Right Hand").gameObject;
 
-        for (int i = 0; i < WheelManagerUI.GetComponentsInChildren<Button>().Length; i++)
+        if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
+
+
+
+        for (int i = 0; i != rightHand.transform.childCount; i++)
+        {
+            equippedWeaponList[i] = rightHand.transform.GetChild(i).gameObject;
+        }
+
+        playerCanvasParent = Instantiate(PlayerCanvasParentPF, this.transform);
+        uiWeaponWheelCanvas = playerCanvasParent.transform.Find("Weapon Wheel Canvas").gameObject;
+        uiWeaponWheelCanvas.GetComponent<Canvas>().worldCamera = FPSScript.camera;
+
+        uiDeathCanvas = playerCanvasParent.transform.Find("Death Canvas").gameObject;
+        uiPlayerStatsCanvas = playerCanvasParent.transform.Find("Player Stats Canvas").gameObject;
+        //Instantiate(MiniMapPF, this.transform);
+
+        uiCurrentWeaponIcon = uiPlayerStatsCanvas.transform.Find("CurrentWeaponImage").GetComponent<Image>();
+        cameraEffectsCanvas = playerCanvasParent.transform.Find("Camera Effects Canvas").gameObject;
+        cameraEffectInjured = cameraEffectsCanvas.transform.Find("Injured").GetComponent<Image>();
+        cameraEffectBlood = cameraEffectsCanvas.transform.Find("Blood").GetComponent<Image>();
+
+        uiStaminaCanvas = playerCanvasParent.transform.Find("Stamina Canvas").gameObject;
+        uiStaminaCanvas.GetComponent<StaminaUI>().InitBars();
+
+        crosshairCanvas = playerCanvasParent.transform.Find("Custom Crosshair Canvas").gameObject;
+        crosshairCanvas.GetComponent<CustomCrosshair>().doUpdate = true;
+
+        for (int i = 0; i < uiWeaponWheelCanvas.GetComponentsInChildren<Button>().Length; i++)
         {
             var index = i;
-            Button items = WheelManagerUI.GetComponentsInChildren<Button>()[i];
+            Button items = uiWeaponWheelCanvas.GetComponentsInChildren<Button>()[i];
             items.onClick.AddListener(() => UpdateWheelManager(index));
 
             EventTrigger trigger = items.gameObject.AddComponent<EventTrigger>();
@@ -41,7 +88,7 @@ public class PlayerEntity : EntityBase
             entry.callback.AddListener((eventData) => { OnPointerExitDelegate(eventData, items, index); });
             trigger.triggers.Add(entry);
         }
-        DeathUI = transform.Find("Canvas/DeathUI").gameObject;
+        //DeathUI = transform.Find("Canvas/DeathUI").gameObject;
         currentrespawnelaspe = respawncountdown;
     }
 
@@ -68,77 +115,89 @@ public class PlayerEntity : EntityBase
     void Update()
     {
         base.Update();
+        if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
 
-
-        if (Input.GetKey(KeyCode.E))
+        // For debugging
+        if (Input.GetKeyDown(KeyCode.P))
         {
-            WheelManagerUI.SetActive(true);
+            Debug.LogError("RESETTING UI");
+            Destroy(uiStaminaCanvas);
+            uiStaminaCanvas = Instantiate(StaminaCanvasPF, this.transform);
+            uiStaminaCanvas.GetComponent<StaminaUI>().InitBars();
+        }
+
+        if (Input.GetKey(KeyCode.Q))
+        {
+            uiWeaponWheelCanvas.SetActive(true);
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
         else
         {
-            WheelManagerUI.SetActive(false);
+            uiWeaponWheelCanvas.SetActive(false);
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
 
 
 
-        foreach (GameObject weapon in Weapons)
-        {
-            if (Weapons[currentIdx] == weapon && Health > 0)
-            {
-                weapon.SetActive(true);
-            }
-            else
-            {
-                weapon.SetActive(false);
-            }
-        }
+        //foreach (GameObject weapon in equippedWeaponList)
+        //{
+        //    if (equippedWeaponList[currentIdx] == weapon && Health > 0)
+        //    {
+        //        weapon.SetActive(true);
+        //    }
+        //    else
+        //    {
+        //        weapon.SetActive(false);
+        //    }
+        //}
 
         if (Health <= 0)
         {
             UpdateDead();
-            DeathUI.SetActive(true);
+            uiDeathCanvas.SetActive(true);
         }
         else
         {
-            DeathUI.SetActive(false);
+            uiDeathCanvas.SetActive(false);
         }
 
         //weapon icon and inside the wheel
-        if (Weapons[currentIdx].GetComponent<WeaponBase>() != null)
-            CurrentWeaponIcon.sprite = Weapons[currentIdx].GetComponent<WeaponBase>().WeaponIcon;
+        if (equippedWeaponList[currentIdx] != null)
+           uiCurrentWeaponIcon.sprite = equippedWeaponList[currentIdx].GetComponent<WeaponBase>().WeaponIcon;
 
-        for (int i = 0; i < WheelManagerUI.GetComponentsInChildren<Button>().Length; i++)
+        for (int i = 0; i < uiWeaponWheelCanvas.GetComponentsInChildren<Button>().Length; i++)
         {
-            Button items = WheelManagerUI.GetComponentsInChildren<Button>()[i];
-            items.gameObject.transform.GetChild(0).GetComponent<Image>().sprite = Weapons[i].GetComponent<WeaponBase>().WeaponIcon;
+            Button items = uiWeaponWheelCanvas.GetComponentsInChildren<Button>()[i];
+            if(equippedWeaponList[i] != null)
+                items.gameObject.transform.GetChild(0).GetComponent<Image>().sprite = equippedWeaponList[i].GetComponent<WeaponBase>().WeaponIcon;
         }
 
 
-        Color currAlpha = Injured.color;
+        Color currAlpha = cameraEffectInjured.color;
         currAlpha.a = 1 - (Health / MaxHealth);
-        Injured.color = currAlpha;
+        cameraEffectInjured.color = currAlpha;
+
+        uiStaminaCanvas.GetComponent<StaminaUI>().UpdateStamina(FPSScript.staminaAmount);
 
     }
 
 
     public override void TakeDamage(float hp, Vector3 dir)
     {
-        Image dmgImg = Instantiate(DamageIndicator) as Image;
+        Image dmgImg = Instantiate(DamageIndicatorImagePF) as Image;
         dmgImg.GetComponentInChildren<DamageIndicator>().SetSourcePos(dir);
-        dmgImg.transform.SetParent(CameraEffectsUIManager.transform, false);
+        dmgImg.transform.SetParent(cameraEffectsCanvas.transform, false);
 
-        BloodEffect.GetComponent<BloodEffects>().ResetStartDuration();
+        cameraEffectBlood.GetComponent<BloodEffects>().ResetStartDuration();
 
         SetHealth(GetHealth() - hp);
     }
 
     public void UpdateDead()
     {
-        DeathUI.GetComponentInChildren<Text>().text = ((int)currentrespawnelaspe).ToString();
+        uiDeathCanvas.GetComponentInChildren<Text>().text = ((int)currentrespawnelaspe).ToString();
         
         if ((int)currentrespawnelaspe <= 0)
         {
@@ -162,5 +221,21 @@ public class PlayerEntity : EntityBase
     private void UpdateWheelManager(int idx)
     {
         currentIdx = idx;
+    }
+
+    public string GetWeaponName(int idx)
+    {
+        return equippedWeaponList[idx].name;
+    }
+
+    public GameObject GetCrosshairCanvas()
+    {
+        Debug.LogWarning(crosshairCanvas);
+        return crosshairCanvas;
+    }
+
+    public GameObject GetWeaponWheelCanvas()
+    {
+        return uiWeaponWheelCanvas;
     }
 }

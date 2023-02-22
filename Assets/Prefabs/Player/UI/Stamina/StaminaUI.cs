@@ -19,7 +19,7 @@ public class StaminaUI : MonoBehaviour
     private GameObject barReference;
     void Awake()
     {
-        owner = this.transform.parent.gameObject;
+        owner = this.transform.parent.parent.gameObject; // Canvas parent > player
         staminaMax = owner.GetComponent<FPS>().staminaMax;
         barReference = this.transform.GetChild(0).gameObject;
 
