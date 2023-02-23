@@ -22,12 +22,16 @@ public class PlayerCard : MonoBehaviour
             //characterIconImage.enabled = false;
         }
 
-        playerNameText.text = state.IsLockedIn ? $"Player {state.ClientId}" : $"Player {state.ClientId} (Picking...)";
-
+        //playerNameText.text = state.IsLockedIn ? $"Player {state.ClientId}" : $"Player {state.ClientId} (Picking...)";
+        
         Locked.SetActive(state.IsLockedIn);
         gameObject.SetActive(true);
     }
 
+    public void SetDisplay(string playername)
+    {
+        playerNameText.text = playername;
+    }
     public void DisableDisplay()
     {
         gameObject.SetActive(false);
