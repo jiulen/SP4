@@ -62,7 +62,7 @@ public class WeaponBase : MonoBehaviour
 
         crosshair = ownerPlayerEntityScript.GetCrosshairCanvas().GetComponent<CustomCrosshair>();
         wheelManagerUI = ownerPlayerEntityScript.GetWeaponWheelCanvas().gameObject;
-
+        Debug.LogWarning(wheelManagerUI);
     }
 
     // Update is called once per frame

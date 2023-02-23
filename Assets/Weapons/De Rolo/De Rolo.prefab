@@ -532,7 +532,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2433933939539184634
 Transform:
   m_ObjectHideFlags: 0
@@ -562,7 +562,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireRate:
-  - 0
+  - 2
   - 0
   - 0
   - 0
@@ -575,13 +575,14 @@ MonoBehaviour:
   uiChamberList: []
   uiImageChamberList: []
   bulletTrailPF: {fileID: 8676091470326512184, guid: 13f964860fbd257408c5384d352a7198, type: 3}
+  bulletTrail: {fileID: 7338455853520770129, guid: c8a74160b55dc8a429d2a617fc546e54, type: 3}
   bulletColors:
   - {r: 0, g: 0, b: 0, a: 1}
   - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   - {r: 255, g: 60, b: 0, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 0, g: 0, b: 1, a: 1}
-  cylinder: 00000000010000000200000002000000000000000000000000000000
+  cylinder: 000000000100000002000000020000000000000000000000
 --- !u!1 &6245500581402153876
 GameObject:
   m_ObjectHideFlags: 0
@@ -654,7 +655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -1059,7 +1060,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -200}
+  m_AnchoredPosition: {x: 0, y: -175}
   m_SizeDelta: {x: 75, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6459003112975209300
@@ -1324,15 +1325,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5021729131001816755, guid: 6fa361e769977d1458718b892b0f8ae3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.303
+      value: 4.231
       objectReference: {fileID: 0}
     - target: {fileID: 5021729131001816755, guid: 6fa361e769977d1458718b892b0f8ae3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.612
+      value: 1.128
       objectReference: {fileID: 0}
     - target: {fileID: 5021729131001816755, guid: 6fa361e769977d1458718b892b0f8ae3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.275
+      value: -0.014
       objectReference: {fileID: 0}
     - target: {fileID: 5021729131001816755, guid: 6fa361e769977d1458718b892b0f8ae3, type: 3}
       propertyPath: m_LocalRotation.w
