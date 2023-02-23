@@ -16,4 +16,31 @@ public class SwordProjectile : ProjectileBase
         Quaternion rotation = Quaternion.LookRotation(transform.forward);
         transform.rotation = rotation;
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Vector3 vel = this.GetComponent<Rigidbody>().velocity;
+        debugOnTriggerBackwardsPosition = this.transform.position - vel.normalized * 1;
+        Ray laserRayCast = new Ray(debugOnTriggerBackwardsPosition, vel);
+        if (Physics.Raycast(laserRayCast, out RaycastHit hit, 1))
+        {
+            if (hit.collider.tag == "PlayerHitBox")
+            {
+                if (hit.collider.name == "Head")
+                {
+                    particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
+                }
+                else
+                {
+                    particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
+
+                }
+            }
+            else
+            {
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hit.point, hit.normal);
+            }
+
+        }
+    }
 }

@@ -187,13 +187,12 @@ public class PlayerEntity : EntityBase
 
     public override void TakeDamage(float hp, Vector3 dir)
     {
-        Debug.Log(cameraEffectsCanvas);
-        Image dmgImg = Instantiate(DamageIndicatorImagePF) as Image;
-        dmgImg.GetComponent<DamageIndicator>().SetSourcePos(dir);
-        dmgImg.transform.SetParent(cameraEffectsCanvas.transform, false);
-
-        cameraEffectBlood.GetComponent<BloodEffects>().ResetStartDuration();
-        Debug.Log(cameraEffectBlood);
+        //Debug.Log(cameraEffectsCanvas);
+        //Image dmgImg = Instantiate(DamageIndicatorImagePF) as Image;
+        //dmgImg.GetComponent<DamageIndicator>().SetSourcePos(dir);
+        //dmgImg.transform.parent = cameraEffectsCanvas.transform;
+        //cameraEffectBlood.GetComponent<BloodEffects>().ResetStartDuration();
+        //Debug.Log(cameraEffectBlood);
         SetHealth(GetHealth() - hp);
     }
 
