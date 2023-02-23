@@ -2682,6 +2682,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1873280063}
     m_Modifications:
     - target: {fileID: 1371599825830388150, guid: 4255c8074ec5ed64cb74525d39efe5a4, type: 3}
+      propertyPath: cycleDuration
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371599825830388150, guid: 4255c8074ec5ed64cb74525d39efe5a4, type: 3}
       propertyPath: cylinder.Array.size
       value: 6
       objectReference: {fileID: 0}
@@ -2708,6 +2712,42 @@ PrefabInstance:
     - target: {fileID: 1371599825830388150, guid: 4255c8074ec5ed64cb74525d39efe5a4, type: 3}
       propertyPath: bulletColors.Array.data[2].r
       value: 0.7372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371599825830388150, guid: 4255c8074ec5ed64cb74525d39efe5a4, type: 3}
+      propertyPath: cycleAnimationCurve.m_Curve.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371599825830388150, guid: 4255c8074ec5ed64cb74525d39efe5a4, type: 3}
+      propertyPath: cycleAnimationCurve.m_Curve.Array.data[1].time
+      value: 0.14497826
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371599825830388150, guid: 4255c8074ec5ed64cb74525d39efe5a4, type: 3}
+      propertyPath: cycleAnimationCurve.m_Curve.Array.data[2].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371599825830388150, guid: 4255c8074ec5ed64cb74525d39efe5a4, type: 3}
+      propertyPath: cycleAnimationCurve.m_Curve.Array.data[1].value
+      value: 0.9452945
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371599825830388150, guid: 4255c8074ec5ed64cb74525d39efe5a4, type: 3}
+      propertyPath: cycleAnimationCurve.m_Curve.Array.data[2].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371599825830388150, guid: 4255c8074ec5ed64cb74525d39efe5a4, type: 3}
+      propertyPath: cycleAnimationCurve.m_Curve.Array.data[1].inSlope
+      value: 0.97223294
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371599825830388150, guid: 4255c8074ec5ed64cb74525d39efe5a4, type: 3}
+      propertyPath: cycleAnimationCurve.m_Curve.Array.data[1].inWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371599825830388150, guid: 4255c8074ec5ed64cb74525d39efe5a4, type: 3}
+      propertyPath: cycleAnimationCurve.m_Curve.Array.data[1].outSlope
+      value: 0.97223294
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371599825830388150, guid: 4255c8074ec5ed64cb74525d39efe5a4, type: 3}
+      propertyPath: cycleAnimationCurve.m_Curve.Array.data[1].outWeight
+      value: 0.33333334
       objectReference: {fileID: 0}
     - target: {fileID: 2433933939539184634, guid: 4255c8074ec5ed64cb74525d39efe5a4, type: 3}
       propertyPath: m_RootOrder
