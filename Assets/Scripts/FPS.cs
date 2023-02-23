@@ -96,6 +96,9 @@ public class FPS : NetworkBehaviour
 
     Dash dashstate = Dash.NONE;
 
+    //Dash camera effects
+    Coroutine zoomInCoroutine, zoomOutCoroutine;
+
     //Wallrunning
     public bool canWallrun = true;
     public bool isWallrunning = false;
@@ -432,10 +435,21 @@ public class FPS : NetworkBehaviour
                 rigidbody.velocity = newVelocity;
             }
             isDashing = true;
+
+            if (zoomInCoroutine != null) StopCoroutine(zoomInCoroutine);
+            if (zoomOutCoroutine != null) StopCoroutine(zoomOutCoroutine);
+
+            zoomOutCoroutine = StartCoroutine(DoFOV(75f, 200f));
         }
         else
+        {
             isDashing = false;
 
+            if (zoomInCoroutine != null) StopCoroutine(zoomInCoroutine);
+            if (zoomOutCoroutine != null) StopCoroutine(zoomOutCoroutine);
+
+            zoomInCoroutine = StartCoroutine(DoFOV(60f, 150f));
+        }
 
         return;
     }
