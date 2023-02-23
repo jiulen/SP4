@@ -552,9 +552,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2007606734375078153, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007606734375078153, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007606734375078153, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 6861657865719934034, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
       propertyPath: m_Name
       value: Weapon Wheel Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 7772757300453473289, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 7772757300453473289, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7772757300453473289, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8921444942702868388, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 8921444942702868388, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8921444942702868388, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}

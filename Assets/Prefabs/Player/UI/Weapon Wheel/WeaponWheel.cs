@@ -41,7 +41,7 @@ public class WeaponWheel : MonoBehaviour
         for (int i = 0; i != segmentNum; i++)
         {
             if (equippedWeaponList[i] != null)
-                wheelSegmentsParent.transform.GetChild(i).GetChild(0).GetComponent<Image>().sprite = equippedWeaponList[i].GetComponent<WeaponBase>().WeaponIcon;
+                wheelSegmentsParent.transform.GetChild(i).GetChild(0).GetChild(0).GetComponent<Image>().sprite = equippedWeaponList[i].GetComponent<WeaponBase>().WeaponIcon;
         }
 
     }
