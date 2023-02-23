@@ -44,7 +44,7 @@ public class CustomCrosshair : MonoBehaviour
 
         canvas = this.GetComponent<Canvas>();
         canvas.worldCamera = this.GetComponentInParent<FPS>().camera;
-        canvas.planeDistance = 0.1f;
+        canvas.planeDistance = 0.09f;
     }
 
     void Update()

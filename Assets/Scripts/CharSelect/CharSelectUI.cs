@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Services.Authentication;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
+using Unity.Services.Lobbies.Models;
+using UnityEngine.SceneManagement;
 
 public class CharSelectUI : NetworkBehaviour
 {
@@ -31,16 +34,20 @@ public class CharSelectUI : NetworkBehaviour
 
 
     private NetworkList<CharacterSelectState> players;
-    bool one = true;
+    public string clientName;
     private void Awake()
     {
         players = new NetworkList<CharacterSelectState>();
     }
 
+
+
     public override void OnNetworkSpawn()
     {
+
         if (IsClient)
         {
+
             //Character[] allCharacters = characterDatabase.GetAllCharacters();
 
             //foreach (var character in allCharacters)
@@ -49,7 +56,7 @@ public class CharSelectUI : NetworkBehaviour
             //    selectbuttonInstance.SetCharacter(this, character);
             //    characterButtons.Add(selectbuttonInstance);
             //}
-
+            Debug.Log("Updated");
             players.OnListChanged += HandlePlayersStateChanged;
         }
 
@@ -58,15 +65,26 @@ public class CharSelectUI : NetworkBehaviour
             foreach (NetworkClient client in NetworkManager.Singleton.ConnectedClientsList)
             {
                 players.Add(new CharacterSelectState(client.ClientId));
+                Debug.Log(client.ClientId);
+            }
+            int i = 0;
+            foreach (Player player in LobbyManager.Instance.joinedLobby.Players)
+            {
+                if (player.Id == AuthenticationService.Instance.PlayerId)
+                {
+                    clientName = player.Data[LobbyManager.KEY_PLAYER_NAME].Value;
+                    playerCards[i].SetDisplay(clientName);
+                }
+                i++;
             }
         }
-        //players.OnListChanged += HandlePlayersStateChanged;
-        
-       
+        players.OnListChanged += HandlePlayersStateChanged;
+
+
 
 
     }
-    public void Select(Character character)
+        public void Select(Character character)
     {
         for (int i = 0; i < players.Count; i++)
         {

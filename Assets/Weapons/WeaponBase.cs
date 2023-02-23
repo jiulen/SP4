@@ -34,7 +34,7 @@ public class WeaponBase : MonoBehaviour
     protected ParticleSystem muzzleFlash;
     protected Animator fireAnimation;
     protected CustomCrosshair crosshair;
-    private GameObject WheelManagerUI;
+    private GameObject wheelManagerUI;
 
     public void Start()
     {
@@ -59,9 +59,9 @@ public class WeaponBase : MonoBehaviour
         if (bulletEmitter.transform.childCount > 0)
             muzzleFlash = bulletEmitter.transform.GetChild(0).GetComponent<ParticleSystem>();
 
-        
+
         crosshair = ownerPlayerEntityScript.GetCrosshairCanvas().GetComponent<CustomCrosshair>();
-        WheelManagerUI = ownerPlayerEntityScript.GetWeaponWheelCanvas().gameObject;
+        wheelManagerUI = ownerPlayerEntityScript.GetWeaponWheelCanvas().gameObject;
 
     }
 
@@ -74,7 +74,7 @@ public class WeaponBase : MonoBehaviour
             elapsedSinceLastShot[i] += Time.deltaTime;
         }
 
-        //if (!WheelManagerUI.activeSelf)
+        if (!wheelManagerUI.transform.GetChild(0).gameObject.activeSelf)
         {
             if (Input.GetButton("Fire1"))
             {

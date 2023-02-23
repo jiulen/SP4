@@ -248,6 +248,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6150797814911005632}
     m_Modifications:
+    - target: {fileID: 304482145323830815, guid: 0f3425e527a764a4899eb97e3fbcb584, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 304482145323830815, guid: 0f3425e527a764a4899eb97e3fbcb584, type: 3}
+      propertyPath: m_PlaneDistance
+      value: 0.09
+      objectReference: {fileID: 0}
     - target: {fileID: 4309501206075968949, guid: 0f3425e527a764a4899eb97e3fbcb584, type: 3}
       propertyPath: m_Name
       value: Custom Crosshair Canvas
@@ -544,9 +552,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2007606734375078153, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007606734375078153, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007606734375078153, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 6861657865719934034, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
       propertyPath: m_Name
       value: Weapon Wheel Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 7772757300453473289, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 7772757300453473289, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7772757300453473289, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8921444942702868388, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 8921444942702868388, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8921444942702868388, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3ca1ec889cc3a8d428f4c3dc3c85522c, type: 3}
@@ -758,7 +802,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3421546521053433844, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_PresetInfoIsWorld
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9031491400341693026, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_Name

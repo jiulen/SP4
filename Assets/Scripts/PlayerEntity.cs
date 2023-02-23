@@ -12,8 +12,9 @@ public class PlayerEntity : EntityBase
     private FPS FPSScript;
     public GameObject[] equippedWeaponList = new GameObject[3];
     private GameObject equipped;
+    private GameObject activeWeapon;
+    private GameObject previousWeapon;
     private float respawncountdown = 5, currentrespawnelaspe;
-    private int currentIdx;
     private Image uiCurrentWeaponIcon;
     private Image cameraEffectInjured, cameraEffectBlood;
     private GameObject uiWeaponWheelCanvas;
@@ -34,10 +35,11 @@ public class PlayerEntity : EntityBase
     //public GameObject MiniMapPF;
     public Image DamageIndicatorImagePF;
 
+
     void Awake()
     {
+       
         FPSScript = this.GetComponent<FPS>();
-        currentIdx = 0;
         base.Start();
         equipped = transform.Find("Equipped").gameObject;
         GameObject rightHand = equipped.transform.Find("Right Hand").gameObject;
@@ -49,11 +51,14 @@ public class PlayerEntity : EntityBase
         for (int i = 0; i != rightHand.transform.childCount; i++)
         {
             equippedWeaponList[i] = rightHand.transform.GetChild(i).gameObject;
+            if(i != 0)
+              equippedWeaponList[i].SetActive(false);
         }
+        activeWeapon = equippedWeaponList[0];
+        previousWeapon = activeWeapon;
 
         playerCanvasParent = Instantiate(PlayerCanvasParentPF, this.transform);
         uiWeaponWheelCanvas = playerCanvasParent.transform.Find("Weapon Wheel Canvas").gameObject;
-        uiWeaponWheelCanvas.GetComponent<Canvas>().worldCamera = FPSScript.camera;
 
         uiDeathCanvas = playerCanvasParent.transform.Find("Death Canvas").gameObject;
         uiPlayerStatsCanvas = playerCanvasParent.transform.Find("Player Stats Canvas").gameObject;
@@ -71,23 +76,23 @@ public class PlayerEntity : EntityBase
         crosshairCanvas = playerCanvasParent.transform.Find("Custom Crosshair Canvas").gameObject;
         crosshairCanvas.GetComponent<CustomCrosshair>().doUpdate = true;
 
-        for (int i = 0; i < uiWeaponWheelCanvas.GetComponentsInChildren<Button>().Length; i++)
-        {
-            var index = i;
-            Button items = uiWeaponWheelCanvas.GetComponentsInChildren<Button>()[i];
-            items.onClick.AddListener(() => UpdateWheelManager(index));
+        //for (int i = 0; i < uiWeaponWheelCanvas.GetComponentsInChildren<Button>().Length; i++)
+        //{
+        //    var index = i;
+        //    Button items = uiWeaponWheelCanvas.GetComponentsInChildren<Button>()[i];
+        //    items.onClick.AddListener(() => UpdateWheelManager(index));
 
-            EventTrigger trigger = items.gameObject.AddComponent<EventTrigger>();
-            EventTrigger.Entry entry = new EventTrigger.Entry();
-            entry.eventID = EventTriggerType.PointerEnter;
-            entry.callback.AddListener((eventData) => { OnPointerEnterDelegate(eventData, items, index); });
-            trigger.triggers.Add(entry);
+        //    EventTrigger trigger = items.gameObject.AddComponent<EventTrigger>();
+        //    EventTrigger.Entry entry = new EventTrigger.Entry();
+        //    entry.eventID = EventTriggerType.PointerEnter;
+        //    entry.callback.AddListener((eventData) => { OnPointerEnterDelegate(eventData, items, index); });
+        //    trigger.triggers.Add(entry);
 
-            entry = new EventTrigger.Entry();
-            entry.eventID = EventTriggerType.PointerExit;
-            entry.callback.AddListener((eventData) => { OnPointerExitDelegate(eventData, items, index); });
-            trigger.triggers.Add(entry);
-        }
+        //    entry = new EventTrigger.Entry();
+        //    entry.eventID = EventTriggerType.PointerExit;
+        //    entry.callback.AddListener((eventData) => { OnPointerExitDelegate(eventData, items, index); });
+        //    trigger.triggers.Add(entry);
+        //}
         //DeathUI = transform.Find("Canvas/DeathUI").gameObject;
         currentrespawnelaspe = respawncountdown;
     }
@@ -127,33 +132,6 @@ public class PlayerEntity : EntityBase
             uiStaminaCanvas.GetComponent<StaminaUI>().InitBars();
         }
 
-        if (Input.GetKey(KeyCode.Q))
-        {
-            uiWeaponWheelCanvas.SetActive(true);
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
-        else
-        {
-            uiWeaponWheelCanvas.SetActive(false);
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-        }
-
-
-
-        //foreach (GameObject weapon in equippedWeaponList)
-        //{
-        //    if (equippedWeaponList[currentIdx] == weapon && Health > 0)
-        //    {
-        //        weapon.SetActive(true);
-        //    }
-        //    else
-        //    {
-        //        weapon.SetActive(false);
-        //    }
-        //}
-
         if (Health <= 0)
         {
             UpdateDead();
@@ -164,16 +142,11 @@ public class PlayerEntity : EntityBase
             uiDeathCanvas.SetActive(false);
         }
 
-        //weapon icon and inside the wheel
-        if (equippedWeaponList[currentIdx] != null)
-           uiCurrentWeaponIcon.sprite = equippedWeaponList[currentIdx].GetComponent<WeaponBase>().WeaponIcon;
+        //Weapon UI icon
+        if (activeWeapon != null)
+           uiCurrentWeaponIcon.sprite = activeWeapon.GetComponent<WeaponBase>().WeaponIcon;
 
-        for (int i = 0; i < uiWeaponWheelCanvas.GetComponentsInChildren<Button>().Length; i++)
-        {
-            Button items = uiWeaponWheelCanvas.GetComponentsInChildren<Button>()[i];
-            if(equippedWeaponList[i] != null)
-                items.gameObject.transform.GetChild(0).GetComponent<Image>().sprite = equippedWeaponList[i].GetComponent<WeaponBase>().WeaponIcon;
-        }
+    
 
 
         Color currAlpha = cameraEffectInjured.color;
@@ -219,11 +192,6 @@ public class PlayerEntity : EntityBase
         }
     }
 
-    private void UpdateWheelManager(int idx)
-    {
-        currentIdx = idx;
-    }
-
     public string GetWeaponName(int idx)
     {
         return equippedWeaponList[idx].name;
@@ -238,5 +206,28 @@ public class PlayerEntity : EntityBase
     public GameObject GetWeaponWheelCanvas()
     {
         return uiWeaponWheelCanvas;
+    }
+
+    public void SetActiveWeapon(int i)
+    {
+        //if (activeWeapon != null)
+            activeWeapon.SetActive(false);
+
+        // Swap to previous weapon
+        if(i == -1)
+        {
+            GameObject tempReference = previousWeapon;
+            previousWeapon.SetActive(true);
+
+            previousWeapon = activeWeapon;
+            activeWeapon = tempReference;
+        }
+        else
+        {
+            equippedWeaponList[i].SetActive(true);
+            previousWeapon = activeWeapon;
+            activeWeapon = equippedWeaponList[i];
+        }
+       
     }
 }

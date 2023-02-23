@@ -68,13 +68,13 @@ public class LobbyManager : NetworkBehaviour {
     private float heartbeatTimer;
     private float lobbyPollTimer;
     private float refreshLobbyListTimer = 5f;
-    private Lobby joinedLobby;
+    public Lobby joinedLobby;
     private string playerName;
 
 
     private void Awake() {
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
     }
 
     private void Update() {
@@ -178,7 +178,7 @@ public class LobbyManager : NetworkBehaviour {
         return false;
     }
 
-    private Player GetPlayer() {
+    public Player GetPlayer() {
         return new Player(AuthenticationService.Instance.PlayerId, null, new Dictionary<string, PlayerDataObject> {
             { KEY_PLAYER_NAME, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, playerName) },
             { KEY_PLAYER_CHARACTER, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, PlayerCharacter.Marine.ToString()) }

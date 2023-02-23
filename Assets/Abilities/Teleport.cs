@@ -31,6 +31,7 @@ public class Teleport : MonoBehaviour
         playerBody = playerFPSScript.body.transform;
 
         terrain = 1 << LayerMask.NameToLayer("Terrain");
+        tpMarker.SetActive(false);
     }
 
     // Update is called once per frame
