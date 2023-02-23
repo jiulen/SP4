@@ -54,6 +54,7 @@ public class FishingHook : MonoBehaviour
                 particleManager.CreateEffect("Sparks_PE", transform.position, -fishingRod.hookVelocity.normalized);
 
             fishingRod.hookState = FishingRod.HookState.HOOKED;
+            transform.parent = other.transform;
         }
     }
 }
