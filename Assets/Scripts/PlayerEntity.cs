@@ -40,7 +40,6 @@ public class PlayerEntity : EntityBase
     {
        
         FPSScript = this.GetComponent<FPS>();
-
         base.Start();
         equipped = transform.Find("Equipped").gameObject;
         GameObject rightHand = equipped.transform.Find("Right Hand").gameObject;
@@ -121,6 +120,7 @@ public class PlayerEntity : EntityBase
     void Update()
     {
         base.Update();
+        //Debug.Log(Health);
         if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
 
         // For debugging

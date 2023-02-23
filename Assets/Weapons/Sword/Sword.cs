@@ -89,13 +89,11 @@ public class Sword : WeaponBase
                         {
                             particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
                             player.TakeDamage(damage * 2, dir);
-                            Debug.Log("SLICE PLAYER HEAD");
                         }
                         else
                         {
                             particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
                             player.TakeDamage(damage, dir);
-                            Debug.Log("SLICE PLAYER BODY");
                         }
                     }
                 }
@@ -110,7 +108,6 @@ public class Sword : WeaponBase
                 {
                     Vector3 dir = owner.transform.position - entity.transform.position;
                     entity.TakeDamage(damage, dir);
-                    Debug.Log("HIT CRATES");
                 }
             }
             if (Physics.Raycast(camera.transform.position, camera.transform.forward, out RaycastHit hit))
