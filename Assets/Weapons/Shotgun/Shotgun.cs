@@ -54,13 +54,11 @@ public class Shotgun : WeaponBase
                                     {
                                         particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit2.point, hit2.normal, 15);
                                         player2.TakeDamage(damage[0] * 2, -bulletDir);
-                                        Debug.Log("head2");
                                     }
                                     else
                                     {
                                         particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit2.point, hit2.normal);
                                         player2.TakeDamage(damage[0] * 2, -bulletDir);
-                                        Debug.Log("body2");
                                     }
                                 }
                                 else
