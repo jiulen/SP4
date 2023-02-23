@@ -62,6 +62,7 @@ public class PlayerEntity : EntityBase
 
         uiCurrentWeaponIcon = uiPlayerStatsCanvas.transform.Find("CurrentWeaponImage").GetComponent<Image>();
         cameraEffectsCanvas = playerCanvasParent.transform.Find("Camera Effects Canvas").gameObject;
+        Debug.Log(cameraEffectsCanvas);
         cameraEffectInjured = cameraEffectsCanvas.transform.Find("Injured").GetComponent<Image>();
         cameraEffectBlood = cameraEffectsCanvas.transform.Find("Blood").GetComponent<Image>();
 
@@ -186,12 +187,13 @@ public class PlayerEntity : EntityBase
 
     public override void TakeDamage(float hp, Vector3 dir)
     {
+        Debug.Log(cameraEffectsCanvas);
         Image dmgImg = Instantiate(DamageIndicatorImagePF) as Image;
-        dmgImg.GetComponentInChildren<DamageIndicator>().SetSourcePos(dir);
+        dmgImg.GetComponent<DamageIndicator>().SetSourcePos(dir);
         dmgImg.transform.SetParent(cameraEffectsCanvas.transform, false);
 
         cameraEffectBlood.GetComponent<BloodEffects>().ResetStartDuration();
-
+        Debug.Log(cameraEffectBlood);
         SetHealth(GetHealth() - hp);
     }
 

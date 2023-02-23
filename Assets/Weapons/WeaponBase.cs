@@ -74,7 +74,7 @@ public class WeaponBase : MonoBehaviour
             elapsedSinceLastShot[i] += Time.deltaTime;
         }
 
-        if (!WheelManagerUI.activeSelf)
+        //if (!WheelManagerUI.activeSelf)
         {
             if (Input.GetButton("Fire1"))
             {

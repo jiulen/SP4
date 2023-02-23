@@ -45,7 +45,7 @@ public class Boomerang : ProjectileBase
                     break;
             }
 
-            transform.localRotation = Quaternion.AngleAxis(rotationElaspe * rotationSpeed, transform.up);
+            transform.localRotation = Quaternion.AngleAxis(rotationElaspe * rotationSpeed, Vector3.Cross(transform.forward, transform.right));
             rotationElaspe += Time.deltaTime;
             elapsed += Time.deltaTime;
         }
@@ -53,38 +53,56 @@ public class Boomerang : ProjectileBase
 
     private void OnTriggerEnter(Collider collider)
     {
-        FPS ownerofBoom = collider.gameObject.GetComponent<FPS>();
-        EntityBase entity = collider.gameObject.GetComponent<EntityBase>();
-
-
-        if (ownerofBoom == null && entity == null)
+        if (CheckIfCreator(collider.gameObject))
         {
-            boomererangState = BoomererangState.RECOIL;
+            if (boomererangState == BoomererangState.RECOIL)
+            {
+                transform.parent = boomerangWeapon.transform.GetChild(0);
+                transform.localPosition = Vector3.zero;
+                transform.localRotation = Quaternion.identity;
+                GetComponent<MeshCollider>().enabled = false;
+                rb.isKinematic = true;
+                rb.velocity = Vector3.zero;
+                elapsed = 0;
+                boomererangState = BoomererangState.NONE;
+            }
         }
         else
         {
-            if (entity.gameObject != creator)
-            {
-                Vector3 dir = entity.transform.position - transform.position;
-                entity.TakeDamage(damage, dir);
-            }
-
-            if (ownerofBoom != null)
-            {
-                if (ownerofBoom.gameObject == creator)
-                {
-                    if (boomererangState == BoomererangState.RECOIL)
-                    {
-                        transform.parent = boomerangWeapon.transform.GetChild(0);
-                        transform.localPosition = Vector3.zero;
-                        transform.localRotation = Quaternion.identity;
-                        GetComponent<MeshCollider>().enabled = false;
-                        rb.isKinematic = true;
-                        rb.velocity = Vector3.zero;
-                        boomererangState = BoomererangState.NONE;
-                    }
-                }
-            }
+            boomererangState = BoomererangState.RECOIL;
         }
+
+        //EntityBase entity = collider.gameObject.GetComponent<EntityBase>();
+
+        //if (entity == null)
+        //{
+        //    if (CheckIfCreator(collider.gameObject))
+        //        return;
+
+        //    boomererangState = BoomererangState.RECOIL;
+        //}
+        //else
+        //{
+        //    if (CheckIfCreator(collider.gameObject))
+        //    {
+        //        if (boomererangState == BoomererangState.RECOIL)
+        //        {
+        //            transform.parent = boomerangWeapon.transform.GetChild(0);
+        //            transform.localPosition = Vector3.zero;
+        //            transform.localRotation = Quaternion.identity;
+        //            GetComponent<MeshCollider>().enabled = false;
+        //            rb.isKinematic = true;
+        //            rb.velocity = Vector3.zero;
+        //            boomererangState = BoomererangState.NONE;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Vector3 dir = entity.transform.position - transform.position;
+        //        entity.TakeDamage(damage, dir);
+        //        Debug.Log("BOOMERANG HIT");
+        //    }
+        //    //}
+        //}
     }
 }
