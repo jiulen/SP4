@@ -68,9 +68,17 @@ public class FishingRod : WeaponBase
     {
         if (hookState == HookState.INACTIVE)
         {
+            //Raycast front
             //Throw hook out
-            Vector3 shootDir = camera.transform.position + camera.transform.forward * 10 - bulletEmitter.transform.position;
-            hookVelocity = shootDir.normalized * fishingThrowSpeed;
+            RaycastHit raycastHitFront;
+            if (Physics.Raycast(camera.transform.position, camera.transform.forward, out raycastHitFront, 200))
+            {
+                hookVelocity = (raycastHitFront.point - bulletEmitter.transform.position).normalized * fishingThrowSpeed;
+            }
+            else
+            {
+                hookVelocity = (camera.transform.position + camera.transform.forward * 10 - bulletEmitter.transform.position).normalized * fishingThrowSpeed;
+            }            
 
             hookState = HookState.NOT_HOOKED;
             fishingLine.SetActive(true);
