@@ -8,6 +8,8 @@ public class FishingHook : MonoBehaviour
 
     ParticleManager particleManager;
 
+    [SerializeField] AudioSource hookHitAudio;
+
     float gravity = -9.81f;
 
     private void Start()
@@ -46,6 +48,7 @@ public class FishingHook : MonoBehaviour
 
                 }
                 fishingRod.hookedRigidbody = other.attachedRigidbody;
+                hookHitAudio.Play();
             }
             else
                 particleManager.CreateEffect("Sparks_PE", transform.position, -fishingRod.hookVelocity.normalized);

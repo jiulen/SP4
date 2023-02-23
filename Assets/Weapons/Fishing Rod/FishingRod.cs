@@ -28,6 +28,8 @@ public class FishingRod : WeaponBase
     };
     public HookState hookState = HookState.INACTIVE;
 
+    [SerializeField] AudioSource rodPullAudio;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -74,6 +76,8 @@ public class FishingRod : WeaponBase
             fishingLine.SetActive(true);
             hookPivot.parent = null;
             hookedRigidbody = null;
+
+            fireAudio.Play();
         }
         else
         {
@@ -91,6 +95,8 @@ public class FishingRod : WeaponBase
             hookPivot.localRotation = Quaternion.identity;
             fishingLine.SetActive(false);
             hookedRigidbody = null;
+
+            rodPullAudio.Play();
         }
     }
 }
