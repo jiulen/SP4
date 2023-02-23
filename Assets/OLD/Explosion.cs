@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
@@ -24,24 +25,41 @@ public class Explosion : ProjectileBase
         Collider[] colliders = Physics.OverlapSphere(transform.position, radius);
         foreach (Collider collider in colliders)
         {
-            EntityBase entity = collider.gameObject.GetComponent<EntityBase>();
-            if (entity != null)
+            if (collider.gameObject.tag == "PlayerHitBox")
             {
-                //if (entity.gameObject != creator) // if the explosion is not the creator
-                //{
+                EntityBase entity = collider.GetComponent<PlayerHitBox>().owner.GetComponent<EntityBase>();
+                Vector3 dir = entity.transform.position - transform.position;
+                entity.TakeDamage(damage, dir);
+            }
+            else
+            {
+                EntityBase entity = collider.GetComponent<EntityBase>();
+                if (entity != null)
+                {
                     Vector3 dir = entity.transform.position - transform.position;
                     entity.TakeDamage(damage, dir);
-                //}
+                }
             }
         }
 
         Collider[] collidersmove = Physics.OverlapSphere(transform.position, radius);
         foreach (Collider collider in collidersmove)
         {
-            Rigidbody rb = collider.GetComponent<Rigidbody>();
-            if (rb != null)
+            if (collider.gameObject.tag == "PlayerHitBox")
             {
-                rb.AddExplosionForce(explosionForce, transform.position, radius);
+                Rigidbody rb = collider.GetComponent<PlayerHitBox>().owner.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.AddExplosionForce(explosionForce, transform.position, radius);
+                }
+            }
+            else
+            {
+                Rigidbody rb = collider.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.AddExplosionForce(explosionForce, transform.position, radius);
+                }
             }
         }
         AudioSource.PlayClipAtPoint(clip, transform.position);

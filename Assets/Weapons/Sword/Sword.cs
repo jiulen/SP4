@@ -1,3 +1,4 @@
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 public class Sword : WeaponBase
@@ -13,6 +14,7 @@ public class Sword : WeaponBase
     {
         return animator;
     }
+
     private void Awake()
     {
         storeOGPosition = transform.Find("Gun/sword").localPosition;
@@ -73,15 +75,46 @@ public class Sword : WeaponBase
 
     public void OnChildTriggerEnter(Collider other, int damage)
     {
-        EntityBase entity = other.GetComponent<EntityBase>();
-        if (entity != null)
+        if (other.tag == "PlayerHitBox")
         {
-            if (entity.gameObject != owner)
+            EntityBase player = other.GetComponent<PlayerHitBox>().owner.GetComponent<EntityBase>();
+            if (player != null)
             {
-                Vector3 dir = owner.transform.position - entity.transform.position;
-                entity.TakeDamage(damage, dir);
-                Debug.Log("HIT");
+                if (player.gameObject != owner)
+                {
+                    Vector3 dir = owner.transform.position - player.transform.position;
+                    if (Physics.Raycast(camera.transform.position, camera.transform.forward, out RaycastHit hit))
+                    {
+                        if (other.name == "Head")
+                        {
+                            particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
+                            player.TakeDamage(damage * 2, dir);
+                            Debug.Log("SLICE PLAYER HEAD");
+                        }
+                        else
+                        {
+                            particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
+                            player.TakeDamage(damage, dir);
+                            Debug.Log("SLICE PLAYER BODY");
+                        }
+                    }
+                }
             }
+        }
+        else
+        {
+            EntityBase entity = other.GetComponent<EntityBase>();
+            if (entity != null)
+            {
+                if (entity.gameObject != owner)
+                {
+                    Vector3 dir = owner.transform.position - entity.transform.position;
+                    entity.TakeDamage(damage, dir);
+                    Debug.Log("HIT CRATES");
+                }
+            }
+            if (Physics.Raycast(camera.transform.position, camera.transform.forward, out RaycastHit hit))
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hit.point, hit.normal);
         }
     }
 

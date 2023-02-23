@@ -106,12 +106,6 @@ public class Sniper : WeaponBase
                 TrailRenderer trail = null;
                 if (Physics.Raycast(bulletEmitter.transform.position, front, out RaycastHit hit))
                 {
-                    EntityBase entity = hit.transform.gameObject.GetComponent<EntityBase>();
-                    if (entity != null)
-                    {
-                        Vector3 dir = -front;
-                        entity.TakeDamage(damage[0], dir);
-                    }
 
                     //Do bullet tracer (if hit)
                     trail = Instantiate(bulletTrail, bulletEmitter.transform.position, Quaternion.identity);
@@ -120,18 +114,30 @@ public class Sniper : WeaponBase
 
                     if (hit.collider.tag == "PlayerHitBox")
                     {
+                        EntityBase player = hit.transform.gameObject.GetComponent<EntityBase>();
+
                         if (hit.collider.name == "Head")
                         {
                             particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
+                            player.TakeDamage(damage[0] * 2, -front);
                         }
                         else
                         {
                             particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
+                            player.TakeDamage(damage[0], -front);
 
                         }
                     }
                     else
+                    {
                         particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hit.point, hit.normal);
+
+                        EntityBase entity = hit.transform.gameObject.GetComponent<EntityBase>();
+                        if (entity != null)
+                        {
+                            entity.TakeDamage(damage[0], -front);
+                        }
+                    }
                 }
                 else
                 {
