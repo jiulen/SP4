@@ -9,15 +9,6 @@ using UnityEngine.SceneManagement;
 // Player script for movement and abilities
 public class FPS : NetworkBehaviour
 {
-    CapsuleCollider capsuleCollider;
-    public Camera camera; // Main camera
-    Vector3 moveVector;
-    private bool isGround = false;
-    private float pitch, yaw, roll;
-    private float CamSen;
-
-    private Rigidbody rigidbody;
-
     // Debug
     public bool debugBelongsToPlayer = false;
 
@@ -28,6 +19,14 @@ public class FPS : NetworkBehaviour
     [SerializeField] GameObject headPivot;
     public float airMovementMultiplier = 2.5f;
     public float runSpeed = 10f;
+    CapsuleCollider capsuleCollider;
+    public Camera camera; // Main camera
+    Vector3 moveVector;
+    private float pitch, yaw, roll;
+    private float CamSen;
+    private Rigidbody rigidbody;
+    public bool cameraMoveEnabled = true;
+
 
     // Stamina
     public float staminaJumpCost = 0.5f;
@@ -47,6 +46,7 @@ public class FPS : NetworkBehaviour
     private float bodyHeight = 1;
     private float bodyRadius = 1;
     private double airTimer = 0;
+    private bool isGround = false;
 
 
     // Jump
@@ -180,15 +180,19 @@ public class FPS : NetworkBehaviour
         float playerVerticalInput = Input.GetAxisRaw("Vertical"); // 1: W key , -1: S key, 0: no key input
         float playerHorizontalInput = Input.GetAxisRaw("Horizontal");
 
+        if (cameraMoveEnabled)
+        {
+            yaw += mouseX * CamSen * Time.deltaTime;
+            pitch -= mouseY * CamSen * Time.deltaTime;
+            camera.transform.rotation = Quaternion.Euler(pitch, yaw, roll); 
+        }
+
         Vector3 forward = camera.transform.forward;
         Vector3 right = camera.transform.right;
         forward.y = 0;
         right.y = 0;
         forward = forward.normalized;
         right = right.normalized;
-
-        yaw += mouseX * CamSen * Time.deltaTime;
-        pitch -= mouseY * CamSen * Time.deltaTime;
 
         if (isWallrunning)
         {
@@ -296,7 +300,6 @@ public class FPS : NetworkBehaviour
         //Rotation
         pitch = Mathf.Clamp(pitch, -89f, 89f);
         float targetAngle = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
-        camera.transform.rotation = Quaternion.Euler(pitch, yaw, roll);
         transform.rotation = Quaternion.Euler(0f, targetAngle, roll);
         head.transform.localRotation = Quaternion.Euler(pitch, 0, 0); //rotate head to face same dir as camera
         headPivot.transform.localRotation = Quaternion.Euler(-pitch, 0, 0); //rotate body to reverse head rotation

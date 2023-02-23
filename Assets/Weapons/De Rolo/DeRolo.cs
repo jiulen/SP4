@@ -61,7 +61,6 @@ public class DeRolo : WeaponBase
 
         for (int i = 0; i != cylinderSize; i++)
         {
-            Debug.Log(i);
 
             //Debug.Log((int)cylinder[i]);
             Color color = bulletColors[(int)cylinder[i]];

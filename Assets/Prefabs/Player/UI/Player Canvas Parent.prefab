@@ -248,6 +248,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6150797814911005632}
     m_Modifications:
+    - target: {fileID: 304482145323830815, guid: 0f3425e527a764a4899eb97e3fbcb584, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 304482145323830815, guid: 0f3425e527a764a4899eb97e3fbcb584, type: 3}
+      propertyPath: m_PlaneDistance
+      value: 0.09
+      objectReference: {fileID: 0}
     - target: {fileID: 4309501206075968949, guid: 0f3425e527a764a4899eb97e3fbcb584, type: 3}
       propertyPath: m_Name
       value: Custom Crosshair Canvas
@@ -758,7 +766,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3421546521053433844, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_PresetInfoIsWorld
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9031491400341693026, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_Name
