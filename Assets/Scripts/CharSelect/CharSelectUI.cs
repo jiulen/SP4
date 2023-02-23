@@ -6,6 +6,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
+using UnityEngine.SceneManagement;
+
 public class CharSelectUI : NetworkBehaviour
 {
     public static CharSelectUI Instance { get; private set; }
@@ -38,9 +40,11 @@ public class CharSelectUI : NetworkBehaviour
         players = new NetworkList<CharacterSelectState>();
     }
 
+
+
     public override void OnNetworkSpawn()
     {
-      
+
         if (IsClient)
         {
 
@@ -74,13 +78,13 @@ public class CharSelectUI : NetworkBehaviour
                 i++;
             }
         }
-        //players.OnListChanged += HandlePlayersStateChanged;
-        
-       
+        players.OnListChanged += HandlePlayersStateChanged;
+
+
 
 
     }
-    public void Select(Character character)
+        public void Select(Character character)
     {
         for (int i = 0; i < players.Count; i++)
         {
