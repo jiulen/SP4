@@ -37,7 +37,6 @@ public class PlayerEntity : EntityBase
     void Awake()
     {
         FPSScript = this.GetComponent<FPS>();
-
         currentIdx = 0;
         base.Start();
         equipped = transform.Find("Equipped").gameObject;
@@ -116,6 +115,7 @@ public class PlayerEntity : EntityBase
     void Update()
     {
         base.Update();
+        //Debug.Log(Health);
         if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
 
         // For debugging

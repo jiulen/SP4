@@ -43,11 +43,11 @@ public class BoomerangWeapon : WeaponBase
         if (boomererangWeaponState == BoomererangWeaponState.NONE)
         {
             Rigidbody rb = boomerang.GetComponent<Rigidbody>();
-            boomerang.GetComponent<ProjectileBase>().SetCreator(owner);
+            boomerang.GetComponent<ProjectileBase>().SetObjectReferences(owner, particleManager);
             boomerang.GetComponent<Boomerang>().boomererangState = Boomerang.BoomererangState.THROW;
             boomerang.GetComponent<MeshCollider>().enabled = true;
+            boomerang.GetComponent<Boomerang>().dir = -camera.transform.forward;
             rb.isKinematic = false;
-            rb.AddForce(camera.transform.forward * 25f, ForceMode.Impulse);
             boomerang.parent = null;
             boomererangWeaponState = BoomererangWeaponState.THROW;
         }

@@ -114,7 +114,7 @@ public class Sniper : WeaponBase
 
                     if (hit.collider.tag == "PlayerHitBox")
                     {
-                        EntityBase player = hit.transform.gameObject.GetComponent<EntityBase>();
+                        EntityBase player = hit.collider.gameObject.GetComponent<PlayerHitBox>().owner.GetComponent<EntityBase>();
 
                         if (hit.collider.name == "Head")
                         {
