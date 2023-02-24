@@ -27,13 +27,12 @@ public class Healthbar : MonoBehaviour
         //player.TakeDamage(Time.deltaTime); // testing
         UpdateSlider();
 
-        if (percentage <= 0.75f)
-            hBarFill.color = new Color32(85, 229, 106, 255);
-        if (percentage <= 0.5f)
-            hBarFill.color = new Color32(255, 255, 0, 255);
-        if (percentage <= 0.25f)
-            hBarFill.color = new Color32(255, 0, 0, 255);
-
+        if (percentage >= 0.75)
+            hBarFill.color = Color.green;
+        else if (percentage >= 0.5)
+            hBarFill.color = new Color(255, 191, 0, 255); // Ornge
+        else
+            hBarFill.color = Color.red;
 
         hbartext.text = ((int)(percentage * 100f)).ToString() + "%";
     }

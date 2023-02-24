@@ -143,7 +143,6 @@ public class PlayerEntity : EntityBase
         if (Health <= 0)
         {
             UpdateDead();
-            uiDeathCanvas.GetComponentInChildren<Text>().text = ((int)currentrespawnelaspe).ToString();
             uiDeathCanvas.SetActive(true);
         }
         else
@@ -176,17 +175,18 @@ public class PlayerEntity : EntityBase
         SetLastTouch(source);
         SetHealth(GetHealth() - hp);
 
-        //if (Health <= 0)
-
-        Debug.Log(weaponUsed);
-
-        Debug.Log(source);
-        SpawnKillFeed(source, this.gameObject, weaponUsed.GetComponent<WeaponBase>().WeaponIcon);
+        if (Health <= 0)
+        {
+            SpawnKillFeed(source, this.gameObject, weaponUsed.GetComponent<WeaponBase>().WeaponIcon);
+        }
     }
 
 
     public void UpdateDead()
-    {        
+    {
+        uiDeathCanvas.transform.Find("DeathTimerTxt").GetComponent<Text>().text = ((int)currentrespawnelaspe).ToString();
+        uiDeathCanvas.transform.Find("DeathTxt").GetComponent<Text>().text = "You are killed by " + GetLastTouch().name;
+
         if ((int)currentrespawnelaspe <= 0)
         {
             FPSScript.enabled = true;
@@ -204,7 +204,6 @@ public class PlayerEntity : EntityBase
             transform.GetComponent<PickupCollectibles>().enabled = false;
             currentrespawnelaspe -= Time.deltaTime;
         }
-        Debug.Log("You are killed by " + GetLastTouch());
     }
 
     public string GetWeaponName(int idx)

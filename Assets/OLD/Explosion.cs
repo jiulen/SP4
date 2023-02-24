@@ -47,6 +47,7 @@ public class Explosion : ProjectileBase
                 }
             }
         }
+        emptycollider.Clear();
 
         Collider[] collidersmove = Physics.OverlapSphere(transform.position, radius);
         foreach (Collider collider in collidersmove)

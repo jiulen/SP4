@@ -8,11 +8,13 @@ public class SwordProjectile : ProjectileBase
     void Start()
     {
         base.Start();
+        duration = 5f;
     }
 
     // Update is called once per frame
     void Update()
     {
+        base.Update();
         Quaternion rotation = Quaternion.LookRotation(transform.forward);
         transform.rotation = rotation;
     }
