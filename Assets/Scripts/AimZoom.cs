@@ -15,8 +15,6 @@ public class AimZoom : MonoBehaviour
 
     void Update()
     {
-        if (cam.fieldOfView > DefaultZoom)
-            cam.fieldOfView = DefaultZoom;
     }
 
     // Update is called once per frame

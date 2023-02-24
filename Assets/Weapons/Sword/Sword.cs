@@ -10,6 +10,7 @@ public class Sword : WeaponBase
     private Vector3 storeOGPosition;
     private Quaternion storeOGRotation;
 
+    private float KnifeThrowCooldown = 2.0f, elaspe = 0;
     public Animator GetAnimator()
     {
         return animator;
@@ -41,17 +42,32 @@ public class Sword : WeaponBase
                 animator.SetBool("TrSlice", false);
             }
 
+            if ((AnimatorIsPlaying("Throw") && !animator.GetBool("TrThrow"))) {
+                //if (currentStrength > minStrength)
+                    ThrowKnife();
+            }
+
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
             {
                 transform.Find("Gun/sword").localPosition = storeOGPosition;
                 transform.Find("Gun/sword").localRotation = storeOGRotation;
             }
         }
+
+        if (!weaponModel.activeSelf)
+        {
+            if (elaspe >= KnifeThrowCooldown)
+            {
+                weaponModel.SetActive(true);
+                elaspe = 0;
+            }
+            elaspe += Time.deltaTime;
+        }
     }
 
     protected override void Fire2()
     {
-        if (!animator.GetBool("TrSlice"))
+        if (!animator.GetBool("TrSlice") && weaponModel.activeSelf)
         {
             animator.SetBool("TrHold", true);
             animator.SetBool("TrThrow", false);
@@ -61,7 +77,7 @@ public class Sword : WeaponBase
 
     protected override void Fire1Once()
     {
-        if (!animator.GetBool("TrHold"))
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty") && weaponModel.activeSelf)
         {
             animator.SetBool("TrSlice", true);
             animator.SetBool("TrThrow", false);
@@ -117,8 +133,6 @@ public class Sword : WeaponBase
         animator.SetBool("TrThrow", true);
         animator.SetBool("TrHold", false);
         animator.SetBool("TrSlice", false);
-        if (currentStrength > minStrength)
-            ThrowKnife();
     }
 
 
@@ -132,6 +146,8 @@ public class Sword : WeaponBase
         go.GetComponent<SwordProjectile>().damage = damage[0];
         go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[0];
         go.transform.SetParent(projectileManager.transform);
+        currentStrength = 0;
+        weaponModel.SetActive(false);
         //fireAudio.Play();
     }
 }
