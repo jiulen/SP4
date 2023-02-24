@@ -9,10 +9,13 @@ public class DeRolo : WeaponBase
     Canvas uiCanvas;
 
     GameObject uiChamberParent;
+    GameObject uiChamberReloadParent;
     GameObject uiCylinder;
 
+    public List<Image> uiReloadMarkerList = new List<Image>();
     public List<GameObject> uiChamberList = new List<GameObject>();
     public List<Image> uiImageChamberList = new List<Image>();
+
     private int activeChamber = 0;
     //public GameObject bulletTrailPF;
     [SerializeField] TrailRenderer bulletTrail;
@@ -71,11 +74,15 @@ public class DeRolo : WeaponBase
 
         uiCylinder = ui.transform.Find("Cylinder").gameObject;
         uiChamberParent = uiCylinder.transform.GetChild(0).gameObject;
+        uiChamberReloadParent = uiCylinder.transform.GetChild(1).gameObject;
 
-        for(int i = 0; i != cylinderSize; i++)
+        for (int i = 0; i != cylinderSize; i++)
         {
             uiChamberList.Add(uiChamberParent.transform.GetChild(i).gameObject);
             uiImageChamberList.Add(uiChamberList[i].GetComponent<Image>());
+
+            // Put it in reverse
+            uiReloadMarkerList.Add(uiChamberReloadParent.transform.GetChild(i).GetChild(0).GetComponent<Image>()); // Chamber reload parent > reload pivot > reload marker
         }
 
         fireAnimation = weaponModel.transform.Find("Revolver").GetComponent<Animator>();
@@ -114,16 +121,53 @@ public class DeRolo : WeaponBase
         cycleElapsed += Time.deltaTime;
         reloadElapsed += Time.deltaTime;
 
-        UpdateOnceAfterFireFinishes();
-        UpdateOnceAfterCycleFinishes();
-        UpdateOnceAfterReloadFinishes();
-
-      
-
         float anglePerChamber = -360 / cylinderSize;
         float targetAngle = anglePerChamber * activeChamber;
         float currentAngle = targetAngle - anglePerChamber + anglePerChamber * cycleAnimationCurve.Evaluate((float)cycleElapsed/cycleDuration);
         uiCylinder.transform.rotation = Quaternion.Euler(0,0, currentAngle);
+
+
+        // Reset all reload markers to be invisible
+        for (int i = 0; i != cylinderSize; i++)
+        {
+            uiReloadMarkerList[i].enabled = false;
+        }
+
+
+        // Update reload UI
+        if (reloadQueue.Count != 0)
+        {
+            List<int> emptyChambers = new List<int>();
+            // Find empty chambers starting from the active chamber
+            // Iterate from the active chamber to the end
+            for (int i = activeChamber; i != cylinderSize; i++)
+            {
+                if (cylinder[i] == BulletTypes.NONE)
+                    emptyChambers.Add(i);
+            }
+
+            // Circle back to the beginning, and iterate until the chamber before the active chamber is reached
+            for (int i = 0; i != activeChamber; i++)
+            {
+                if (cylinder[i] == BulletTypes.NONE)
+                    emptyChambers.Add(i);
+            }
+
+            // Color the respective reload markers
+            for (int i = 0; i != reloadQueue.Count; i++)
+            {
+                // If there are more bullets to reload than there are empty chambers, then break
+                if (i == emptyChambers.Count)
+                    break;
+
+                uiReloadMarkerList[emptyChambers[i]].color = bulletColors[(int)reloadQueue[i]];
+                uiReloadMarkerList[emptyChambers[i]].enabled = true;
+            }
+        }
+
+        UpdateOnceAfterFireFinishes();
+        UpdateOnceAfterCycleFinishes();
+        UpdateOnceAfterReloadFinishes();
     }
 
     public void Reload()
@@ -139,6 +183,7 @@ public class DeRolo : WeaponBase
         fireAnimation.StartPlayback();
         fireAnimation.Play("Reload");
         fireAnimation.speed = 1 / reloadDuration;
+
         List<int> emptyChambers = new List<int>();
         // Find empty chambers starting from the active chamber
         // Iterate from the active chamber to the end
@@ -265,21 +310,24 @@ public class DeRolo : WeaponBase
                 case BulletTypes.NONE:
                 {
                      CycleCylinder();
+                     return;
                 }
                 break;
 
             }
-            if (cylinder[activeChamber] != BulletTypes.NONE)
-            {
-                fireAnimation.enabled = true;
-                fireAnimation.StopPlayback();
-                fireAnimation.Play("Fire Revolver");
-                fireAnimation.speed = 1 / (float)elapsedBetweenEachShot[(int)cylinder[activeChamber]];
-                hasUpdatedAfterFireFinished = false;
-                numEmptyChambers++;
-            }
+          
+            fireAnimation.enabled = true;
+            fireAnimation.StopPlayback();
+            fireAnimation.Play("Fire Revolver");
+            muzzleFlash.GetComponent<ParticleSystem>().Stop();
+            muzzleFlash.GetComponent<ParticleSystem>().Play();
+            fireAnimation.speed = 1 / (float)elapsedBetweenEachShot[(int)cylinder[activeChamber]];
+            hasUpdatedAfterFireFinished = false;
+            numEmptyChambers++;
             cylinder[activeChamber] = BulletTypes.NONE;
-            
+
+           
+
         }
     }
 

@@ -33,7 +33,6 @@ public class DICKSCAT : WeaponBase
     GameObject portal1;
     GameObject DICKFocalPoint;
     GameObject bulletEmitterFront;
-    ParticleSystem muzzleFlashLight;
 
     public GameObject bloodEffect;
     public GameObject sparkEffect;
@@ -61,8 +60,6 @@ public class DICKSCAT : WeaponBase
         // Set camera for canvas
         transform.Find("UI canvas").GetComponent<Canvas>().worldCamera = camera;
         transform.Find("UI canvas").GetComponent<Canvas>().planeDistance = 0.5f;
-
-        muzzleFlashLight = muzzleFlash.transform.Find("Light").GetComponent<ParticleSystem>();
 
         numPortals = portalParent.transform.childCount;
 
@@ -212,6 +209,8 @@ public class DICKSCAT : WeaponBase
                     {
                         steamCurrent = 0;
                         currentMode = mode.DICK;
+                        fireAnimation.enabled = false;
+
                     }
                     if (CheckCanFire(2) && steamCurrent > 0)
                     {
@@ -221,8 +220,6 @@ public class DICKSCAT : WeaponBase
 
                         muzzleFlash.GetComponent<ParticleSystem>().Stop();
                         muzzleFlash.GetComponent<ParticleSystem>().Play();
-
-                        //muzzleFlashLight
 
                         Transform newTransform = camera.transform;
                         GameObject bullet = Instantiate(SCATBulletPF, bulletEmitter.transform);
