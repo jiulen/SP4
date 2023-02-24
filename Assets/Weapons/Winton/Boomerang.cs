@@ -91,12 +91,12 @@ public class Boomerang : ProjectileBase
                         if (collider.name == "Head")
                         {
                             particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
-                            player.TakeDamage(damage * 2, dir);
+                            player.TakeDamage(damage * 2, dir, creator, weaponused);
                         }
                         else
                         {
                             particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
-                            player.TakeDamage(damage, dir);
+                            player.TakeDamage(damage, dir, creator, weaponused);
                         }
                     }
                 }
@@ -106,15 +106,14 @@ public class Boomerang : ProjectileBase
                     if (entity != null)
                     {
                         Vector3 dir = transform.position - entity.transform.position;
-                        entity.TakeDamage(damage, dir);
+                        entity.TakeDamage(damage, dir, creator, weaponused);
                     }
                     else
                     {
+                        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit))
+                            particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hit.point, hit.normal);
                         boomererangState = BoomererangState.RECOIL;
                     }
-
-                    if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit))
-                        particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hit.point, hit.normal);
                 }
             }
         }

@@ -14,11 +14,6 @@ public class RPG : WeaponBase
     private Vector3 storeOGPosition;
     private Quaternion storeOGRotation;
     FPS player;
-    private void Awake()
-    {
-        storeOGPosition = transform.Find("Gun/RPG7").localPosition;
-        storeOGRotation = transform.Find("Gun/RPG7").localRotation;
-    }
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +25,9 @@ public class RPG : WeaponBase
         slider.minValue = slider.value = PowerCurrentScale;
         animator = transform.Find("Gun/RPG7").GetComponent<Animator>();
         RocketMuzzle = transform.Find("Gun/RPG7/Rocket").gameObject;
+
+        storeOGPosition = transform.Find("Gun/RPG7").localPosition;
+        storeOGRotation = transform.Find("Gun/RPG7").localRotation;
     }
 
     // Update is called once per frame
@@ -87,6 +85,7 @@ public class RPG : WeaponBase
                 Transform newTransform = camera.transform;
                 Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
                 GameObject go = Instantiate(Rocket, bulletEmitter.transform);
+                go.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
                 go.GetComponent<Rocket>().damage = damage[0];
                 go.GetComponent<Rocket>().SetObjectReferences(owner, particleManager);
                 go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[0] * PowerCurrentScale;

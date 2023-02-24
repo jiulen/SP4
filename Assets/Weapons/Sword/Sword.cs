@@ -15,16 +15,13 @@ public class Sword : WeaponBase
         return animator;
     }
 
-    private void Awake()
-    {
-        storeOGPosition = transform.Find("Gun/sword").localPosition;
-        storeOGRotation = transform.Find("Gun/sword").localRotation;
-    }
     void Start()
     {
         base.Start();
         player = owner.GetComponent<FPS>();
         animator = transform.Find("Gun/sword").GetComponent<Animator>();
+        storeOGPosition = transform.Find("Gun/sword").localPosition;
+        storeOGRotation = transform.Find("Gun/sword").localRotation;
     }
 
     // Update is called once per frame
@@ -88,12 +85,12 @@ public class Sword : WeaponBase
                         if (other.name == "Head")
                         {
                             particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
-                            player.TakeDamage(damage * 2, dir);
+                            player.TakeDamage(damage * 2, dir, owner, this.gameObject);
                         }
                         else
                         {
                             particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
-                            player.TakeDamage(damage, dir);
+                            player.TakeDamage(damage, dir, owner, this.gameObject);
                         }
                     }
                 }
@@ -107,7 +104,7 @@ public class Sword : WeaponBase
                 if (entity.gameObject != owner)
                 {
                     Vector3 dir = owner.transform.position - entity.transform.position;
-                    entity.TakeDamage(damage, dir);
+                    entity.TakeDamage(damage, dir, owner, this.gameObject);
                 }
             }
             if (Physics.Raycast(camera.transform.position, camera.transform.forward, out RaycastHit hit))
@@ -130,6 +127,7 @@ public class Sword : WeaponBase
         Transform newTransform = camera.transform;
         Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
         GameObject go = Instantiate(KnifeProjectile, bulletEmitter.transform);
+        go.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
         go.GetComponent<ProjectileBase>().SetObjectReferences(owner, particleManager);
         go.GetComponent<SwordProjectile>().damage = damage[0];
         go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[0];

@@ -53,12 +53,12 @@ public class Shotgun : WeaponBase
                                     if (hit2.collider.name == "Head")
                                     {
                                         particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit2.point, hit2.normal, 15);
-                                        player2.TakeDamage(damage[0] * 2, -bulletDir);
+                                        player2.TakeDamage(damage[0] * 2, -bulletDir, owner, this.gameObject);
                                     }
                                     else
                                     {
                                         particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit2.point, hit2.normal);
-                                        player2.TakeDamage(damage[0] * 2, -bulletDir);
+                                        player2.TakeDamage(damage[0] * 2, -bulletDir, owner, this.gameObject);
                                     }
                                 }
                                 else
@@ -73,7 +73,7 @@ public class Shotgun : WeaponBase
                                     EntityBase entity2 = hit2.transform.gameObject.GetComponent<EntityBase>();
                                     if (entity2 != null)
                                     {
-                                        entity2.TakeDamage(damage[0], -bulletDir);
+                                        entity2.TakeDamage(damage[0], -bulletDir, owner, this.gameObject);
                                     }
                                 }
                             }
@@ -96,12 +96,12 @@ public class Shotgun : WeaponBase
                             if (hit.collider.name == "Head")
                             {
                                 particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
-                                player.TakeDamage(damage[0] * 2, -bulletDir);
+                                player.TakeDamage(damage[0] * 2, -bulletDir, owner, this.gameObject);
                             }
                             else
                             {
                                 particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
-                                player.TakeDamage(damage[0] * 2, -bulletDir);
+                                player.TakeDamage(damage[0] * 2, -bulletDir, owner, this.gameObject);
                             }
                         }
                     }
@@ -117,7 +117,7 @@ public class Shotgun : WeaponBase
                         EntityBase entity = hit.transform.gameObject.GetComponent<EntityBase>();
                         if (entity != null)
                         {
-                            entity.TakeDamage(damage[0], -bulletDir);
+                            entity.TakeDamage(damage[0], -bulletDir, owner, this.gameObject);
                         }
                     }
 

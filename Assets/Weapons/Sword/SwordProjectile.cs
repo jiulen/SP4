@@ -34,13 +34,13 @@ public class SwordProjectile : ProjectileBase
                     if (other.name == "Head")
                     {
                         particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
-                        player.TakeDamage(damage * 2, -dir);
+                        player.TakeDamage(damage * 2, -dir, creator, weaponused);
 
                     }
                     else
                     {
                         particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
-                        player.TakeDamage(damage, -dir);
+                        player.TakeDamage(damage, -dir, creator, weaponused);
 
                     }
                 }
@@ -53,7 +53,7 @@ public class SwordProjectile : ProjectileBase
                 if (entity != null)
                 {
                     Vector3 dir = entity.transform.position - transform.position;
-                    entity.TakeDamage(damage, dir);
+                    entity.TakeDamage(damage, dir, creator, weaponused);
                 }
             }
 
