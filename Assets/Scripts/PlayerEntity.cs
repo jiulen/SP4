@@ -58,7 +58,7 @@ public class PlayerEntity : EntityBase
         previousWeapon = activeWeapon;
 
         playerCanvasParent = Instantiate(PlayerCanvasParentPF, this.transform);
-        uiWeaponWheelCanvas = playerCanvasParent.transform.Find("Weapon Wheel Canvas").gameObject;
+        uiWeaponWheelCanvas = playerCanvasParent.transform.Find("Weapon Wheel Canvas V2").gameObject;
 
         uiDeathCanvas = playerCanvasParent.transform.Find("Death Canvas").gameObject;
         uiPlayerStatsCanvas = playerCanvasParent.transform.Find("Player Stats Canvas").gameObject;

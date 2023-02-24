@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class WeaponWheel : MonoBehaviour
+public class WeaponWheelV2 : MonoBehaviour
 {
     private FPS FPSScript;
     private PlayerEntity PlayerEntityScript;
@@ -12,6 +12,9 @@ public class WeaponWheel : MonoBehaviour
     GameObject uiParent;
     GameObject selectorPivot;
     GameObject wheelSegmentsParent;
+    GameObject originalSegmentPivot;
+    GameObject centre;
+
     public GameObject[] equippedWeaponList = new GameObject[3];
 
     // Weapon wheel
@@ -19,6 +22,10 @@ public class WeaponWheel : MonoBehaviour
     public int segmentNum = 3;
     public float radius;
     public float startingAngle = 0; //Right, anti-clockwise
+    public float segmentGapAngle = 5;
+    public float centreRadius = 50;
+    public float centreToSegmentGap = 5;
+    public float totalRadius = 100;
 
     private int selectedWeapon = 0;
     public float weaponWheelDelay = 0.2f;
@@ -30,20 +37,67 @@ public class WeaponWheel : MonoBehaviour
         uiParent = this.transform.GetChild(0).gameObject;
         selectorPivot = uiParent.transform.Find("Selector Pivot").gameObject;
         wheelSegmentsParent = uiParent.transform.Find("Wheel Segments Parent").gameObject;
+        originalSegmentPivot = wheelSegmentsParent.transform.GetChild(0).gameObject;
+        centre = uiParent.transform.Find("Centre").gameObject;
 
         FPSScript = this.transform.parent.parent.GetComponent<FPS>(); // this > canvas parent > player
         PlayerEntityScript = this.transform.parent.parent.GetComponent<PlayerEntity>(); // this > canvas parent > player
 
         this.GetComponent<Canvas>().worldCamera = FPSScript.camera;
-        this.GetComponent<Canvas>().planeDistance = 0.11f;
+        this.GetComponent<Canvas>().planeDistance = 0.2f;
         equippedWeaponList = PlayerEntityScript.equippedWeaponList;
+
+        InitMeshes();
+
+        //for (int i = 0; i != segmentNum; i++)
+        //{
+        //    if (equippedWeaponList[i] != null)
+        //        wheelSegmentsParent.transform.GetChild(i).GetChild(0).GetChild(0).GetComponent<Image>().sprite = equippedWeaponList[i].GetComponent<WeaponBase>().WeaponIcon;
+        //}
+
+    }
+
+    public void InitMeshes()
+    {
+        // Change selector pivot distance based on new radius
+        selectorPivot.transform.GetChild(0).GetComponent<RectTransform>().localPosition = new Vector3(centreRadius + centreToSegmentGap/2, 0, 0);
+
+        // Initialise centre
+        centre.GetComponent<ProudLlama.CircleGenerator.FillCircleGenerator>().CircleData = new ProudLlama.CircleGenerator.CircleData(centreRadius, 360, 0, 32, true);
+
+        //foreach(Transform child in wheelSegmentsParent.transform)
+        //{
+        //    if (child != originalSegmentPivot)
+        //        Destroy(child);
+        //}
 
         for (int i = 0; i != segmentNum; i++)
         {
-            if (equippedWeaponList[i] != null)
-                wheelSegmentsParent.transform.GetChild(i).GetChild(0).GetChild(0).GetComponent<Image>().sprite = equippedWeaponList[i].GetComponent<WeaponBase>().WeaponIcon;
-        }
+            GameObject iterateSegment = originalSegmentPivot;
+            // Skip instantiation of the first segment as it already exists
+            if (i != 0)
+            {
+                iterateSegment = Instantiate(originalSegmentPivot, wheelSegmentsParent.transform);
+            }
 
+            // Set the angle to 300 so that it is oriented to the top. We rotate the pivot instead to get it each segment where we want
+            float strokeSize = totalRadius - centreRadius - centreToSegmentGap;
+
+            ProudLlama.CircleGenerator.StrokeCircleGenerator iterateSegmentCircle = iterateSegment.transform.GetChild(0).GetComponent<ProudLlama.CircleGenerator.StrokeCircleGenerator>();
+            float arcAngle = 360 / segmentNum - segmentGapAngle;
+            iterateSegmentCircle.CircleData = new ProudLlama.CircleGenerator.CircleData(centreRadius + centreToSegmentGap, arcAngle, 360 - arcAngle / 2, 32, true);
+            iterateSegmentCircle.StrokeData = new ProudLlama.CircleGenerator.StrokeData(strokeSize, false);
+
+            // Recalculate normals to get the material to work
+            iterateSegmentCircle.GetComponent<MeshFilter>().mesh.RecalculateNormals();
+
+            iterateSegment.transform.rotation = Quaternion.Euler(0, 0, startingAngle + 360 / segmentNum * i);
+            GameObject weaponImage = iterateSegment.transform.GetChild(0).GetChild(0).gameObject;
+            weaponImage.GetComponent<RectTransform>().localPosition = new Vector3(0, centreRadius + centreToSegmentGap + strokeSize/ 2, -0.1f);
+            if(i != equippedWeaponList.Length)
+                if (equippedWeaponList[i] != null)
+                    weaponImage.GetComponent<Image>().sprite = equippedWeaponList[i].GetComponent<WeaponBase>().WeaponIcon;
+        }
     }
 
     void Update()

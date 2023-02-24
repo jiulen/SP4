@@ -27,7 +27,7 @@ public class WeaponBase : MonoBehaviour
     protected GameObject weaponModel;
     protected Vector3 saveStartingWeaponPosition;
     public Sprite WeaponIcon;
-    protected GameObject owner;
+    public GameObject owner;
     protected PlayerEntity ownerPlayerEntityScript;
     private bool isLeftClickDown = false, isRightClickDown = false;
     protected Animator animator;
