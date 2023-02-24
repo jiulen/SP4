@@ -33,6 +33,7 @@ public class Boomerang : ProjectileBase
     {
         if (transform.parent == null)
         {
+            transform.forward = dir.normalized;
             switch (boomererangState)
             {
                 case BoomererangState.THROW:
@@ -40,14 +41,17 @@ public class Boomerang : ProjectileBase
                     {
                         boomererangState = BoomererangState.RECOIL;
                     }
-                    rb.velocity = dir.normalized * -speed * Time.deltaTime;
+                    rb.velocity = transform.forward * -speed * Time.deltaTime;
                     break;
                 case BoomererangState.RECOIL:
-                    rb.velocity = (rb.position - creator.transform.position).normalized * speed * Time.deltaTime;
+                    dir = (rb.position - boomerangWeapon.emitter.transform.position).normalized;
+                    rb.velocity = transform.forward * speed * Time.deltaTime;
                     break;
             }
+            transform.localRotation = Quaternion.LookRotation(-transform.forward);
+            var axis = transform.InverseTransformDirection(transform.up);
+            transform.localRotation = transform.localRotation * Quaternion.AngleAxis(rotationElaspe * rotationSpeed, axis);
 
-            transform.localRotation = Quaternion.AngleAxis(rotationElaspe * rotationSpeed, Vector3.Cross(transform.forward, transform.right));
             rotationElaspe += Time.deltaTime;
             speed -= Time.deltaTime * 2000f;
 
@@ -59,24 +63,43 @@ public class Boomerang : ProjectileBase
 
     private void OnTriggerEnter(Collider collider)
     {
+        bool temp = false;
         if (boomererangState != BoomererangState.NONE)
         {
-            if (CheckIfCreator(collider.gameObject))
+            PlayerHitBox myplayer = collider.gameObject.GetComponent<PlayerHitBox>();
+
+            if (myplayer != null)
             {
-                if (boomererangState == BoomererangState.RECOIL)
+                if (creator == myplayer.owner)
                 {
-                    transform.parent = boomerangWeapon.transform.GetChild(0);
-                    transform.localPosition = Vector3.zero;
-                    transform.localRotation = Quaternion.identity;
-                    GetComponent<MeshCollider>().enabled = false;
-                    rb.isKinematic = true;
-                    rb.velocity = Vector3.zero;
-                    speed = 4000f;
-                    elapsed = 0;
-                    boomererangState = BoomererangState.NONE;
+                    if (boomererangState == BoomererangState.RECOIL)
+                    {
+                        transform.parent = boomerangWeapon.transform.GetChild(0);
+                        transform.localPosition = Vector3.zero;
+                        transform.localRotation = Quaternion.identity;
+                        GetComponent<MeshCollider>().enabled = false;
+                        rb.isKinematic = true;
+                        rb.velocity = Vector3.zero;
+                        speed = 4000f;
+                        elapsed = 0;
+                        boomererangState = BoomererangState.NONE;
+                    }
+                }
+                else
+                {
+                    temp = true;
                 }
             }
             else
+            {
+                temp = true;
+            }
+
+
+
+
+
+            if (temp)
             {
                 if (collider.tag == "PlayerHitBox")
                 {
@@ -110,45 +133,18 @@ public class Boomerang : ProjectileBase
                     }
                     else
                     {
-                        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit))
-                            particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hit.point, hit.normal);
-                        boomererangState = BoomererangState.RECOIL;
+                        if (Physics.Raycast(rb.position, transform.forward, out RaycastHit hit))
+                            particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", rb.position, hit.normal);
+
+                        if (boomererangState == BoomererangState.THROW)
+                        {
+                            speed = 0;
+                            boomererangState = BoomererangState.RECOIL;
+                        }
                     }
                 }
             }
         }
 
-        //EntityBase entity = collider.gameObject.GetComponent<EntityBase>();
-
-        //if (entity == null)
-        //{
-        //    if (CheckIfCreator(collider.gameObject))
-        //        return;
-
-        //    boomererangState = BoomererangState.RECOIL;
-        //}
-        //else
-        //{
-        //    if (CheckIfCreator(collider.gameObject))
-        //    {
-        //        if (boomererangState == BoomererangState.RECOIL)
-        //        {
-        //            transform.parent = boomerangWeapon.transform.GetChild(0);
-        //            transform.localPosition = Vector3.zero;
-        //            transform.localRotation = Quaternion.identity;
-        //            GetComponent<MeshCollider>().enabled = false;
-        //            rb.isKinematic = true;
-        //            rb.velocity = Vector3.zero;
-        //            boomererangState = BoomererangState.NONE;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Vector3 dir = entity.transform.position - transform.position;
-        //        entity.TakeDamage(damage, dir);
-        //        Debug.Log("BOOMERANG HIT");
-        //    }
-        //    //}
-        //}
     }
 }
