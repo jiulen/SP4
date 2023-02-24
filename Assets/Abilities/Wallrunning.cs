@@ -5,20 +5,20 @@ using UnityEngine;
 public class Wallrunning : MonoBehaviour
 {
     LayerMask terrain;
-    float wallRunForce = 150;
-    float wallCheckDist = 1.0f;
+    float wallRunForce = 200;
+    float wallCheckDist = 2.0f;
     float wallRunSpeed = 5.0f;
     RaycastHit leftWallHit, rightWallHit;
     bool wallLeft = false, wallRight = false;
     bool wallRunningLeft = false; //check which direction wallrunning on - doesnt matter when not wallrunning
 
     //Wall jump
-    float wallJumpUpForce = 5, wallJumpSideForce = 20;
+    float wallJumpUpForce = 5, wallJumpSideForce = 15;
     float minJumpHeight = 1.5f;
 
     //Exit wall
     bool exitingWall = false;
-    const float exitWallTime = 0.25f;
+    const float exitWallTime = 0.5f;
     float exitWallTimer;
 
     Rigidbody rb;
