@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
+using Unity.Netcode;
 
 // Player script for UI, playerstats 
 public class PlayerEntity : EntityBase
@@ -12,7 +13,7 @@ public class PlayerEntity : EntityBase
     private FPS FPSScript;
     public GameObject[] equippedWeaponList = new GameObject[3];
     private GameObject equipped;
-    private GameObject activeWeapon;
+    public GameObject activeWeapon;
     private GameObject previousWeapon;
     private float respawncountdown = 5, currentrespawnelaspe;
     private Image uiCurrentWeaponIcon;
@@ -21,10 +22,10 @@ public class PlayerEntity : EntityBase
     private GameObject uiPlayerStatsCanvas;
     private GameObject uiDeathCanvas;
     private GameObject uiStaminaCanvas;
+    private GameObject uiKillFeedCanvas;
     private GameObject crosshairCanvas;
     private GameObject cameraEffectsCanvas;
     private GameObject playerCanvasParent;
-
     public GameObject PlayerCanvasParentPF;
     //public GameObject UIWeaponWheelPF;
     //public GameObject PlayerStatsCanvasPF;
@@ -34,7 +35,7 @@ public class PlayerEntity : EntityBase
     //public GameObject CameraEffectsCanvasPF;
     //public GameObject MiniMapPF;
     public Image DamageIndicatorImagePF;
-
+    public GameObject KillFeedPrefab;
 
     void Awake()
     {
@@ -43,10 +44,9 @@ public class PlayerEntity : EntityBase
         base.Start();
         equipped = transform.Find("Equipped").gameObject;
         GameObject rightHand = equipped.transform.Find("Right Hand").gameObject;
+        uiKillFeedCanvas = GameObject.Find("Canvas/KillerFeedUI");
 
         if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
-
-
 
         for (int i = 0; i != rightHand.transform.childCount; i++)
         {
@@ -63,10 +63,8 @@ public class PlayerEntity : EntityBase
         uiDeathCanvas = playerCanvasParent.transform.Find("Death Canvas").gameObject;
         uiPlayerStatsCanvas = playerCanvasParent.transform.Find("Player Stats Canvas").gameObject;
         //Instantiate(MiniMapPF, this.transform);
-
         uiCurrentWeaponIcon = uiPlayerStatsCanvas.transform.Find("CurrentWeaponImage").GetComponent<Image>();
         cameraEffectsCanvas = playerCanvasParent.transform.Find("Camera Effects Canvas").gameObject;
-        Debug.Log(cameraEffectsCanvas);
         cameraEffectInjured = cameraEffectsCanvas.transform.Find("Injured").GetComponent<Image>();
         cameraEffectBlood = cameraEffectsCanvas.transform.Find("Blood").GetComponent<Image>();
 
@@ -116,6 +114,18 @@ public class PlayerEntity : EntityBase
         }
     }
 
+    [ClientRpc]
+    public void SpawnKillFeed(GameObject playerkills, GameObject playerdeath, Sprite typeofWeapon)
+    {
+        GameObject spawnFeed = Instantiate(KillFeedPrefab, uiKillFeedCanvas.transform);
+        spawnFeed.transform.Find("PlayerKill").GetComponent<Text>().text = playerkills.name;
+        spawnFeed.transform.Find("PlayerDeath").GetComponent<Text>().text = playerdeath.name;
+        spawnFeed.transform.Find("KillerWeapon").GetComponent<Image>().sprite = typeofWeapon;
+        spawnFeed.transform.parent = uiKillFeedCanvas.transform;
+
+       //if (killfeedlist)
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -135,6 +145,7 @@ public class PlayerEntity : EntityBase
         if (Health <= 0)
         {
             UpdateDead();
+            uiDeathCanvas.GetComponentInChildren<Text>().text = ((int)currentrespawnelaspe).ToString();
             uiDeathCanvas.SetActive(true);
         }
         else
@@ -157,8 +168,8 @@ public class PlayerEntity : EntityBase
 
     }
 
-
-    public override void TakeDamage(float hp, Vector3 dir)
+    [ClientRpc]
+    public override void TakeDamage(float hp, Vector3 dir, GameObject source, GameObject weaponUsed)
     {
         //Debug.Log(cameraEffectsCanvas);
         //Image dmgImg = Instantiate(DamageIndicatorImagePF) as Image;
@@ -166,16 +177,19 @@ public class PlayerEntity : EntityBase
         //dmgImg.transform.parent = cameraEffectsCanvas.transform;
         //cameraEffectBlood.GetComponent<BloodEffects>().ResetStartDuration();
         //Debug.Log(cameraEffectBlood);
+        SetLastTouch(source);
         SetHealth(GetHealth() - hp);
+
+        if (Health <= 0)
+            SpawnKillFeed(source, this.gameObject, weaponUsed.GetComponent<WeaponBase>().WeaponIcon);
     }
 
+
     public void UpdateDead()
-    {
-        uiDeathCanvas.GetComponentInChildren<Text>().text = ((int)currentrespawnelaspe).ToString();
-        
+    {        
         if ((int)currentrespawnelaspe <= 0)
         {
-            transform.GetComponent<FPS>().enabled = true;
+            FPSScript.enabled = true;
             transform.GetComponent<Teleport>().enabled = true;
             transform.GetComponent<PickupCollectibles>().enabled = true;
             transform.Find("Head").gameObject.SetActive(true);
@@ -184,12 +198,13 @@ public class PlayerEntity : EntityBase
         }
         else
         {
-            transform.GetComponent<FPS>().enabled = false;
+            FPSScript.enabled = false;
             transform.Find("Head").gameObject.SetActive(false);
             transform.GetComponent<Teleport>().enabled = false;
             transform.GetComponent<PickupCollectibles>().enabled = false;
             currentrespawnelaspe -= Time.deltaTime;
         }
+        Debug.Log("You are killed by " + GetLastTouch());
     }
 
     public string GetWeaponName(int idx)

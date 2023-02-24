@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
@@ -23,13 +23,19 @@ public class Explosion : ProjectileBase
     public void Explode()
     {
         Collider[] colliders = Physics.OverlapSphere(transform.position, radius);
+        List<GameObject> emptycollider = new List<GameObject>();
         foreach (Collider collider in colliders)
         {
             if (collider.gameObject.tag == "PlayerHitBox")
             {
-                EntityBase entity = collider.GetComponent<PlayerHitBox>().owner.GetComponent<EntityBase>();
-                Vector3 dir = entity.transform.position - transform.position;
-                entity.TakeDamage(damage, dir);
+                if (!emptycollider.Contains(collider.GetComponent<PlayerHitBox>().owner))
+                {
+                    EntityBase entity = collider.GetComponent<PlayerHitBox>().owner.GetComponent<EntityBase>();
+                    Vector3 dir = entity.transform.position - transform.position;
+                    entity.TakeDamage(damage, dir, creator, weaponused);
+
+                    emptycollider.Add(collider.GetComponent<PlayerHitBox>().owner);
+                }
             }
             else
             {
@@ -37,7 +43,7 @@ public class Explosion : ProjectileBase
                 if (entity != null)
                 {
                     Vector3 dir = entity.transform.position - transform.position;
-                    entity.TakeDamage(damage, dir);
+                    entity.TakeDamage(damage, dir, creator, weaponused);
                 }
             }
         }
@@ -47,10 +53,13 @@ public class Explosion : ProjectileBase
         {
             if (collider.gameObject.tag == "PlayerHitBox")
             {
-                Rigidbody rb = collider.GetComponent<PlayerHitBox>().owner.GetComponent<Rigidbody>();
-                if (rb != null)
+                if (!emptycollider.Contains(collider.GetComponent<PlayerHitBox>().owner))
                 {
-                    rb.AddExplosionForce(explosionForce, transform.position, radius);
+                    Rigidbody rb = collider.GetComponent<PlayerHitBox>().owner.GetComponent<Rigidbody>();
+                    if (rb != null)
+                    {
+                        rb.AddExplosionForce(explosionForce, transform.position, radius);
+                    }
                 }
             }
             else
@@ -63,5 +72,7 @@ public class Explosion : ProjectileBase
             }
         }
         AudioSource.PlayClipAtPoint(clip, transform.position);
+
+        emptycollider.Clear();
     }
 }

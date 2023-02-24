@@ -6,20 +6,27 @@ public class EntityBase : MonoBehaviour
 {
     protected float Health;
     public float MaxHealth;
+    private GameObject lasttouch;
 
+    public void SetLastTouch(GameObject source)
+    {
+        lasttouch = source;
+    }
+    public GameObject GetLastTouch()
+    {
+        return lasttouch;
+    }
     protected void Start()
     {
         Health = MaxHealth;
     }
     protected void Update()
     {
-        if (Health > MaxHealth)
-            Health = MaxHealth;
-        if (Health < 0)
-            Health = 0;
+        Health = Mathf.Clamp(Health, 0, MaxHealth);
     }
-    public virtual void TakeDamage(float hp, Vector3 dir)
+    public virtual void TakeDamage(float hp, Vector3 dir, GameObject source, GameObject weaponUsed)
     {
+        SetLastTouch(source);
         SetHealth(GetHealth() - hp);
 
         if (Health <= 0)

@@ -14,6 +14,12 @@ public class ProjectileBase : MonoBehaviour
     public GameObject bloodEffect;
     public GameObject sparkEffect;
 
+    protected GameObject weaponused;
+    public void SetWeaponUsed(GameObject obj)
+    {
+        weaponused = obj;
+    }
+
     // Used to debug particle effect spawn location using ray tracing. Comment out destroy and debug.drawray to use
     protected Vector3 debugOnTriggerBackwardsPosition;
     public void SetCreator(GameObject _creator)
@@ -102,7 +108,7 @@ public class ProjectileBase : MonoBehaviour
         if (entity != null)
         {
             Vector3 dir = entity.transform.position - transform.position;
-            entity.TakeDamage(damage, -dir);
+            entity.TakeDamage(damage, -dir, creator, weaponused);
         }
 
         Destroy(gameObject);

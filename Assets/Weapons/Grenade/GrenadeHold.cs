@@ -53,6 +53,7 @@ public class GrenadeHold : WeaponBase
             grenade.GetComponent<MeshCollider>().enabled = true;
             rb.isKinematic = false;
             rb.useGravity = true;
+            grenade.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
             grenade.GetComponent<ProjectileBase>().SetCreator(owner);
             grenade.GetComponent<GrenadeProjectile>().SetObjectReferences(owner, particleManager);
             grenade.transform.SetParent(projectileManager.transform);

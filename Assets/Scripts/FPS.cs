@@ -82,7 +82,6 @@ public class FPS : NetworkBehaviour
 
     //Dash
     private bool forcedash = false;
-    public bool isDashing = false;
     public void SetForcedash(bool force)
     {
         forcedash = force;
@@ -162,9 +161,6 @@ public class FPS : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-       
-
-
         // Reset position and velocity if player goes out of bounds for debugging
         if (transform.position.magnitude > 100 || transform.position.y <= -20)
         {
@@ -434,21 +430,26 @@ public class FPS : NetworkBehaviour
                 newVelocity.y = rigidbody.velocity.y;
                 rigidbody.velocity = newVelocity;
             }
-            isDashing = true;
+
 
             if (zoomInCoroutine != null) StopCoroutine(zoomInCoroutine);
             if (zoomOutCoroutine != null) StopCoroutine(zoomOutCoroutine);
 
-            zoomOutCoroutine = StartCoroutine(DoFOV(75f, 200f));
+            if (candash)
+            {
+                zoomOutCoroutine = StartCoroutine(DoFOV(75f, 200f));
+            }
         }
         else
         {
-            isDashing = false;
 
             if (zoomInCoroutine != null) StopCoroutine(zoomInCoroutine);
             if (zoomOutCoroutine != null) StopCoroutine(zoomOutCoroutine);
 
-            zoomInCoroutine = StartCoroutine(DoFOV(60f, 150f));
+            if (candash)
+            {
+                zoomInCoroutine = StartCoroutine(DoFOV(60f, 150f));
+            }
         }
 
         return;

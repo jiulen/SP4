@@ -11,6 +11,7 @@ public class Rocket : ProjectileBase
         explosion = GetComponent<Explosion>();
         explosion.damage = damage;
         explosion.SetCreator(creator);
+        explosion.SetWeaponUsed(weaponused);
         base.Start();
     }
 

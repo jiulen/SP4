@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 4912592111111457368}
   - component: {fileID: 8662854791619368845}
   - component: {fileID: 2486353561105620320}
+  - component: {fileID: 2197172129202925147}
   m_Layer: 2
   m_Name: Player System
   m_TagString: Player
@@ -61,6 +62,7 @@ MonoBehaviour:
   PlayerCanvasParentPF: {fileID: 3373540134267314841, guid: 1cdd9b5a254e02d45b067a2585f60963, type: 3}
   StaminaCanvasPF: {fileID: 7545810131014022935, guid: 33dfa1fc9ca59f34b87ad309d1060843, type: 3}
   DamageIndicatorImagePF: {fileID: 1146428141691373998, guid: c1bb4a44968cd8a4c81277ad729d2cad, type: 3}
+  KillFeedPrefab: {fileID: 1860099090150034777, guid: a9829ca973e93d24eb34667e2842643e, type: 3}
 --- !u!114 &6821579352656245129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,7 +75,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e3de743d182b8e4bbc3d86cae2876ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 0}
   debugBelongsToPlayer: 0
   body: {fileID: 4943057770563239521}
   head: {fileID: 7192775230315233508}
@@ -81,6 +82,8 @@ MonoBehaviour:
   headPivot: {fileID: 8615069937391616092}
   airMovementMultiplier: 2.5
   runSpeed: 10
+  camera: {fileID: 0}
+  cameraMoveEnabled: 1
   staminaJumpCost: 0.5
   staminaDashCost: 1
   staminaGrappleCost: 1
@@ -197,6 +200,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TwoDSprite: {fileID: 3921537443013132640}
+--- !u!114 &2197172129202925147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 938903241585491733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f89d8579e28888146b055e13b78bdf1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3486350877694439094
 GameObject:
   m_ObjectHideFlags: 0

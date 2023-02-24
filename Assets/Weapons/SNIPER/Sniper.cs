@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 public class Sniper : WeaponBase
 {
-    public GameObject SCATBulletPF;
     private Vector3 front;
     public Canvas Scoped;
     private Slider slider;
@@ -28,11 +27,11 @@ public class Sniper : WeaponBase
     const float trailSpeed = 200f;
     FPS player;
 
-    private void Awake()
-    {
-        storeOGPosition = transform.Find("Gun/AWP").localPosition;
-        storeOGRotation = transform.Find("Gun/AWP").localRotation;
-    }
+    //private void Awake()
+    //{
+    //    storeOGPosition = transform.Find("Gun/AWP").localPosition;
+    //    storeOGRotation = transform.Find("Gun/AWP").localRotation;
+    //}
 
     //public ParticleSystem hiteffect;
 
@@ -50,6 +49,8 @@ public class Sniper : WeaponBase
         slider.maxValue = slider.value = StablizeProgress;
         DmgReductionTxt = transform.Find("SniperUICanvas").GetComponentInChildren<Text>();
         animator = transform.Find("Gun/AWP").GetComponent<Animator>();
+        storeOGPosition = transform.Find("Gun/AWP").localPosition;
+        storeOGRotation = transform.Find("Gun/AWP").localRotation;
     }
 
     //Update is called once per frame
@@ -63,8 +64,11 @@ public class Sniper : WeaponBase
         }
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
         {
-            transform.Find("Gun/AWP").localPosition = storeOGPosition;
-            transform.Find("Gun/AWP").localRotation = storeOGRotation;
+            if (transform.Find("Gun/AWP") != null)
+            {
+                transform.Find("Gun/AWP").localPosition = storeOGPosition;
+                transform.Find("Gun/AWP").localRotation = storeOGRotation;
+            }
         }
         transform.localPosition = Vector3.SmoothDamp(transform.localPosition, desiredPositionAnimation, ref velocity, AnimationRate);
 
@@ -87,7 +91,7 @@ public class Sniper : WeaponBase
     {
         Scoped.enabled = false;
         PlayOnce = false;
-        camaim.ZoomOut();
+        //camaim.ZoomOut();
         desiredPositionAnimation = new Vector3(0.25f, -0.2f, 0.75f);
         player.candash = true;
         weaponModel.SetActive(true);
@@ -119,12 +123,12 @@ public class Sniper : WeaponBase
                         if (hit.collider.name == "Head")
                         {
                             particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
-                            player.TakeDamage(damage[0] * 2, -front);
+                            player.TakeDamage(damage[0] * 2, -front, owner, this.gameObject);
                         }
                         else
                         {
                             particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
-                            player.TakeDamage(damage[0], -front);
+                            player.TakeDamage(damage[0], -front, owner, this.gameObject);
 
                         }
                     }
@@ -135,7 +139,7 @@ public class Sniper : WeaponBase
                         EntityBase entity = hit.transform.gameObject.GetComponent<EntityBase>();
                         if (entity != null)
                         {
-                            entity.TakeDamage(damage[0], -front);
+                            entity.TakeDamage(damage[0], -front, owner, this.gameObject);
                         }
                     }
                 }
@@ -154,7 +158,7 @@ public class Sniper : WeaponBase
         }
     }
 
-    override protected void Fire2() // right click press and hold
+    override protected void Fire2()
     {
         if (animationdone)
         {
@@ -164,7 +168,8 @@ public class Sniper : WeaponBase
                 ScopeSound.Play();
                 PlayOnce = true;
             }
-            camaim.ZoomIn();
+            //if (!player.candash)
+                //camaim.ZoomIn();
             weaponModel.SetActive(false);
         }
         ScopeDesiredPosition = desiredPositionAnimation = new Vector3(0.0f, -0.15f, 0.58f);
