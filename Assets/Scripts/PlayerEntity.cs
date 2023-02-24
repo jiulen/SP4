@@ -44,25 +44,25 @@ public class PlayerEntity : EntityBase
         base.Start();
         equipped = transform.Find("Equipped").gameObject;
         GameObject rightHand = equipped.transform.Find("Right Hand").gameObject;
-        uiKillFeedCanvas = GameObject.Find("Canvas/KillerFeedUI");
-
-        if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
-
         for (int i = 0; i != rightHand.transform.childCount; i++)
         {
             equippedWeaponList[i] = rightHand.transform.GetChild(i).gameObject;
-            if(i != 0)
-              equippedWeaponList[i].SetActive(false);
+            if (i != 0)
+                equippedWeaponList[i].SetActive(false);
         }
         activeWeapon = equippedWeaponList[0];
         previousWeapon = activeWeapon;
+        uiKillFeedCanvas = GameObject.Find("Canvas/KillerFeedUI");
+    }
+
+    void Start()
+    {
+        if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
 
         playerCanvasParent = Instantiate(PlayerCanvasParentPF, this.transform);
         uiWeaponWheelCanvas = playerCanvasParent.transform.Find("Weapon Wheel Canvas V2").gameObject;
-
         uiDeathCanvas = playerCanvasParent.transform.Find("Death Canvas").gameObject;
         uiPlayerStatsCanvas = playerCanvasParent.transform.Find("Player Stats Canvas").gameObject;
-        //Instantiate(MiniMapPF, this.transform);
         uiCurrentWeaponIcon = uiPlayerStatsCanvas.transform.Find("CurrentWeaponImage").GetComponent<Image>();
         cameraEffectsCanvas = playerCanvasParent.transform.Find("Camera Effects Canvas").gameObject;
         cameraEffectInjured = cameraEffectsCanvas.transform.Find("Injured").GetComponent<Image>();
@@ -74,24 +74,6 @@ public class PlayerEntity : EntityBase
         crosshairCanvas = playerCanvasParent.transform.Find("Custom Crosshair Canvas").gameObject;
         crosshairCanvas.GetComponent<CustomCrosshair>().doUpdate = true;
 
-        //for (int i = 0; i < uiWeaponWheelCanvas.GetComponentsInChildren<Button>().Length; i++)
-        //{
-        //    var index = i;
-        //    Button items = uiWeaponWheelCanvas.GetComponentsInChildren<Button>()[i];
-        //    items.onClick.AddListener(() => UpdateWheelManager(index));
-
-        //    EventTrigger trigger = items.gameObject.AddComponent<EventTrigger>();
-        //    EventTrigger.Entry entry = new EventTrigger.Entry();
-        //    entry.eventID = EventTriggerType.PointerEnter;
-        //    entry.callback.AddListener((eventData) => { OnPointerEnterDelegate(eventData, items, index); });
-        //    trigger.triggers.Add(entry);
-
-        //    entry = new EventTrigger.Entry();
-        //    entry.eventID = EventTriggerType.PointerExit;
-        //    entry.callback.AddListener((eventData) => { OnPointerExitDelegate(eventData, items, index); });
-        //    trigger.triggers.Add(entry);
-        //}
-        //DeathUI = transform.Find("Canvas/DeathUI").gameObject;
         currentrespawnelaspe = respawncountdown;
     }
 

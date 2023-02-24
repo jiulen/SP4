@@ -131,10 +131,13 @@ public class FPS : NetworkBehaviour
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
         rigidbody = this.GetComponent<Rigidbody>();
         rigidbody.velocity.Set(0, 0, 0);
+    }
 
+    private void Start() //must do check for IsOwner in start (IsOwner only updates after awake)
+    {
         if (!IsOwner && !debugBelongsToPlayer) return;
-        camera = GameObject.Find("Main Camera").GetComponent<Camera>();
 
+        camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         body.GetComponent<MeshRenderer>().enabled = false;
     }
 
@@ -146,9 +149,10 @@ public class FPS : NetworkBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("Scene Loaded : " + scene.name);
-        if (scene.name == "Parallel_Pillars")
+        if (scene.name == "RandallTestingScene")
         {
             Init();
+            Start();
         }
     }
 
