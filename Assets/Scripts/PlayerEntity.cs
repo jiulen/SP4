@@ -180,8 +180,12 @@ public class PlayerEntity : EntityBase
         SetLastTouch(source);
         SetHealth(GetHealth() - hp);
 
-        if (Health <= 0)
-            SpawnKillFeed(source, this.gameObject, weaponUsed.GetComponent<WeaponBase>().WeaponIcon);
+        //if (Health <= 0)
+
+        Debug.Log(weaponUsed);
+
+        Debug.Log(source);
+        SpawnKillFeed(source, this.gameObject, weaponUsed.GetComponent<WeaponBase>().WeaponIcon);
     }
 
 

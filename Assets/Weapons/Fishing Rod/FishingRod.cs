@@ -103,12 +103,12 @@ public class FishingRod : WeaponBase
                 if (hookedCollider.name == "Head")
                 {
                     particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", transform.position, -hookVelocity.normalized, 15);
-                    player.TakeDamage(hookDamage * 2, -hookVelocity.normalized);
+                    player.TakeDamage(hookDamage * 2, -hookVelocity.normalized, owner, gameObject);
                 }
                 else
                 {
                     particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", transform.position, -hookVelocity.normalized);
-                    player.TakeDamage(hookDamage, -hookVelocity.normalized);
+                    player.TakeDamage(hookDamage, -hookVelocity.normalized, owner, gameObject);
                 }
             }
 

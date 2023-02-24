@@ -36,6 +36,10 @@ public class WeaponBase : MonoBehaviour
     protected CustomCrosshair crosshair;
     private GameObject wheelManagerUI;
 
+    public GameObject GetOwner()
+    {
+        return owner;
+    }
     public void Start()
     {
         //elapsedBetweenEachShot = 1 / fireRate;

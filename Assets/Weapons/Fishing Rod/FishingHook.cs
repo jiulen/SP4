@@ -43,12 +43,12 @@ public class FishingHook : MonoBehaviour
                 if (other.name == "Head")
                 {
                     particleManager.CreateEffect("Blood_PE", transform.position, -fishingRod.hookVelocity.normalized, 15);
-                    player.TakeDamage(fishingRod.hookDamage * 2, -fishingRod.hookVelocity.normalized);
+                    player.TakeDamage(fishingRod.hookDamage * 2, -fishingRod.hookVelocity.normalized, fishingRod.GetOwner(), fishingRod.gameObject);
                 }
                 else
                 {
                     particleManager.CreateEffect("Blood_PE", transform.position, -fishingRod.hookVelocity.normalized);
-                    player.TakeDamage(fishingRod.hookDamage, -fishingRod.hookVelocity.normalized);
+                    player.TakeDamage(fishingRod.hookDamage, -fishingRod.hookVelocity.normalized, fishingRod.GetOwner(), fishingRod.gameObject);
 
                 }
                 fishingRod.hookedRigidbody = other.attachedRigidbody;
@@ -62,7 +62,7 @@ public class FishingHook : MonoBehaviour
 
                 if (entity != null)
                 {
-                    entity.TakeDamage(fishingRod.hookDamage, -fishingRod.hookVelocity.normalized);
+                    entity.TakeDamage(fishingRod.hookDamage, -fishingRod.hookVelocity.normalized, fishingRod.GetOwner(), fishingRod.gameObject);
                 }
             }
 
