@@ -35,10 +35,10 @@ public class PlayerEntity : EntityBase
     //public GameObject CameraEffectsCanvasPF;
     public Image DamageIndicatorImagePF;
     public GameObject KillFeedPrefab;
+    private static List<GameObject> KillPrefabList = new List<GameObject>();
 
     void Awake()
     {
-       
         FPSScript = this.GetComponent<FPS>();
         base.Start();
         equipped = transform.Find("Equipped").gameObject;
@@ -103,8 +103,25 @@ public class PlayerEntity : EntityBase
         spawnFeed.transform.Find("PlayerDeath").GetComponent<Text>().text = playerdeath.name;
         spawnFeed.transform.Find("KillerWeapon").GetComponent<Image>().sprite = typeofWeapon;
         spawnFeed.transform.parent = uiKillFeedCanvas.transform;
+        KillPrefabList.Insert(0, spawnFeed);
 
-       //if (killfeedlist)
+        if (KillPrefabList.Count >= 5)
+        {
+            Destroy(KillPrefabList[KillPrefabList.Count - 1].gameObject);
+            KillPrefabList.Remove(KillPrefabList[KillPrefabList.Count - 1]);
+        }
+
+
+        int i = 0;
+        foreach (GameObject killfeed in KillPrefabList)
+        {
+            Vector2 killfeedpos = KillPrefabList[0].GetComponent<RectTransform>().anchoredPosition;
+            killfeed.GetComponent<RectTransform>().anchoredPosition = new Vector2(killfeedpos.x, killfeedpos.y + (i * 25));
+            killfeed.transform.parent = uiKillFeedCanvas.transform;
+            i++;
+        }
+
+
     }
 
     // Update is called once per frame
@@ -137,8 +154,6 @@ public class PlayerEntity : EntityBase
         //Weapon UI icon
         if (activeWeapon != null)
            uiCurrentWeaponIcon.sprite = activeWeapon.GetComponent<WeaponBase>().WeaponIcon;
-
-    
 
 
         Color currAlpha = cameraEffectInjured.color;
@@ -208,6 +223,7 @@ public class PlayerEntity : EntityBase
         return uiWeaponWheelCanvas;
     }
 
+    [ClientRpc]
     public void SetActiveWeapon(int i)
     {
         //if (activeWeapon != null)
