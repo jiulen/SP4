@@ -17,8 +17,10 @@ public class FishingRod : WeaponBase
     const float fishingPullForce = 10f; //Force to launch hook and pull player back
 
     public Rigidbody hookedRigidbody = null;
+    public Collider hookedCollider = null;
 
     public Vector3 hookVelocity = Vector3.zero;
+    public int hookDamage;
 
     public enum HookState
     {
@@ -37,6 +39,8 @@ public class FishingRod : WeaponBase
 
         fishingLineRenderer = fishingLine.GetComponent<LineRenderer>();
         fishingLineRenderer.positionCount = 2;
+
+        hookDamage = damage[0];
     }
 
     // Update is called once per frame
@@ -84,6 +88,7 @@ public class FishingRod : WeaponBase
             fishingLine.SetActive(true);
             hookPivot.parent = null;
             hookedRigidbody = null;
+            hookedCollider = null;
 
             fireAudio.Play();
         }
@@ -92,6 +97,19 @@ public class FishingRod : WeaponBase
             if (hookState == HookState.HOOKED && hookedRigidbody)
             {
                 hookedRigidbody.AddForce((hookPivot.position - hookedRigidbody.position).normalized * fishingPullForce, ForceMode.Impulse);
+
+                EntityBase player = hookedCollider.gameObject.GetComponent<PlayerHitBox>().owner.GetComponent<EntityBase>();
+
+                if (hookedCollider.name == "Head")
+                {
+                    particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", transform.position, -hookVelocity.normalized, 15);
+                    player.TakeDamage(hookDamage * 2, -hookVelocity.normalized);
+                }
+                else
+                {
+                    particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", transform.position, -hookVelocity.normalized);
+                    player.TakeDamage(hookDamage, -hookVelocity.normalized);
+                }
             }
 
             //Teleport hook back
@@ -103,6 +121,7 @@ public class FishingRod : WeaponBase
             hookPivot.localRotation = Quaternion.identity;
             fishingLine.SetActive(false);
             hookedRigidbody = null;
+            hookedCollider = null;
 
             rodPullAudio.Play();
         }

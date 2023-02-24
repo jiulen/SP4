@@ -132,6 +132,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8174995483575974657, guid: 49088e0a4ffcdc3478fa4b8691eae3ab, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 49088e0a4ffcdc3478fa4b8691eae3ab, type: 3}
 --- !u!224 &7934672361141583435 stripped
@@ -234,6 +238,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1409390252752729183, guid: 055a8a6704ee95642b4e28b00ca7d0d4, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 055a8a6704ee95642b4e28b00ca7d0d4, type: 3}
 --- !u!224 &1947374684245138810 stripped
@@ -255,6 +263,10 @@ PrefabInstance:
     - target: {fileID: 304482145323830815, guid: 0f3425e527a764a4899eb97e3fbcb584, type: 3}
       propertyPath: m_PlaneDistance
       value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 3316442775851197802, guid: 0f3425e527a764a4899eb97e3fbcb584, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4309501206075968949, guid: 0f3425e527a764a4899eb97e3fbcb584, type: 3}
       propertyPath: m_Name
@@ -445,6 +457,10 @@ PrefabInstance:
     - target: {fileID: 1975893786193018960, guid: 33dfa1fc9ca59f34b87ad309d1060843, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2759330385436932492, guid: 33dfa1fc9ca59f34b87ad309d1060843, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4967693516218762285, guid: 33dfa1fc9ca59f34b87ad309d1060843, type: 3}
       propertyPath: m_AnchorMax.y
@@ -694,6 +710,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Stats Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 2657146564967917597, guid: ed51acaa407d0fe4d8737f10342f53c0, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3663438322172640350, guid: ed51acaa407d0fe4d8737f10342f53c0, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -718,11 +738,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1555180637052695860, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_Pivot.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1555180637052695860, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_Pivot.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1555180637052695860, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_RootOrder
@@ -730,11 +750,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1555180637052695860, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1555180637052695860, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1555180637052695860, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_AnchorMin.x
@@ -750,6 +770,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1555180637052695860, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1555180637052695860, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1555180637052695860, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1555180637052695860, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
+      propertyPath: m_LocalScale.z
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1555180637052695860, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
@@ -770,15 +802,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1555180637052695860, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1555180637052695860, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1555180637052695860, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1555180637052695860, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -800,9 +832,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2891989118063425415, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3421546521053433844, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3421546521053433844, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_PresetInfoIsWorld
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9031491400341693026, guid: 6a9b24d438099b14cb2acd7d527ba9c2, type: 3}
       propertyPath: m_Name
