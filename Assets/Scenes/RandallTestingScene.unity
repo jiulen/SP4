@@ -3574,49 +3574,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 935216032}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &944075511 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7015862069296273038, guid: 37d2d5b071ab13c4b89418a1b18bc186, type: 3}
-  m_PrefabInstance: {fileID: 1958846529}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &944075512
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 944075511}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d25711ef7d827aa43963a7378ef86f9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fireRate: []
-  damage: 
-  bulletsPerShot: 
-  inaccuracy: []
-  projectileVel: []
-  WeaponIcon: {fileID: 0}
-  KnifeProjectile: {fileID: 0}
---- !u!114 &944075513
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 944075511}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d25711ef7d827aa43963a7378ef86f9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fireRate: []
-  damage: 
-  bulletsPerShot: 
-  inaccuracy: []
-  projectileVel: []
-  WeaponIcon: {fileID: 0}
-  KnifeProjectile: {fileID: 0}
 --- !u!1001 &945781487
 PrefabInstance:
   m_ObjectHideFlags: 0
