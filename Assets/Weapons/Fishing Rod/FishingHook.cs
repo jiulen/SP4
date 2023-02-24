@@ -33,6 +33,8 @@ public class FishingHook : MonoBehaviour
     {
         if (fishingRod.hookState == FishingRod.HookState.NOT_HOOKED)
         {
+            transform.parent = other.transform;
+
             transform.position = other.ClosestPointOnBounds(transform.position);
 
             //Check what is hooked
@@ -67,7 +69,6 @@ public class FishingHook : MonoBehaviour
             }
 
             fishingRod.hookState = FishingRod.HookState.HOOKED;
-            transform.parent = other.transform;
         }
     }
 }
