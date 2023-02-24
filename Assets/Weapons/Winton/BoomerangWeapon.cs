@@ -6,6 +6,7 @@ public class BoomerangWeapon : WeaponBase
 {
     [SerializeField] Transform boomerang;
     public float spinRate;
+    public GameObject emitter;
 
     enum BoomererangWeaponState
     {
@@ -25,7 +26,7 @@ public class BoomerangWeapon : WeaponBase
     void Update()
     {
         base.Update();
-
+        emitter = bulletEmitter.gameObject;
         switch (boomererangWeaponState)
         {
             case BoomererangWeaponState.THROW:
@@ -43,7 +44,8 @@ public class BoomerangWeapon : WeaponBase
         if (boomererangWeaponState == BoomererangWeaponState.NONE)
         {
             Rigidbody rb = boomerang.GetComponent<Rigidbody>();
-            boomerang.GetComponent<ProjectileBase>().SetObjectReferences(owner, particleManager);
+            boomerang.GetComponent<Boomerang>().SetObjectReferences(owner, particleManager);
+            boomerang.GetComponent<Boomerang>().SetWeaponUsed(gameObject);
             boomerang.GetComponent<Boomerang>().boomererangState = Boomerang.BoomererangState.THROW;
             boomerang.GetComponent<MeshCollider>().enabled = true;
             boomerang.GetComponent<Boomerang>().dir = -camera.transform.forward;
