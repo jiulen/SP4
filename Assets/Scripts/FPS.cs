@@ -133,7 +133,14 @@ public class FPS : NetworkBehaviour
         rigidbody.velocity.Set(0, 0, 0);
     }
 
-    private void Start() //must do check for IsOwner in start (IsOwner only updates after awake)
+    public override void OnNetworkSpawn() //must do check for IsOwner in OnNetworkSpawn (IsOwner only updates after awake)
+    {
+        base.OnNetworkSpawn();
+
+        IsOwnerStartCheck();
+    }
+
+    private void IsOwnerStartCheck()
     {
         if (!IsOwner && !debugBelongsToPlayer) return;
 
@@ -152,7 +159,7 @@ public class FPS : NetworkBehaviour
         if (scene.name == "RandallTestingScene")
         {
             Init();
-            Start();
+            IsOwnerStartCheck();
         }
     }
 
