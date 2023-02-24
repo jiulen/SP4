@@ -152,7 +152,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4894784866927994046}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.26, y: -0.352, z: 0.589}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children:
   - {fileID: 8484413522312709495}
@@ -179,7 +179,8 @@ MonoBehaviour:
   inaccuracy: []
   projectileVel:
   - 0
-  WeaponIcon: {fileID: 0}
+  WeaponIcon: {fileID: 21300000, guid: db257454c8a5b154c930a29a49357ac5, type: 3}
+  owner: {fileID: 0}
   ThrowForce: 20
   grenade: {fileID: 2872681686790852967}
   grenadePrefab: {fileID: 1655352229576528853, guid: 7d464e74552864c438e01a04314008f6, type: 3}
