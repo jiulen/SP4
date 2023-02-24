@@ -137,6 +137,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7870089367360788887}
   - component: {fileID: 4627015878036272592}
+  - component: {fileID: 3254247007720604278}
   m_Layer: 0
   m_Name: Grenade
   m_TagString: Untagged
@@ -184,6 +185,22 @@ MonoBehaviour:
   ThrowForce: 20
   grenade: {fileID: 2872681686790852967}
   grenadePrefab: {fileID: 1655352229576528853, guid: 7d464e74552864c438e01a04314008f6, type: 3}
+--- !u!114 &3254247007720604278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4894784866927994046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &7337912094450789007
 GameObject:
   m_ObjectHideFlags: 0

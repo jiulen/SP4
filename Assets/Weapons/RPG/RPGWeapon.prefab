@@ -110,6 +110,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8504944394129077542}
   - component: {fileID: 2287712280178462441}
+  - component: {fileID: 206792830793501462}
   m_Layer: 0
   m_Name: RPGWeapon
   m_TagString: Untagged
@@ -154,7 +155,24 @@ MonoBehaviour:
   projectileVel:
   - 15
   WeaponIcon: {fileID: 21300000, guid: 45eec8595d054e34b86510b9796f7451, type: 3}
+  owner: {fileID: 0}
   Rocket: {fileID: 6011158359209759673, guid: aeb286dfa3312594889f03175f3d7cce, type: 3}
+--- !u!114 &206792830793501462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2555964571765687526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &2688858351614480851
 GameObject:
   m_ObjectHideFlags: 0

@@ -524,6 +524,7 @@ GameObject:
   - component: {fileID: 4988232870063903566}
   - component: {fileID: 9113023903280448902}
   - component: {fileID: 9107404262379298849}
+  - component: {fileID: -2758808866984029124}
   m_Layer: 0
   m_Name: Sniper
   m_TagString: Untagged
@@ -586,6 +587,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoom: 20
+--- !u!114 &-2758808866984029124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2360753460710343700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &3814944076502870689
 GameObject:
   m_ObjectHideFlags: 0
