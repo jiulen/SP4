@@ -6,7 +6,6 @@ using UnityEngine;
 public class ExplosiveBullet : ProjectileBase
 {
     protected GameObject playerManager;
-    protected GameObject particleManager;
 
     // Anything outisde this range will not be affected
     public float upperExplosionRadius = 10;
