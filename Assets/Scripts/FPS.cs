@@ -129,6 +129,12 @@ public class FPS : NetworkBehaviour
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
         rigidbody = this.GetComponent<Rigidbody>();
         rigidbody.velocity.Set(0, 0, 0);
+
+        if (!IsOwner && !debugBelongsToPlayer) return;
+
+        camera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        body.GetComponent<MeshRenderer>().enabled = false;
+        visorMR.enabled = false;
     }
 
     public override void OnNetworkSpawn() //must do check for IsOwner in OnNetworkSpawn (IsOwner only updates after awake)

@@ -12,6 +12,8 @@ public class DeRolo : WeaponBase
     GameObject uiChamberReloadParent;
     GameObject uiCylinder;
 
+    DeRoloGrappleHook GrappleHookScript;
+
     public List<Image> uiReloadMarkerList = new List<Image>();
     public List<GameObject> uiChamberList = new List<GameObject>();
     public List<Image> uiImageChamberList = new List<Image>();
@@ -21,6 +23,8 @@ public class DeRolo : WeaponBase
     [SerializeField] TrailRenderer bulletTrail;
 
     public AnimationCurve cycleAnimationCurve = new AnimationCurve();
+
+    public GameObject ExplosiveBulletPF;
 
     private AmmoWheel ammoWheel;
 
@@ -89,27 +93,13 @@ public class DeRolo : WeaponBase
         fireAnimation.speed = 1/* / (float)elapsedBetweenEachShot[1]*/;
 
         ammoWheel = transform.Find("Ammo Wheel").GetComponent<AmmoWheel>();
+
+        GrappleHookScript = this.GetComponent<DeRoloGrappleHook>();
     }
 
     void Update()
     {
         base.Update();
-
-        //int i = 0;
-        //int j = 0;
-        //// Set the colors after the active chamber, inclusive
-        //for (i = activeChamber; i != cylinderSize; i++, j++)
-        //{
-        //    Color color = bulletColors[(int)cylinder[i]];
-        //    uiImageChamberList[j].color = color;
-        //}
-
-        //// Set the colors before the active chamber
-        //for (i = 0; i != activeChamber; i++, j++)
-        //{
-        //    Color color = bulletColors[(int)cylinder[i]];
-        //    uiImageChamberList[j].color = color;
-        //}
 
         for (int i = 0; i != cylinderSize; i++)
         {
@@ -247,11 +237,10 @@ public class DeRolo : WeaponBase
         fireAnimation.enabled = false;
     }
 
-
     // We override the base function here as the revolver has some unique properties
     new protected bool CheckCanFire()
     {
-        if (fireCooldownRemaining <= 0 && cycleElapsed >= cycleDuration && reloadElapsed >= reloadDuration)
+        if (fireCooldownRemaining <= 0 && cycleElapsed >= cycleDuration && reloadElapsed >= reloadDuration && !GrappleHookScript.hookActive)
         {
             // fireCooldownRemaining and cycleElapsed to be set outside
 
@@ -262,6 +251,12 @@ public class DeRolo : WeaponBase
 
     override protected void Fire1Once()
     {
+        if (GrappleHookScript.hookActive)
+        {
+            GrappleHookScript.SetHookActive(false);
+            return;
+        }
+
         if (CheckCanFire() && !ammoWheel.wheelActive)
         {
             //Debug.LogError(activeChamber);
@@ -269,7 +264,6 @@ public class DeRolo : WeaponBase
             {
                 case BulletTypes.NORMAL:
                 {
-                    fireCooldownRemaining = elapsedBetweenEachShot[(int)cylinder[activeChamber]];
                     Ray laserRayCast = new Ray(camera.transform.position + camera.transform.forward * 0.5f, camera.transform.forward);
                 
 
@@ -307,6 +301,37 @@ public class DeRolo : WeaponBase
                     }
                 }
                 break;
+                case BulletTypes.SHORTEXPLOSIVE:
+                    {
+                        Transform newTransform = camera.transform;
+                        GameObject bullet = Instantiate(ExplosiveBulletPF, bulletEmitter.transform);
+                        Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
+                        bullet.GetComponent<Rigidbody>().velocity = front.normalized * 100;
+                        bullet.transform.SetParent(projectileManager.transform);
+                        bullet.GetComponent<ProjectileBase>().SetCreator(owner);
+                        bullet.GetComponent<ExplosiveBullet>().armingDistance = 0;
+                        bullet.GetComponent<ExplosiveBullet>().maxDistance = 5;
+
+                        Quaternion rotation = Quaternion.LookRotation(front.normalized, Vector3.up);
+                    }
+                    break;
+                case BulletTypes.MEDIUMEXPLOSIVE:
+                    {
+                        Transform newTransform = camera.transform;
+                        GameObject bullet = Instantiate(ExplosiveBulletPF, bulletEmitter.transform);
+                        Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
+                        bullet.GetComponent<Rigidbody>().velocity = front.normalized * 50;
+                        bullet.transform.SetParent(projectileManager.transform);
+                        bullet.GetComponent<ProjectileBase>().SetCreator(owner);
+                        Quaternion rotation = Quaternion.LookRotation(front.normalized, Vector3.up);
+                        bullet.transform.rotation = rotation;
+                    }
+                    break;
+                case BulletTypes.GRAPPLE:
+                    {
+                        GrappleHookScript.FireGrapple();
+                    }
+                    break;
                 case BulletTypes.NONE:
                 {
                      CycleCylinder();
@@ -315,7 +340,8 @@ public class DeRolo : WeaponBase
                 break;
 
             }
-          
+
+            fireCooldownRemaining = elapsedBetweenEachShot[(int)cylinder[activeChamber]];
             fireAnimation.enabled = true;
             fireAnimation.StopPlayback();
             fireAnimation.Play("Fire Revolver");
