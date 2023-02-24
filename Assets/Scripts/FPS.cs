@@ -17,6 +17,7 @@ public class FPS : NetworkBehaviour
     public GameObject head;
     [SerializeField] GameObject bodyPivot;
     [SerializeField] GameObject headPivot;
+    [SerializeField] MeshRenderer visorMR;
     public float airMovementMultiplier = 2.5f;
     public float runSpeed = 10f;
     CapsuleCollider capsuleCollider;
@@ -112,9 +113,6 @@ public class FPS : NetworkBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
-
-
-
         capsuleCollider = head.GetComponent<CapsuleCollider>();
 
         headHeight = head.transform.position.y - body.transform.position.y + (body.GetComponent<CapsuleCollider>().height * head.transform.localScale.y * body.transform.localScale.y) / 2;
@@ -146,6 +144,7 @@ public class FPS : NetworkBehaviour
 
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         body.GetComponent<MeshRenderer>().enabled = false;
+        visorMR.enabled = false;
     }
 
     private void OnEnable()
