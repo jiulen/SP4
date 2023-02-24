@@ -121,7 +121,6 @@ public class WeaponWheel : MonoBehaviour
     {
         float angleDiff = Mathf.Abs(angleEnd - angleStart);
         float angleToCheckDiff = Mathf.Abs((angleToCheck - angleStart + 360) % 360);
-        Debug.Log("test" + 110 % 100);
         if (angleToCheckDiff > angleDiff) 
             return false;
         return true;
