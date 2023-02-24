@@ -68,7 +68,7 @@ public class CharSelectUI : MonoBehaviour
     private void Start()
     {
         CharSelectManager.Instance.OnSelect += UpdateLobby_Event;
-        Hide();
+        //Hide();
     }
 
     private void UpdateLobby_Event(object sender, CharSelectManager.CharLobbyEventArgs e)
@@ -110,7 +110,7 @@ public class CharSelectUI : MonoBehaviour
     }
 
     private void Hide() {
-        //gameObject.SetActive(false);
+        gameObject.SetActive(false);
     }
 
     private void Show() {
