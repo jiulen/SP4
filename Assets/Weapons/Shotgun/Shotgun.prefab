@@ -268,6 +268,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7367282867512015018}
   - component: {fileID: 3105152821810700574}
+  - component: {fileID: 4101764385424321917}
   m_Layer: 0
   m_Name: Shotgun
   m_TagString: Untagged
@@ -312,7 +313,24 @@ MonoBehaviour:
   - 20
   projectileVel: []
   WeaponIcon: {fileID: 21300000, guid: 7a4dd39ade8971041b32258521c66f43, type: 3}
+  owner: {fileID: 0}
   bulletTrail: {fileID: 7338455853520770129, guid: c8a74160b55dc8a429d2a617fc546e54, type: 3}
+--- !u!114 &4101764385424321917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5557506430343370324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &8315617614453261876
 GameObject:
   m_ObjectHideFlags: 0

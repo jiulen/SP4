@@ -15188,6 +15188,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3402094154530339546}
   - component: {fileID: 464341549499799659}
+  - component: {fileID: -4544296305885812677}
   m_Layer: 0
   m_Name: DICKSCAT_PF
   m_TagString: Untagged
@@ -15238,12 +15239,29 @@ MonoBehaviour:
   - -1
   - 25
   WeaponIcon: {fileID: 21300000, guid: eb16de1480696f042aa8ded8cb07d8a9, type: 3}
+  owner: {fileID: 0}
   DICKDistance: 15
   steamRate: 20
   SCATBulletPF: {fileID: 4136986527977053402, guid: 7fe315266963d914284057486c11b524, type: 3}
   DICKLaserPF: {fileID: 5763653507336855649, guid: efb8f11a8e8b5e242a2a41863b610af1, type: 3}
   bloodEffect: {fileID: 2305821162208844719, guid: 042f5cddfa0450d45b346081207b21bf, type: 3}
   sparkEffect: {fileID: 2907902898773258639, guid: 7b77a91ec9a07a2468091790b6471b8e, type: 3}
+--- !u!114 &-4544296305885812677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2411887577851961006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &3763747248868537391
 GameObject:
   m_ObjectHideFlags: 0
