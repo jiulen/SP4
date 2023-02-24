@@ -170,7 +170,8 @@ public class Wallrunning : MonoBehaviour
 
         tiltToMiddleCoroutine = StartCoroutine(playerFPSScript.DoTiltZ(0, 20));
 
-        WallJump();
+        if (playerFPSScript.staminaAmount > 0)
+            WallJump();
     }
 
     void WallRunningMovement()
