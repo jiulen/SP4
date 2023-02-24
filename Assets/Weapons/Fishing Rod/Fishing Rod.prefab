@@ -800,16 +800,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireRate: []
-  damage: 
+  damage: 05000000
   bulletsPerShot: 
   inaccuracy: []
   projectileVel: []
-  WeaponIcon: {fileID: 0}
+  WeaponIcon: {fileID: 21300000, guid: 813577ce4058f5f4d999a2bc52741bcb, type: 3}
   fishingLine: {fileID: 4159853816640352201}
   hookPivot: {fileID: 8325342635959248888}
   hookParent: {fileID: 232826171868354169}
   hookedRigidbody: {fileID: 0}
+  hookedCollider: {fileID: 0}
   hookVelocity: {x: 0, y: 0, z: 0}
+  hookDamage: 0
   hookState: 0
   rodPullAudio: {fileID: 8317608451114051056}
 --- !u!1001 &6360273192767502694
