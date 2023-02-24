@@ -182,8 +182,8 @@ public class FPS : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-            AddWeaponServerRpc("Shotgun");
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //    AddWeaponServerRpc("Shotgun");
 
         // Reset position and velocity if player goes out of bounds for debugging
         if (transform.position.magnitude > 100 || transform.position.y <= -20)
