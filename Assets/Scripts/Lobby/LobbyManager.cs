@@ -14,6 +14,8 @@ public class LobbyManager : NetworkBehaviour {
 
     public static LobbyManager Instance { get; private set; }
 
+    [SerializeField] GameObject lobbyCanvas;
+    [SerializeField] GameObject charSelectCanvas;
 
     public const string KEY_PLAYER_NAME = "PlayerName";
     public const string KEY_PLAYER_CHARACTER = "Character";
@@ -428,6 +430,11 @@ public class LobbyManager : NetworkBehaviour {
         }
     }
 
+    public void CharSelect()
+    {
+        lobbyCanvas.SetActive(false);
+        charSelectCanvas.SetActive(true);
+    }
     public async void StartGame()
     {
         if(IsLobbyHost())
