@@ -33,7 +33,6 @@ public class PlayerEntity : EntityBase
     //public GameObject CrosshairCanvasPF;
     //public GameObject DeathCanvasPF;
     //public GameObject CameraEffectsCanvasPF;
-    //public GameObject MiniMapPF;
     public Image DamageIndicatorImagePF;
     public GameObject KillFeedPrefab;
 
