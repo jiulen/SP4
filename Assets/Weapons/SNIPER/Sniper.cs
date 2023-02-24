@@ -64,11 +64,8 @@ public class Sniper : WeaponBase
         }
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
         {
-            if (transform.Find("Gun/AWP") != null)
-            {
-                transform.Find("Gun/AWP").localPosition = storeOGPosition;
-                transform.Find("Gun/AWP").localRotation = storeOGRotation;
-            }
+            transform.Find("Gun/AWP").localPosition = storeOGPosition;
+            transform.Find("Gun/AWP").localRotation = storeOGRotation;
         }
         transform.localPosition = Vector3.SmoothDamp(transform.localPosition, desiredPositionAnimation, ref velocity, AnimationRate);
 
@@ -106,6 +103,8 @@ public class Sniper : WeaponBase
                 Transform newTransform = camera.transform;
                 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
 
+                if (Scoped.enabled)
+                    front = newTransform.forward * 1000;
                 // new
                 TrailRenderer trail = null;
                 if (Physics.Raycast(bulletEmitter.transform.position, front, out RaycastHit hit))
@@ -243,8 +242,8 @@ public class Sniper : WeaponBase
                 ScopeSound.Play();
                 PlayOnce = true;
             }
-            //if (!player.candash)
-                //camaim.ZoomIn();
+            if (!player.candash)
+                camaim.ZoomIn();
             weaponModel.SetActive(false);
         }
         ScopeDesiredPosition = desiredPositionAnimation = new Vector3(0.0f, -0.15f, 0.58f);
