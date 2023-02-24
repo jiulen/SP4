@@ -1166,7 +1166,7 @@ MonoBehaviour:
   bulletsPerShot: 
   inaccuracy: []
   projectileVel: []
-  WeaponIcon: {fileID: 0}
+  WeaponIcon: {fileID: 21300000, guid: 84a17cfaa8bce9540b4466d63150cc64, type: 3}
   owner: {fileID: 0}
   uiReloadMarkerList: []
   uiChamberList: []
@@ -2393,6 +2393,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2483275016711629879, guid: 35464b231b9d0484eb505ba8f48595ab, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2483275016711629879, guid: 35464b231b9d0484eb505ba8f48595ab, type: 3}
       propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.size
       value: 3
       objectReference: {fileID: 0}
@@ -2418,7 +2422,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2483275016711629879, guid: 35464b231b9d0484eb505ba8f48595ab, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.scalar
-      value: 5
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 2483275016711629879, guid: 35464b231b9d0484eb505ba8f48595ab, type: 3}
       propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[1].inSlope

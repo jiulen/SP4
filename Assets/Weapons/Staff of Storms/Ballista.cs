@@ -13,7 +13,10 @@ public class Ballista : WeaponBase
     {
         base.Start();
         bulletEmitter = GameObject.Find("Gun/Bullet emitter");
-       
+
+        fireAnimation = weaponModel.transform.Find("Staff").GetComponent<Animator>();
+        fireAnimation.speed = 1/* / (float)elapsedBetweenEachShot[1]*/;
+
     }
 
     void Update()
@@ -25,6 +28,10 @@ public class Ballista : WeaponBase
     {
         if (CheckCanFire(1))
         {
+            fireAnimation.enabled = true;
+            fireAnimation.StopPlayback();
+            fireAnimation.Play("Fire1");
+
             Ray laserRayCast = new Ray(camera.transform.position + camera.transform.forward * 0.5f, camera.transform.forward);
             GameObject laser = Instantiate(ballistaLaserPF, projectileManager.transform);
             BallistaLaser laserScript = laser.GetComponent<BallistaLaser>();

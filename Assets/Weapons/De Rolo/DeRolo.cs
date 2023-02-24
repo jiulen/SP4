@@ -345,9 +345,10 @@ public class DeRolo : WeaponBase
             fireAnimation.enabled = true;
             fireAnimation.StopPlayback();
             fireAnimation.Play("Fire Revolver");
+            fireAnimation.speed = 1 / (float)elapsedBetweenEachShot[(int)cylinder[activeChamber]];
+
             muzzleFlash.GetComponent<ParticleSystem>().Stop();
             muzzleFlash.GetComponent<ParticleSystem>().Play();
-            fireAnimation.speed = 1 / (float)elapsedBetweenEachShot[(int)cylinder[activeChamber]];
             hasUpdatedAfterFireFinished = false;
             numEmptyChambers++;
             cylinder[activeChamber] = BulletTypes.NONE;
