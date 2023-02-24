@@ -17,10 +17,9 @@ public class DeRolo : WeaponBase
     //public GameObject bulletTrailPF;
     [SerializeField] TrailRenderer bulletTrail;
 
-    private bool hasUpdatedAfterFiredCoolsDown = false;
-    private bool hasUpdatedAfterCycledCoolsDown = false;
-
     public AnimationCurve cycleAnimationCurve = new AnimationCurve();
+
+    private AmmoWheel ammoWheel;
 
     public enum BulletTypes
     {
@@ -35,6 +34,13 @@ public class DeRolo : WeaponBase
     private double fireCooldownRemaining = 0;
     private double cycleElapsed = 0;
     public float cycleDuration = 0.1f;
+    private double reloadElapsed = 0;
+    public float reloadDuration = 1f;
+
+    private bool hasUpdatedAfterFireFinished = false;
+    private bool hasUpdatedAfterCycledFinished = false;
+    private bool hasUpdatedAfterReloadFinished = false;
+
 
     public List<Color> bulletColors = new List<Color>()
     {
@@ -47,6 +53,11 @@ public class DeRolo : WeaponBase
 
     public List<BulletTypes> cylinder = new List<BulletTypes>();
     private int cylinderSize = 6;
+    public int numEmptyChambers = 0;
+
+    public List<BulletTypes> reloadQueue = new List<BulletTypes>();
+
+
     void Start()
     {
         base.Start();
@@ -70,14 +81,15 @@ public class DeRolo : WeaponBase
         fireAnimation = weaponModel.transform.Find("Revolver").GetComponent<Animator>();
         fireAnimation.speed = 1/* / (float)elapsedBetweenEachShot[1]*/;
 
+        ammoWheel = transform.Find("Ammo Wheel").GetComponent<AmmoWheel>();
     }
 
     void Update()
     {
         base.Update();
 
-        int i = 0;
-        int j = 0;
+        //int i = 0;
+        //int j = 0;
         //// Set the colors after the active chamber, inclusive
         //for (i = activeChamber; i != cylinderSize; i++, j++)
         //{
@@ -92,7 +104,7 @@ public class DeRolo : WeaponBase
         //    uiImageChamberList[j].color = color;
         //}
 
-        for (i = 0; i != cylinderSize; i++)
+        for (int i = 0; i != cylinderSize; i++)
         {
             Color color = bulletColors[(int)cylinder[i]];
             uiImageChamberList[i].color = color;
@@ -100,14 +112,13 @@ public class DeRolo : WeaponBase
 
         fireCooldownRemaining -= Time.deltaTime;
         cycleElapsed += Time.deltaTime;
+        reloadElapsed += Time.deltaTime;
 
-        UpdateOnceAfterFireCoolsDown();
-        UpdateOnceAfterCycleCoolsDown();
+        UpdateOnceAfterFireFinishes();
+        UpdateOnceAfterCycleFinishes();
+        UpdateOnceAfterReloadFinishes();
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Reload();   
-        }
+      
 
         float anglePerChamber = -360 / cylinderSize;
         float targetAngle = anglePerChamber * activeChamber;
@@ -115,29 +126,79 @@ public class DeRolo : WeaponBase
         uiCylinder.transform.rotation = Quaternion.Euler(0,0, currentAngle);
     }
 
-    private void Reload()
+    public void Reload()
     {
-        cylinder[activeChamber] = BulletTypes.NORMAL;
+        if (!CheckCanFire())
+            return;
+        
+        hasUpdatedAfterReloadFinished = false;
+        //cylinder[activeChamber] = BulletTypes.NORMAL;
+        reloadElapsed = 0;
+        fireAnimation.enabled = true;
+        fireAnimation.StopPlayback();
+        fireAnimation.StartPlayback();
+        fireAnimation.Play("Reload");
+        fireAnimation.speed = 1 / reloadDuration;
+        List<int> emptyChambers = new List<int>();
+        // Find empty chambers starting from the active chamber
+        // Iterate from the active chamber to the end
+        for (int i = activeChamber; i != cylinderSize; i++)
+        {
+            if (cylinder[i] == BulletTypes.NONE)
+                emptyChambers.Add(i);
+        }
+
+        // Circle back to the beginning, and iterate until the chamber before the active chamber is reached
+        for (int i = 0; i != activeChamber; i++)
+        {
+            if (cylinder[i] == BulletTypes.NONE)
+                emptyChambers.Add(i);
+        }
+
+        // Reload the empty chambers
+        for(int i = 0; i != reloadQueue.Count; i++)
+        {
+            // If there are more bullets to reload than there are empty chambers, then break
+            if (i == emptyChambers.Count)
+                break;
+
+            cylinder[emptyChambers[i]] = reloadQueue[i];
+        }
+
+        reloadQueue.Clear();
+
+        
+
     }
 
     // Is called once after the weapon comes off fire cooldown
-    private void UpdateOnceAfterFireCoolsDown()
+    private void UpdateOnceAfterFireFinishes()
     {
-        if (hasUpdatedAfterFiredCoolsDown || fireCooldownRemaining > 0)
+        if (hasUpdatedAfterFireFinished || fireCooldownRemaining > 0)
             return;
 
-        hasUpdatedAfterFiredCoolsDown = true;
+        hasUpdatedAfterFireFinished = true;
         fireAnimation.enabled = false;
         CycleCylinder();
     }
 
-    // Is called once after the cycling is done cycling
-    private void UpdateOnceAfterCycleCoolsDown()
+    // Is called once after the reload is done reloading
+    private void UpdateOnceAfterReloadFinishes()
     {
-        if (hasUpdatedAfterCycledCoolsDown || cycleElapsed < cycleDuration)
+        if (hasUpdatedAfterReloadFinished || reloadElapsed < reloadDuration)
             return;
 
-        hasUpdatedAfterCycledCoolsDown = true;
+        hasUpdatedAfterReloadFinished = true;
+        fireAnimation.enabled = false;
+    }
+
+    // Is called once after the cycling is done cycling
+    private void UpdateOnceAfterCycleFinishes()
+    {
+        if (hasUpdatedAfterCycledFinished || cycleElapsed < cycleDuration)
+            return;
+
+        hasUpdatedAfterCycledFinished = true;
         fireAnimation.enabled = false;
     }
 
@@ -145,7 +206,7 @@ public class DeRolo : WeaponBase
     // We override the base function here as the revolver has some unique properties
     new protected bool CheckCanFire()
     {
-        if (fireCooldownRemaining <= 0 && cycleElapsed > cycleDuration)
+        if (fireCooldownRemaining <= 0 && cycleElapsed >= cycleDuration && reloadElapsed >= reloadDuration)
         {
             // fireCooldownRemaining and cycleElapsed to be set outside
 
@@ -156,12 +217,12 @@ public class DeRolo : WeaponBase
 
     override protected void Fire1Once()
     {
-        if (CheckCanFire())
+        if (CheckCanFire() && !ammoWheel.wheelActive)
         {
-            Debug.LogError(activeChamber);
+            //Debug.LogError(activeChamber);
             switch(cylinder[activeChamber])
             {
-            case BulletTypes.NORMAL:
+                case BulletTypes.NORMAL:
                 {
                     fireCooldownRemaining = elapsedBetweenEachShot[(int)cylinder[activeChamber]];
                     Ray laserRayCast = new Ray(camera.transform.position + camera.transform.forward * 0.5f, camera.transform.forward);
@@ -201,9 +262,12 @@ public class DeRolo : WeaponBase
                     }
                 }
                 break;
+                case BulletTypes.NONE:
+                {
+                     CycleCylinder();
+                }
+                break;
 
-                
-                    
             }
             if (cylinder[activeChamber] != BulletTypes.NONE)
             {
@@ -211,16 +275,18 @@ public class DeRolo : WeaponBase
                 fireAnimation.StopPlayback();
                 fireAnimation.Play("Fire Revolver");
                 fireAnimation.speed = 1 / (float)elapsedBetweenEachShot[(int)cylinder[activeChamber]];
-                hasUpdatedAfterFiredCoolsDown = false;
+                hasUpdatedAfterFireFinished = false;
+                numEmptyChambers++;
             }
             cylinder[activeChamber] = BulletTypes.NONE;
+            
         }
     }
 
     // Cycle the cylinder
     private void CycleCylinder()
     {
-        hasUpdatedAfterCycledCoolsDown = false;
+        hasUpdatedAfterCycledFinished = false;
 
         fireAnimation.enabled = true;
         fireAnimation.StopPlayback();
