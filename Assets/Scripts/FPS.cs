@@ -18,6 +18,8 @@ public class FPS : NetworkBehaviour
     [SerializeField] GameObject bodyPivot;
     [SerializeField] GameObject headPivot;
     [SerializeField] MeshRenderer visorMR;
+    [SerializeField] Transform rightHand;
+    [SerializeField] Transform leftHand;
     public float airMovementMultiplier = 2.5f;
     public float runSpeed = 10f;
     CapsuleCollider capsuleCollider;
@@ -103,6 +105,9 @@ public class FPS : NetworkBehaviour
     public bool canWallrun = true;
     public bool isWallrunning = false;
 
+    [SerializeField] GameObject[] weaponPrefabList;
+    [SerializeField] GameObject[] hatPrefabList;
+
     void Awake()
     {
         Init();
@@ -171,6 +176,9 @@ public class FPS : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+            AddWeaponServerRpc("Shotgun");
+
         // Reset position and velocity if player goes out of bounds for debugging
         if (transform.position.magnitude > 100 || transform.position.y <= -20)
         {
@@ -570,5 +578,86 @@ public class FPS : NetworkBehaviour
     public bool GetIsGrounded()
     {
         return isGround;
+    }
+
+    [ServerRpc]
+    public void AddWeaponServerRpc(string weaponName) //For adding general weapons (character specific weapons added separately)
+    {
+        // List of weapon names:
+        // (General)
+        // DickScat
+        // Grenade
+        // RPG
+        // Shotgun
+        // Sniper
+        // Staff
+        // Sword
+
+        GameObject weapon = null;
+
+        switch (weaponName)
+        {
+            case "DickScat":
+                weapon = Instantiate(weaponPrefabList[3]);
+                break;
+            case "Grenade":
+                weapon = Instantiate(weaponPrefabList[4]);
+                break;
+            case "RPG":
+                weapon = Instantiate(weaponPrefabList[5]);
+                break;
+            case "Shotgun":
+                weapon = Instantiate(weaponPrefabList[6]);
+                break;
+            case "Sniper":
+                weapon = Instantiate(weaponPrefabList[7]);
+                break;
+            case "Staff":
+                weapon = Instantiate(weaponPrefabList[8]);
+                break;
+            case "Sword":
+                weapon = Instantiate(weaponPrefabList[9]);
+                break;
+        }
+
+        if (weapon)
+        {
+            weapon.GetComponent<NetworkObject>().Spawn(true);
+            weapon.GetComponent<NetworkObject>().TrySetParent(rightHand);
+            //weapon.transform.SetParent(rightHand);
+        }
+    }
+
+    [ServerRpc]
+    public void SetCharacterServerRpc(string charName)
+    {
+        // List of character names:
+        // Rhino
+        // Angler
+        // Winton
+
+        GameObject weapon = null, hat = null;
+
+        switch (charName)
+        {
+            case "Rhino":
+                weapon = Instantiate(weaponPrefabList[0]);
+                hat = Instantiate(hatPrefabList[0]);
+                break;
+            case "Angler":
+                weapon = Instantiate(weaponPrefabList[1]);
+                hat = Instantiate(hatPrefabList[1]);
+                break;
+            case "Winton":
+                weapon = Instantiate(weaponPrefabList[2]);
+                hat = Instantiate(hatPrefabList[2]);
+                break;
+        }
+
+        if (weapon && hat)
+        {
+            weapon.GetComponent<NetworkObject>().Spawn(true);
+            hat.GetComponent<NetworkObject>().Spawn(true);
+        }
     }
 }

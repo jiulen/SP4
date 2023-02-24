@@ -137,6 +137,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3420278985504335983}
   - component: {fileID: 9002606614054190482}
+  - component: {fileID: -810588104068375425}
   m_Layer: 0
   m_Name: SwordWeapon
   m_TagString: Untagged
@@ -180,7 +181,24 @@ MonoBehaviour:
   projectileVel:
   - 25
   WeaponIcon: {fileID: 21300000, guid: 21501f3a091c58646a48723cb3a474ca, type: 3}
+  owner: {fileID: 0}
   KnifeProjectile: {fileID: 673387428329875730, guid: a6bb5ddbc7c87094ab321ddf47647e26, type: 3}
+--- !u!114 &-810588104068375425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4479606507692593043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &4857649692810559041
 GameObject:
   m_ObjectHideFlags: 0
