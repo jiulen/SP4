@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -82,20 +83,27 @@ public class RPG : WeaponBase
         {
             if (CheckCanFire(1))
             {
-                Transform newTransform = camera.transform;
-                Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
-                GameObject go = Instantiate(Rocket, bulletEmitter.transform);
-                go.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
-                go.GetComponent<Rocket>().damage = damage[0];
-                go.GetComponent<Rocket>().SetObjectReferences(owner, particleManager);
-                go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[0] * PowerCurrentScale;
-                go.transform.SetParent(projectileManager.transform);
+                ShootRocket();
                 PowerCurrentScale = 1;
                 fireAudio.Play();
                 RocketMuzzle.SetActive(false);
                 animator.SetBool("isActive", true);
             }
         }
+    }
+
+    private void ShootRocket()
+    {
+        Transform newTransform = camera.transform;
+        Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
+        GameObject go = Instantiate(Rocket, bulletEmitter.transform);
+        go.GetComponent<NetworkObject>().Spawn();
+        go.GetComponent<NetworkObject>().TrySetParent(projectileManager);
+        go.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
+        go.GetComponent<Rocket>().damage = damage[0];
+        go.GetComponent<Rocket>().SetObjectReferences(owner, particleManager);
+        go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[0] * PowerCurrentScale;
+        //go.transform.SetParent(projectileManager.transform);
     }
 
     private void UpdateSlider()

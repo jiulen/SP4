@@ -23,20 +23,33 @@ public class DamageIndicator : CameraEffects
     // Update is called once per frame
     void Update()
     {
-        Quaternion sourceRot = Quaternion.LookRotation(sourceDir);
-        sourceRot.z = -sourceRot.y;
-        sourceRot.x = sourceRot.y = 0;
-        Vector3 north = new Vector3(0, 0, cam.transform.eulerAngles.y);
-        transform.localRotation = sourceRot * Quaternion.Euler(north);
-
-        if (StartDuration <= 0)
+        if (GetComponent<Image>().enabled)
         {
-            base.Update();
+            Quaternion sourceRot = Quaternion.LookRotation(sourceDir);
+            sourceRot.z = -sourceRot.y;
+            sourceRot.x = sourceRot.y = 0;
+            Vector3 north = new Vector3(0, 0, cam.transform.eulerAngles.y);
+            transform.localRotation = sourceRot * Quaternion.Euler(north);
 
-            Color currAlpha = GetComponent<Image>().color;
-            currAlpha.a = Mathf.Lerp(currAlpha.a, 0.0f, duration * Time.deltaTime);
-            GetComponent<Image>().color = currAlpha;
+            if (StartDuration <= 0)
+            {
+                if (elaspe >= duration)
+                {
+                    GetComponent<Image>().enabled = false;
+                    StartDuration = 1.5f;
+                    elaspe = 0;
+                    Color currAlpha1 = GetComponent<Image>().color;
+                    currAlpha1.a = 1;
+                    GetComponent<Image>().color = currAlpha1;
+                }
+
+                Color currAlpha = GetComponent<Image>().color;
+                currAlpha.a = Mathf.Lerp(currAlpha.a, 0.0f, duration * Time.deltaTime);
+                GetComponent<Image>().color = currAlpha;
+                elaspe += Time.deltaTime;
+            }
+            else
+                StartDuration -= Time.deltaTime;
         }
-        StartDuration -= Time.deltaTime;
     }
 }
