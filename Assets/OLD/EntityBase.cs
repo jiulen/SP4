@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class EntityBase : MonoBehaviour
+public class EntityBase : NetworkBehaviour
 {
     protected float Health;
     public float MaxHealth;
@@ -37,12 +38,24 @@ public class EntityBase : MonoBehaviour
 
     public void SetMaxHealth(float hp)
     {
-        Health = MaxHealth = hp;
+        SetMaxHealthClientRpc(hp);
     }
 
     public void SetHealth(float hp)
     {
+        SetHealthClientRpc(hp);
+    }
+
+    [ClientRpc]
+    private void SetHealthClientRpc(float hp)
+    {
         Health = hp;
+    }
+
+    [ClientRpc]
+    private void SetMaxHealthClientRpc(float hp)
+    {
+        Health = MaxHealth = hp;
     }
 
     public float GetHealth()

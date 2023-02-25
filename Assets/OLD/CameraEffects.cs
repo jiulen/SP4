@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraEffects : MonoBehaviour
 {
     public float duration;
-    private float elaspe;
+    protected float elaspe;
     // Start is called before the first frame update
     protected void Start()
     {

@@ -132,12 +132,12 @@ public class Sniper : WeaponBase
                                     if (hit2.collider.name == "Head")
                                     {
                                         particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit2.point, hit2.normal, 15);
-                                        player2.TakeDamage(damage[0] * 2, -front, owner, gameObject);
+                                        player2.TakeDamage(damage[0] * 2, front, owner, gameObject);
                                     }
                                     else
                                     {
                                         particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit2.point, hit2.normal);
-                                        player2.TakeDamage(damage[0] * 2, -front, owner, gameObject);
+                                        player2.TakeDamage(damage[0] * 2, front, owner, gameObject);
                                     }
                                 }
                                 else
@@ -152,7 +152,7 @@ public class Sniper : WeaponBase
                                     EntityBase entity2 = hit2.transform.gameObject.GetComponent<EntityBase>();
                                     if (entity2 != null)
                                     {
-                                        entity2.TakeDamage(damage[0], -front, owner, gameObject);
+                                        entity2.TakeDamage(damage[0], front, owner, gameObject);
                                     }
                                 }
                             }
@@ -175,12 +175,12 @@ public class Sniper : WeaponBase
                             if (hit.collider.name == "Head")
                             {
                                 particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
-                                player.TakeDamage(damage[0] * 2, -front, owner, gameObject);
+                                player.TakeDamage(damage[0] * 2, front, owner, gameObject);
                             }
                             else
                             {
                                 particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
-                                player.TakeDamage(damage[0] * 2, -front, owner, gameObject);
+                                player.TakeDamage(damage[0] * 2, front, owner, gameObject);
                             }
                         }
 
@@ -192,12 +192,12 @@ public class Sniper : WeaponBase
                         if (hit.collider.name == "Head")
                         {
                             particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
-                            player.TakeDamage(damage[0] * 2, -front, owner, this.gameObject);
+                            player.TakeDamage(damage[0] * 2, front, owner, this.gameObject);
                         }
                         else
                         {
                             particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
-                            player.TakeDamage(damage[0], -front, owner, this.gameObject);
+                            player.TakeDamage(damage[0], front, owner, this.gameObject);
 
                         }
                     }
@@ -213,7 +213,7 @@ public class Sniper : WeaponBase
                         EntityBase entity = hit.transform.gameObject.GetComponent<EntityBase>();
                         if (entity != null)
                         {
-                            entity.TakeDamage(damage[0], -front, owner, this.gameObject);
+                            entity.TakeDamage(damage[0], front, owner, this.gameObject);
                         }
                     }
                 }
