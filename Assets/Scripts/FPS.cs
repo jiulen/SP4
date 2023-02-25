@@ -106,7 +106,8 @@ public class FPS : NetworkBehaviour
     public bool isWallrunning = false;
 
     [SerializeField] GameObject[] weaponPrefabList;
-    [SerializeField] GameObject[] hatPrefabList;
+
+    [SerializeField] GameObject[] hatsList; //Stores all possible hats but only 1 will be active
 
     void Awake()
     {
@@ -192,6 +193,15 @@ public class FPS : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.P) && IsOwner)
             AddWeaponServerRpc("Shotgun");
+
+        if (Input.GetKeyDown(KeyCode.Alpha7) && IsOwner)
+            SetCharacterServerRpc("Rhino");
+
+        if (Input.GetKeyDown(KeyCode.Alpha8) && IsOwner)
+            SetCharacterServerRpc("Angler");
+
+        if (Input.GetKeyDown(KeyCode.Alpha9) && IsOwner)
+            SetCharacterServerRpc("Winton");
         //
 
         // Reset position and velocity if player goes out of bounds for debugging
@@ -568,22 +578,22 @@ public class FPS : NetworkBehaviour
         switch (weaponName)
         {
             case "DickScat":
-                weapon = Instantiate(weaponPrefabList[3]);
+                weapon = Instantiate(weaponPrefabList[3], rightHand.transform.position, rightHand.transform.rotation);
                 break;
             case "Grenade":
-                weapon = Instantiate(weaponPrefabList[4]);
+                weapon = Instantiate(weaponPrefabList[4], rightHand.transform.position, rightHand.transform.rotation);
                 break;
             case "RPG":
-                weapon = Instantiate(weaponPrefabList[5]);
+                weapon = Instantiate(weaponPrefabList[5], rightHand.transform.position, rightHand.transform.rotation);
                 break;
             case "Shotgun":
-                weapon = Instantiate(weaponPrefabList[6]);
+                weapon = Instantiate(weaponPrefabList[6], rightHand.transform.position, rightHand.transform.rotation);
                 break;
             case "Sniper":
-                weapon = Instantiate(weaponPrefabList[7]);
+                weapon = Instantiate(weaponPrefabList[7], rightHand.transform.position, rightHand.transform.rotation);
                 break;
             case "Staff":
-                weapon = Instantiate(weaponPrefabList[8]);
+                weapon = Instantiate(weaponPrefabList[8], rightHand.transform.position, rightHand.transform.rotation);
                 break;
             case "Sword":
                 weapon = Instantiate(weaponPrefabList[9]);
@@ -594,8 +604,6 @@ public class FPS : NetworkBehaviour
         {
             weapon.GetComponent<NetworkObject>().Spawn(true);
             weapon.GetComponent<NetworkObject>().TrySetParent(rightHand);
-            weapon.transform.localPosition = Vector3.zero;
-            weapon.transform.localRotation = Quaternion.identity;
         }
     }
 
@@ -607,32 +615,28 @@ public class FPS : NetworkBehaviour
         // Angler
         // Winton
 
-        GameObject weapon = null, hat = null;
+        GameObject weapon = null;
 
         switch (charName)
         {
             case "Rhino":
-                weapon = Instantiate(weaponPrefabList[0]);
-                hat = Instantiate(hatPrefabList[0]);
+                weapon = Instantiate(weaponPrefabList[0], rightHand.transform.position, rightHand.transform.rotation);
+                SetHatClientRpc(0);
                 break;
             case "Angler":
-                weapon = Instantiate(weaponPrefabList[1]);
-                hat = Instantiate(hatPrefabList[1]);
+                weapon = Instantiate(weaponPrefabList[1], rightHand.transform.position, rightHand.transform.rotation);
+                SetHatClientRpc(1);
                 break;
             case "Winton":
-                weapon = Instantiate(weaponPrefabList[2]);
-                hat = Instantiate(hatPrefabList[2]);
+                weapon = Instantiate(weaponPrefabList[2], rightHand.transform.position, rightHand.transform.rotation);
+                SetHatClientRpc(2);
                 break;
         }
 
-        if (weapon && hat)
+        if (weapon)
         {
             weapon.GetComponent<NetworkObject>().Spawn(true);
             weapon.GetComponent<NetworkObject>().TrySetParent(rightHand);
-            weapon.transform.localPosition = Vector3.zero;
-            weapon.transform.localRotation = Quaternion.identity;
-
-
         }
     }
 
@@ -647,5 +651,11 @@ public class FPS : NetworkBehaviour
 
         if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(objectId3, out NetworkObject networkObject3))
             rightHand = networkObject3.gameObject;
+    }
+
+    [ClientRpc]
+    private void SetHatClientRpc(int hatNum)
+    {
+        hatsList[hatNum].SetActive(true);
     }
 }
