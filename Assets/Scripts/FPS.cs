@@ -15,11 +15,10 @@ public class FPS : NetworkBehaviour
     // General
     public GameObject body;
     public GameObject head;
+    [SerializeField] GameObject playerPivot;
     [SerializeField] GameObject bodyPivot;
     [SerializeField] GameObject headPivot;
     [SerializeField] MeshRenderer visorMR;
-    [SerializeField] Transform rightHand;
-    [SerializeField] Transform leftHand;
     public float airMovementMultiplier = 2.5f;
     public float runSpeed = 10f;
     CapsuleCollider capsuleCollider;
@@ -71,17 +70,18 @@ public class FPS : NetworkBehaviour
     // Grapple
     public bool isGrapple = false;
 
-    //// Gravity
-    //float gravity = -9.81f;
-    //Vector3 velocity;
-
     // Drop kick
     bool dropKickActive = false;
 
     // Teleport
     public bool canTeleport = true;
 
-    private Transform currentEquipped;
+    [SerializeField] GameObject equippedPrefab;
+    [SerializeField] GameObject leftHandPrefab;
+    [SerializeField] GameObject rightHandPrefab;
+    public GameObject currentEquipped;
+    public GameObject leftHand;
+    public GameObject rightHand;
 
     //Dash
     private bool forcedash = false;
@@ -130,7 +130,6 @@ public class FPS : NetworkBehaviour
         pitch = yaw = roll = 0f;
         CamSen = 220f;
 
-        currentEquipped = transform.Find("Equipped");
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
         rigidbody = this.GetComponent<Rigidbody>();
         rigidbody.velocity.Set(0, 0, 0);
@@ -151,6 +150,11 @@ public class FPS : NetworkBehaviour
 
     private void IsOwnerStartCheck()
     {
+        if (IsServer)
+        {
+            
+        }
+
         if (!IsOwner && !debugBelongsToPlayer) return;
 
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
@@ -182,8 +186,13 @@ public class FPS : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //    AddWeaponServerRpc("Shotgun");
+        //Debug multiplayer
+        if (Input.GetKeyDown(KeyCode.O) && IsOwner)
+            AddEquippedServerRpc();
+
+        if (Input.GetKeyDown(KeyCode.P) && IsOwner)
+            AddWeaponServerRpc("Shotgun");
+        //
 
         // Reset position and velocity if player goes out of bounds for debugging
         if (transform.position.magnitude > 100 || transform.position.y <= -20)
@@ -240,23 +249,15 @@ public class FPS : NetworkBehaviour
             {
                 rigidbody.useGravity = true;
 
-                //moveVector = (playerVerticalInput * forward) + (playerHorizontalInput * right);
-                //moveVector.Normalize();
                 Vector3 newDirection = moveVector * runSpeed;
                 newDirection.y = rigidbody.velocity.y;
                 rigidbody.velocity = newDirection;
-                //if (rigidbody.velocity.magnitude >= runSpeed)
-                //{
-                //    rigidbody.velocity = rigidbody.velocity.normalized * runSpeed;
-                //}
             }
             else
             {
                 rigidbody.useGravity = true;
 
                 rigidbody.AddForce(moveVector * airMovementMultiplier);
-                //isSlide = false;
-                //this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
 
             }
 
@@ -300,20 +301,6 @@ public class FPS : NetworkBehaviour
                     rigidbody.velocity = new Vector3(0, -50, 0);
             }
 
-            //if (isGround && moveVector.magnitude == 0)
-            //{
-            //    //rigidbody.velocity = new Vector3(0, 0, 0);
-            //    rigidbody.AddForce(-rigidbody.velocity.normalized * runSpeed);
-
-            //}
-            //else
-            //{
-            //    Debug.Log("ruh roh");
-            //    rigidbody.velocity = new Vector3(0, rigidbody.velocity.y, 0);
-            //    rigidbody.AddForce(moveVector * 100);
-            //}
-            //this.GetComponent<Rigidbody>().velocity = moveVector;
-
             Jump();
             UpdateDash();
             UpdateSlide();
@@ -323,20 +310,14 @@ public class FPS : NetworkBehaviour
         //Rotation
         pitch = Mathf.Clamp(pitch, -89f, 89f);
         float targetAngle = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0f, targetAngle, roll);
-        head.transform.localRotation = Quaternion.Euler(pitch, 0, 0); //rotate head to face same dir as camera
+        transform.rotation = Quaternion.Euler(pitch, yaw, 0);
+        head.transform.localRotation = Quaternion.Euler(0, 0, 0); //rotate head to face same dir as camera
         headPivot.transform.localRotation = Quaternion.Euler(-pitch, 0, 0); //rotate body to reverse head rotation
 
         camera.transform.position = head.transform.position;
-        //Sniper sniper = transform.GetComponent<Sniper>();
-        //if (sniper != null && sniper.Scoped.enabled)
-        //{
-        //    camera.transform.position += camera.transform.up * (Mathf.Sin(sniper.stablizeElasped * 2) / 2) * 0.4f + camera.transform.right * Mathf.Cos(sniper.stablizeElasped) * 0.4f;
-        //}
 
-        currentEquipped.transform.rotation = Quaternion.Euler(pitch, yaw, 0);
         currentEquipped.transform.position = head.transform.position;
-        //Debug.Log(targetAngle);
+
         if (isSlide || isWallrunning)
         {
 
@@ -367,17 +348,6 @@ public class FPS : NetworkBehaviour
         {
             rigidbody.AddForce(-rigidbody.velocity/1.5f);
         }
-
-        // Limit speed
-        //Vector3 velocityWithoutY = rigidbody.velocity;
-        //velocityWithoutY.y = 0;
-        //if ( rigidbody.velocity.magnitude >= runSpeed)
-        //{
-        //    velocityWithoutY = velocityWithoutY.normalized * runSpeed;
-        //    velocityWithoutY.y = rigidbody.velocity.y;
-        //    //rigidbody.velocity = velocityWithoutY.normalized * 5;
-        //    rigidbody.velocity = velocityWithoutY;
-        //}
     }
 
     private void Jump()
@@ -391,14 +361,10 @@ public class FPS : NetworkBehaviour
                     rigidbody.AddForce(0, jumpForce * 2.5f, 0);
                 else
                     rigidbody.AddForce(0, jumpForce, 0);
-                //velocity.y = Mathf.Sqrt(300 * Time.deltaTime * -2f * gravity);
                 
                 if (isSlide)
                 {
-                    //this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
                     rigidbody.AddForce(0, jumpForce, 0);
-
-                    //rigidbody.AddForce(rigidbody.velocity);
 
                 }
             }
@@ -414,12 +380,7 @@ public class FPS : NetworkBehaviour
 
     private void UpdateDash()
     {
-        //Debug.Log(dashMetre);
-        //Debug.Log(dashMetreMax);
-        //Debug.Log(dashNum);
-        dashProgress += Time.deltaTime;
-
-       
+        dashProgress += Time.deltaTime;       
 
         if ((Input.GetKeyDown(KeyCode.LeftShift) || forcedash) && staminaAmount >= staminaDashCost && candash)
         {
@@ -501,7 +462,6 @@ public class FPS : NetworkBehaviour
             Vector3 newVel = storeSlideVelocity;
             newVel.y = rigidbody.velocity.y;
             rigidbody.velocity = newVel;
-            //rigidbody.AddForce(-storeVelocityForSlide.normalized );
             float yAngle = Mathf.Atan2(storeSlideVelocity.x,storeSlideVelocity.z) * Mathf.Rad2Deg; // Convert the vector to an angle in degrees
             if (yAngle < 0)
             {
@@ -519,26 +479,8 @@ public class FPS : NetworkBehaviour
         }
     }
 
-    //IEnumerator StartDash()
-    //{
-    //    Vector3 forward = camera.transform.forward;
-    //    forward.y = 0;
-    //    forward.Normalize();
-
-    //    float starttime = Time.time;
-    //    while (Time.time < starttime + DashTime)
-    //    {
-    //        DashForwardVelocity += decel * Time.deltaTime;
-    //        DashForwardVelocity = Mathf.Clamp(DashForwardVelocity, 0, DashSpeed);
-    //        con.Move(forward * DashForwardVelocity * Time.deltaTime);
-    //        yield return null;
-    //    }
-    //}
-
     private void UpdateGrounded()
     {
-        //Debug.Log("GROUNDED: " + isGround);
-        //Debug.Log("SLIDE: " + isSlide);
         float valueToUse = 0;
         if (isSlide)
             valueToUse = bodyRadius;
@@ -586,7 +528,33 @@ public class FPS : NetworkBehaviour
         return isGround;
     }
 
-    [ServerRpc]
+    [ServerRpc] //do this first - only run when both clients connected
+    public void AddEquippedServerRpc()
+    {
+        GameObject spawnedEquipped;
+        spawnedEquipped = Instantiate(equippedPrefab);
+        spawnedEquipped.GetComponent<NetworkObject>().Spawn(true);
+        spawnedEquipped.GetComponent<NetworkObject>().TrySetParent(gameObject);
+
+        GameObject spawnedLeftHand;
+        spawnedLeftHand = Instantiate(leftHandPrefab);
+        spawnedLeftHand.GetComponent<NetworkObject>().Spawn(true);
+        spawnedLeftHand.GetComponent<NetworkObject>().TrySetParent(spawnedEquipped);
+        spawnedLeftHand.transform.localPosition = Vector3.zero;
+        spawnedLeftHand.transform.localRotation = Quaternion.identity;
+
+        GameObject spawnedRightHand;
+        spawnedRightHand = Instantiate(rightHandPrefab);
+        spawnedRightHand.GetComponent<NetworkObject>().Spawn(true);
+        spawnedRightHand.GetComponent<NetworkObject>().TrySetParent(spawnedEquipped);
+        spawnedRightHand.transform.localPosition = Vector3.zero;
+        spawnedRightHand.transform.localRotation = Quaternion.identity;
+
+        OnEquippedChangedClientRpc(spawnedEquipped.GetComponent<NetworkObject>().NetworkObjectId,
+            spawnedLeftHand.GetComponent<NetworkObject>().NetworkObjectId, spawnedRightHand.GetComponent<NetworkObject>().NetworkObjectId);
+    }
+
+    [ServerRpc] //do this after equipped added - only run when both clients connected
     public void AddWeaponServerRpc(string weaponName) //For adding general weapons (character specific weapons added separately)
     {
         // List of weapon names:
@@ -630,11 +598,12 @@ public class FPS : NetworkBehaviour
         {
             weapon.GetComponent<NetworkObject>().Spawn(true);
             weapon.GetComponent<NetworkObject>().TrySetParent(rightHand);
-            //weapon.transform.SetParent(rightHand);
+            weapon.transform.localPosition = Vector3.zero;
+            weapon.transform.localRotation = Quaternion.identity;
         }
     }
 
-    [ServerRpc]
+    [ServerRpc] //do this after equipped added - only run when both clients connected
     public void SetCharacterServerRpc(string charName)
     {
         // List of character names:
@@ -663,7 +632,24 @@ public class FPS : NetworkBehaviour
         if (weapon && hat)
         {
             weapon.GetComponent<NetworkObject>().Spawn(true);
-            hat.GetComponent<NetworkObject>().Spawn(true);
+            weapon.GetComponent<NetworkObject>().TrySetParent(rightHand);
+            weapon.transform.localPosition = Vector3.zero;
+            weapon.transform.localRotation = Quaternion.identity;
+
+
         }
+    }
+
+    [ClientRpc]
+    private void OnEquippedChangedClientRpc(ulong objectId1, ulong objectId2, ulong objectId3)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(objectId1, out NetworkObject networkObject1))
+            currentEquipped = networkObject1.gameObject;
+
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(objectId2, out NetworkObject networkObject2))
+            leftHand = networkObject2.gameObject;
+
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(objectId3, out NetworkObject networkObject3))
+            rightHand = networkObject3.gameObject;
     }
 }

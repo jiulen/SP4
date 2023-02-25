@@ -268,7 +268,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7367282867512015018}
   - component: {fileID: 3105152821810700574}
-  - component: {fileID: 4101764385424321917}
+  - component: {fileID: -966970063377190689}
+  - component: {fileID: 5046222589180466498}
   m_Layer: 0
   m_Name: Shotgun
   m_TagString: Untagged
@@ -315,7 +316,7 @@ MonoBehaviour:
   WeaponIcon: {fileID: 21300000, guid: 7a4dd39ade8971041b32258521c66f43, type: 3}
   owner: {fileID: 0}
   bulletTrail: {fileID: 7338455853520770129, guid: c8a74160b55dc8a429d2a617fc546e54, type: 3}
---- !u!114 &4101764385424321917
+--- !u!114 &-966970063377190689
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -331,6 +332,32 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &5046222589180466498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5557506430343370324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a688d916da9df543bb947bb12488bef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  InLocalSpace: 1
+  Interpolate: 1
 --- !u!1 &8315617614453261876
 GameObject:
   m_ObjectHideFlags: 0

@@ -41,7 +41,12 @@ public class PlayerEntity : EntityBase
     {
         FPSScript = this.GetComponent<FPS>();
         base.Start();
-        equipped = transform.Find("Equipped").gameObject;
+        uiKillFeedCanvas = GameObject.Find("Canvas/KillerFeedUI");
+    }
+
+    void Start()
+    {
+        equipped = FPSScript.currentEquipped;
         GameObject rightHand = equipped.transform.Find("Right Hand").gameObject;
         for (int i = 0; i != rightHand.transform.childCount; i++)
         {
@@ -51,11 +56,7 @@ public class PlayerEntity : EntityBase
         }
         activeWeapon = equippedWeaponList[0];
         previousWeapon = activeWeapon;
-        uiKillFeedCanvas = GameObject.Find("Canvas/KillerFeedUI");
-    }
 
-    void Start()
-    {
         if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
 
         playerCanvasParent = Instantiate(PlayerCanvasParentPF, this.transform);
@@ -213,7 +214,6 @@ public class PlayerEntity : EntityBase
 
     public GameObject GetCrosshairCanvas()
     {
-        Debug.LogWarning(crosshairCanvas);
         return crosshairCanvas;
     }
 
