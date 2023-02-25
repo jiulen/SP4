@@ -535,6 +535,8 @@ public class FPS : NetworkBehaviour
         spawnedEquipped = Instantiate(equippedPrefab);
         spawnedEquipped.GetComponent<NetworkObject>().Spawn(true);
         spawnedEquipped.GetComponent<NetworkObject>().TrySetParent(gameObject);
+        spawnedEquipped.transform.localPosition = Vector3.zero;
+        spawnedEquipped.transform.localRotation = Quaternion.identity;
 
         GameObject spawnedLeftHand;
         spawnedLeftHand = Instantiate(leftHandPrefab);
