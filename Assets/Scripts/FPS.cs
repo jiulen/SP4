@@ -532,25 +532,19 @@ public class FPS : NetworkBehaviour
     public void AddEquippedServerRpc()
     {
         GameObject spawnedEquipped;
-        spawnedEquipped = Instantiate(equippedPrefab);
+        spawnedEquipped = Instantiate(equippedPrefab, head.transform.position, head.transform.rotation);
         spawnedEquipped.GetComponent<NetworkObject>().Spawn(true);
         spawnedEquipped.GetComponent<NetworkObject>().TrySetParent(gameObject);
-        spawnedEquipped.transform.localPosition = Vector3.zero;
-        spawnedEquipped.transform.localRotation = Quaternion.identity;
 
         GameObject spawnedLeftHand;
-        spawnedLeftHand = Instantiate(leftHandPrefab);
+        spawnedLeftHand = Instantiate(leftHandPrefab, head.transform.position, head.transform.rotation);
         spawnedLeftHand.GetComponent<NetworkObject>().Spawn(true);
         spawnedLeftHand.GetComponent<NetworkObject>().TrySetParent(spawnedEquipped);
-        spawnedLeftHand.transform.localPosition = Vector3.zero;
-        spawnedLeftHand.transform.localRotation = Quaternion.identity;
 
         GameObject spawnedRightHand;
-        spawnedRightHand = Instantiate(rightHandPrefab);
+        spawnedRightHand = Instantiate(rightHandPrefab, head.transform.position, head.transform.rotation);
         spawnedRightHand.GetComponent<NetworkObject>().Spawn(true);
         spawnedRightHand.GetComponent<NetworkObject>().TrySetParent(spawnedEquipped);
-        spawnedRightHand.transform.localPosition = Vector3.zero;
-        spawnedRightHand.transform.localRotation = Quaternion.identity;
 
         OnEquippedChangedClientRpc(spawnedEquipped.GetComponent<NetworkObject>().NetworkObjectId,
             spawnedLeftHand.GetComponent<NetworkObject>().NetworkObjectId, spawnedRightHand.GetComponent<NetworkObject>().NetworkObjectId);
