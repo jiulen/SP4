@@ -134,15 +134,6 @@ public class PlayerEntity : EntityBase
         //Debug.Log(Health);
         if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
 
-        // For debugging
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            Debug.LogError("RESETTING UI");
-            Destroy(uiStaminaCanvas);
-            uiStaminaCanvas = Instantiate(StaminaCanvasPF, this.transform);
-            uiStaminaCanvas.GetComponent<StaminaUI>().InitBars();
-        }
-
         if (Health <= 0)
         {
             uiDeathCanvas.SetActive(true);
