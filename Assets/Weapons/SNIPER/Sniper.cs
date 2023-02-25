@@ -14,7 +14,6 @@ public class Sniper : WeaponBase
     private Vector3 velocity = Vector3.zero;
     private Vector3 desiredPositionAnimation;
     private bool animationdone = true;
-    private AudioSource ScopeSound;
     private float DmgReduction;
     public float stablizeElasped = 0;
     float StablizeDuration = 10f, StablizeProgress, AnimationRate = 0.1f;
@@ -29,7 +28,7 @@ public class Sniper : WeaponBase
 
     [Header("Audio References")]
     public AudioSource AudioFire1;
-    public AudioSource AudioFire2;
+    public AudioSource AudioScopeSound;
 
     //private void Awake()
     //{
@@ -48,7 +47,6 @@ public class Sniper : WeaponBase
         Scoped = transform.Find("SniperUICanvas").GetComponent<Canvas>();
         camaim = GetComponent<AimZoom>();
         slider = GetComponentInChildren<Slider>();
-        ScopeSound = GameObject.Find("ScopeSound").GetComponent<AudioSource>();
         StablizeProgress = StablizeDuration;
         slider.maxValue = slider.value = StablizeProgress;
         DmgReductionTxt = transform.Find("SniperUICanvas").GetComponentInChildren<Text>();
@@ -104,6 +102,8 @@ public class Sniper : WeaponBase
         {
             if (CheckCanFire(1))
             {
+                AudioFire1.Play();
+
                 Transform newTransform = camera.transform;
                 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
 
@@ -243,7 +243,7 @@ public class Sniper : WeaponBase
             Scoped.enabled = true;
             if (!PlayOnce)
             {
-                ScopeSound.Play();
+                AudioScopeSound.Play();
                 PlayOnce = true;
             }
             if (!player.candash)

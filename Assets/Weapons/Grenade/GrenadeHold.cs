@@ -8,6 +8,9 @@ public class GrenadeHold : WeaponBase
     public float ThrowForce;
     [SerializeField] Transform grenade;
     [SerializeField] GameObject grenadePrefab;
+
+    public AudioSource AudioThrow;
+
     enum GrenadeWeaponState
     {
         NONE,
@@ -49,6 +52,7 @@ public class GrenadeHold : WeaponBase
     {
         if (grenadestate == GrenadeWeaponState.NONE)
         {
+            AudioThrow.Play();
             Rigidbody rb = grenade.GetComponent<Rigidbody>();
             grenade.GetComponent<MeshCollider>().enabled = true;
             rb.isKinematic = false;
