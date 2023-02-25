@@ -38,8 +38,9 @@ public class PlayerCard : MonoBehaviour
         this.player = player;
         playerNameText.text = player.Data[LobbyManager.KEY_PLAYER_NAME].Value;
         LobbyManager.PlayerCharacter playerCharacter =
-            EnumUtils.Parse<LobbyManager.PlayerCharacter>(player.Data[CharSelectManager.KEY_PLAYER_CHARACTER].Value);
+            EnumUtils.Parse<LobbyManager.PlayerCharacter>(player.Data[LobbyManager.KEY_PLAYER_CHARACTER].Value);
         characterIconImage.sprite = LobbyAssets.Instance.GetSprite(playerCharacter);
+        Locked.SetActive(bool.Parse(player.Data[LobbyManager.KEY_IS_LOCKED].Value));
         Debug.Log("debug");
     }
     //public void UpdateDisplay(CharacterSelectState state)

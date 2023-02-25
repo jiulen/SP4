@@ -36,24 +36,27 @@ public class CharSelectUI : MonoBehaviour
 
 
 
-    private void Awake()
+    void Awake()
     {
         Instance = this;
 
         playerCard.gameObject.SetActive(false);
 
+        //UpdateLobby(LobbyManager.Instance.GetJoinedLobby());
+
         //RhinoBtn.onClick.AddListener(() => {
-        //    //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Marine);
+        //    //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Rhino);
         //});
         //AnglerBtn.onClick.AddListener(() => {
-        //    //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Ninja);
+        //    //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Angler);
         //});
         //WintonBtn.onClick.AddListener(() => {
-        //    //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Zombie);
+        //    //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Winton);
         //});
 
         LockBtn.onClick.AddListener(() => {
-            CharSelectManager.Instance.UpdatePlayerLock();
+            LobbyManager.Instance.UpdatePlayerLock();
+            
         });
 
         //changeGameModeButton.onClick.AddListener(() => {
@@ -65,13 +68,17 @@ public class CharSelectUI : MonoBehaviour
         //});
     }
 
-    private void Start()
+    void Start()
     {
-        CharSelectManager.Instance.OnSelect += UpdateLobby_Event;
-        //Hide();
+        LobbyManager.Instance.OnSelect += UpdateLobby_Event;
+        LobbyManager.Instance.OnCharSelect += LobbyManager_OnCharSelect;
+        Hide();
     }
-
-    private void UpdateLobby_Event(object sender, CharSelectManager.CharLobbyEventArgs e)
+    private void LobbyManager_OnCharSelect(object sender, LobbyManager.LobbyEventArgs e)
+    {
+        Show();
+    }
+    private void UpdateLobby_Event(object sender, LobbyManager.LobbyEventArgs e)
     {
         UpdateLobby();
     }
@@ -89,16 +96,10 @@ public class CharSelectUI : MonoBehaviour
             Transform playerSingleTransform = Instantiate(playerCard, container);
             playerSingleTransform.gameObject.SetActive(true);
             PlayerCard lobbyPlayerSingleUI = playerSingleTransform.GetComponent<PlayerCard>();
-
+            //playerSingleTransform.Find("Locked").gameObject.SetActive(bool.Parse(lobby.Data[LobbyManager.KEY_LOBBY_SELECT].Value));
             lobbyPlayerSingleUI.UpdatePlayer(player);
         }
-
-        //changeGameModeButton.gameObject.SetActive(LobbyManager.Instance.IsLobbyHost());
-
-        //lobbyNameText.text = lobby.Name;
-        //playerCountText.text = lobby.Players.Count + "/" + lobby.MaxPlayers;
-        //gameModeText.text = lobby.Data[LobbyManager.KEY_GAME_MODE].Value;
-
+        
         Show();
     }
 

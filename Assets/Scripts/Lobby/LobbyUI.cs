@@ -26,6 +26,7 @@ public class LobbyUI : MonoBehaviour {
     [SerializeField] private Button startGameButton;
 
 
+
     private void Awake() {
         Instance = this;
 
@@ -50,7 +51,7 @@ public class LobbyUI : MonoBehaviour {
         });
 
         startGameButton.onClick.AddListener(() => {
-            LobbyManager.Instance.CharSelect();
+            LobbyManager.Instance.CharSelect(LobbyManager.LobbyState.CharSelection);
         });
     }
 
@@ -61,7 +62,7 @@ public class LobbyUI : MonoBehaviour {
         LobbyManager.Instance.OnLeftLobby += LobbyManager_OnLeftLobby;
         LobbyManager.Instance.OnKickedFromLobby += LobbyManager_OnLeftLobby;
         LobbyManager.Instance.OnGameStarted += LobbyManager_GameStarted;
-
+        LobbyManager.Instance.OnCharSelect += LobbyManager_CharSelect;
         Hide();
     }
 
@@ -69,6 +70,16 @@ public class LobbyUI : MonoBehaviour {
         ClearLobby();
         Hide();
     }
+
+    private void LobbyManager_CharSelect(object sender, LobbyManager.LobbyEventArgs e)
+    {
+        Hide();
+    }
+
+    //private void switchChar()
+    //{
+    //    UpdateChar(LobbyManager.Instance.GetJoinedLobby());
+    //}
 
     private void UpdateLobby_Event(object sender, LobbyManager.LobbyEventArgs e) {
         UpdateLobby();
@@ -82,9 +93,12 @@ public class LobbyUI : MonoBehaviour {
     }
 
     private void UpdateLobby(Lobby lobby) {
+        
+
         ClearLobby();
 
-        foreach (Player player in lobby.Players) {
+        foreach (Player player in lobby.Players)
+        {
             Transform playerSingleTransform = Instantiate(playerSingleTemplate, container);
             playerSingleTransform.gameObject.SetActive(true);
             LobbyPlayerSingleUI lobbyPlayerSingleUI = playerSingleTransform.GetComponent<LobbyPlayerSingleUI>();
@@ -98,13 +112,23 @@ public class LobbyUI : MonoBehaviour {
         }
 
         changeGameModeButton.gameObject.SetActive(LobbyManager.Instance.IsLobbyHost());
+        startGameButton.gameObject.SetActive(LobbyManager.Instance.IsLobbyHost());
 
         lobbyNameText.text = lobby.Name;
         playerCountText.text = lobby.Players.Count + "/" + lobby.MaxPlayers;
         gameModeText.text = lobby.Data[LobbyManager.KEY_GAME_MODE].Value;
 
+
         Show();
+
     }
+
+    //private void UpdateChar(Lobby lobby)
+    //{
+    //    ClearLobby();
+
+    //    LobbyManager.Instance.CharSelect();
+    //}
 
     private void ClearLobby() {
         foreach (Transform child in container) {
