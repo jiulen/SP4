@@ -51,7 +51,7 @@ public class AmmoWheel : MonoBehaviour
         this.GetComponent<Canvas>().planeDistance = 0.2f;
 
         segmentNum = Enum.GetNames(typeof(DeRolo.BulletTypes)).Length - 1;
-        InitMeshes();
+        InitMeshes();   
     }
 
     public void InitMeshes()

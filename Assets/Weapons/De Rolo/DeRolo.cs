@@ -7,7 +7,7 @@ public class DeRolo : WeaponBase
 {
     GameObject ui;
     Canvas uiCanvas;
-
+    
     GameObject uiChamberParent;
     GameObject uiChamberReloadParent;
     GameObject uiCylinder;
@@ -27,6 +27,14 @@ public class DeRolo : WeaponBase
     public GameObject ExplosiveBulletPF;
 
     private AmmoWheel ammoWheel;
+
+    [Header("Audio References")]
+    public AudioSource AudioNormalFire;
+    public AudioSource AudioExplosiveFire;
+    public AudioSource AudioGrappleFire;
+    public AudioSource AudioReload;
+    public AudioSource AudioCycle;
+
 
     public enum BulletTypes
     {
@@ -64,6 +72,10 @@ public class DeRolo : WeaponBase
 
     public List<BulletTypes> reloadQueue = new List<BulletTypes>();
 
+    private void Awake()
+    {
+        owner = transform.parent.parent./*parent.*/gameObject;   // this > right hand > equipped > player
+    }
 
     void Start()
     {
@@ -95,6 +107,7 @@ public class DeRolo : WeaponBase
         ammoWheel = transform.Find("Ammo Wheel").GetComponent<AmmoWheel>();
 
         GrappleHookScript = this.GetComponent<DeRoloGrappleHook>();
+        
     }
 
     void Update()
@@ -164,7 +177,9 @@ public class DeRolo : WeaponBase
     {
         if (!CheckCanFire())
             return;
-        
+
+        AudioReload.Play();
+
         hasUpdatedAfterReloadFinished = false;
         //cylinder[activeChamber] = BulletTypes.NORMAL;
         reloadElapsed = 0;
@@ -213,7 +228,7 @@ public class DeRolo : WeaponBase
             return;
 
         hasUpdatedAfterFireFinished = true;
-        fireAnimation.enabled = false;
+        //fireAnimation.enabled = false;
         CycleCylinder();
     }
 
@@ -224,7 +239,7 @@ public class DeRolo : WeaponBase
             return;
 
         hasUpdatedAfterReloadFinished = true;
-        fireAnimation.enabled = false;
+        //fireAnimation.enabled = false;
     }
 
     // Is called once after the cycling is done cycling
@@ -234,7 +249,7 @@ public class DeRolo : WeaponBase
             return;
 
         hasUpdatedAfterCycledFinished = true;
-        fireAnimation.enabled = false;
+        //fireAnimation.enabled = false;
     }
 
     // We override the base function here as the revolver has some unique properties
@@ -264,6 +279,7 @@ public class DeRolo : WeaponBase
             {
                 case BulletTypes.NORMAL:
                 {
+                    AudioNormalFire.Play();
                     Ray laserRayCast = new Ray(camera.transform.position + camera.transform.forward * 0.5f, camera.transform.forward);
                 
 
@@ -303,6 +319,7 @@ public class DeRolo : WeaponBase
                 break;
                 case BulletTypes.SHORTEXPLOSIVE:
                     {
+                        AudioExplosiveFire.Play();
                         Transform newTransform = camera.transform;
                         GameObject bullet = Instantiate(ExplosiveBulletPF, bulletEmitter.transform);
                         Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
@@ -317,6 +334,7 @@ public class DeRolo : WeaponBase
                     break;
                 case BulletTypes.MEDIUMEXPLOSIVE:
                     {
+                        AudioExplosiveFire.Play();
                         Transform newTransform = camera.transform;
                         GameObject bullet = Instantiate(ExplosiveBulletPF, bulletEmitter.transform);
                         Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
@@ -329,6 +347,7 @@ public class DeRolo : WeaponBase
                     break;
                 case BulletTypes.GRAPPLE:
                     {
+                        AudioGrappleFire.Play();
                         GrappleHookScript.FireGrapple();
                     }
                     break;
@@ -345,6 +364,7 @@ public class DeRolo : WeaponBase
             fireAnimation.enabled = true;
             fireAnimation.StopPlayback();
             fireAnimation.Play("Fire Revolver");
+         
             fireAnimation.speed = 1 / (float)elapsedBetweenEachShot[(int)cylinder[activeChamber]];
 
             muzzleFlash.GetComponent<ParticleSystem>().Stop();
@@ -361,12 +381,13 @@ public class DeRolo : WeaponBase
     // Cycle the cylinder
     private void CycleCylinder()
     {
+        AudioCycle.Play();
         hasUpdatedAfterCycledFinished = false;
 
         fireAnimation.enabled = true;
         fireAnimation.StopPlayback();
-        fireAnimation.Play("Cycle Cylinder");
-        fireAnimation.speed = 1;
+        fireAnimation.PlayInFixedTime("Cycle Cylinder",-1,0);
+        fireAnimation.speed = 1/*/ cycleDuration*/;
         
         cycleElapsed = 0;
         activeChamber++;

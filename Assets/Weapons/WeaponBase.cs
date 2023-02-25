@@ -19,7 +19,6 @@ public class WeaponBase : MonoBehaviour
     protected float bloomProgress = 0;
     protected float bloomMax = 100;
 
-    protected AudioSource fireAudio;
     protected Camera camera;
     protected GameObject projectileManager;
     protected GameObject particleManager;
@@ -51,18 +50,16 @@ public class WeaponBase : MonoBehaviour
             elapsedBetweenEachShot[i] = 1 / fireRate[i];
         }
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
-        fireAudio = GameObject.Find("SampleFire").GetComponent<AudioSource>();
         projectileManager = GameObject.Find("Projectile Manager");
         particleManager = GameObject.Find("Particle Manager");
         bulletEmitter = transform.Find("Gun/Bullet emitter").gameObject;
         //playerOwner = transform.parent.transform.parent.Find("Player Entity").gameObject;
-        owner = transform.parent.parent.parent.gameObject;   // this > right hand > equipped > player
+        owner = transform.parent.parent./*parent.*/gameObject;   // this > right hand > equipped > player
         ownerPlayerEntityScript = owner.GetComponent<PlayerEntity>();
         weaponModel = transform.Find("Gun").gameObject;
         saveStartingWeaponPosition = weaponModel.transform.localPosition;
         if (bulletEmitter.transform.childCount > 0)
             muzzleFlash = bulletEmitter.transform.GetChild(0).GetComponent<ParticleSystem>();
-
 
         crosshair = ownerPlayerEntityScript.GetCrosshairCanvas().GetComponent<CustomCrosshair>();
         wheelManagerUI = ownerPlayerEntityScript.GetWeaponWheelCanvas().gameObject;

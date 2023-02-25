@@ -39,7 +39,11 @@ public class DICKSCAT : WeaponBase
 
     Slider steamGauge;
     TMP_Text modeText;
-   
+
+    [Header("Audio References")]
+    public AudioSource AudioFire1;
+    public AudioSource AudioFire2;
+
 
     bool togglePortals = false;
 
@@ -192,7 +196,7 @@ public class DICKSCAT : WeaponBase
                             laserLine.SetPosition(1, position);
 
                         }
-                        fireAudio.Play();
+                        AudioFire1.Play();
 
                         currentFiringPortal++;
                         if(currentFiringPortal == numPortals)
@@ -227,7 +231,7 @@ public class DICKSCAT : WeaponBase
                         Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
                         bullet.GetComponent<Rigidbody>().velocity = RandomSpray(front.normalized, inaccuracy[1], bloomProgress, bloomMax) * projectileVel[1];
                         bullet.transform.SetParent(projectileManager.transform);
-                        fireAudio.Play();
+                        AudioFire1.Play();
 
                         bloomProgress += 25;
                         if (bloomProgress > bloomMax)

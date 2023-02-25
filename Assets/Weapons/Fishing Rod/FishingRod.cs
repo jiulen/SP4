@@ -22,6 +22,10 @@ public class FishingRod : WeaponBase
     public Vector3 hookVelocity = Vector3.zero;
     public int hookDamage;
 
+    [Header("Audio References")]
+    public AudioSource AudioFire1;
+    public AudioSource AudioFire2;
+
     public enum HookState
     {
         INACTIVE,
@@ -90,7 +94,7 @@ public class FishingRod : WeaponBase
             hookedRigidbody = null;
             hookedCollider = null;
 
-            fireAudio.Play();
+            AudioFire1.Play();
         }
         else
         {

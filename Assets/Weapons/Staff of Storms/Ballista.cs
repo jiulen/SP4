@@ -9,13 +9,16 @@ public class Ballista : WeaponBase
 
     public float fire1KnockbackForce = 1;
 
+    [Header("Audio References")]
+    public AudioSource AudioFire1;
+    public AudioSource AudioFire2;
+
     void Start()
     {
         base.Start();
         bulletEmitter = GameObject.Find("Gun/Bullet emitter");
 
         fireAnimation = weaponModel.transform.Find("Staff").GetComponent<Animator>();
-        fireAnimation.speed = 1/* / (float)elapsedBetweenEachShot[1]*/;
 
     }
 
@@ -28,9 +31,13 @@ public class Ballista : WeaponBase
     {
         if (CheckCanFire(1))
         {
+            AudioFire1.Play();
+
             fireAnimation.enabled = true;
             fireAnimation.StopPlayback();
             fireAnimation.Play("Fire1");
+
+            fireAnimation.speed = 1 / (float)elapsedBetweenEachShot[0];
 
             Ray laserRayCast = new Ray(camera.transform.position + camera.transform.forward * 0.5f, camera.transform.forward);
             GameObject laser = Instantiate(ballistaLaserPF, projectileManager.transform);
@@ -84,13 +91,21 @@ public class Ballista : WeaponBase
     {
         if (CheckCanFire(2))
         {
+            AudioFire2.Play();
             Transform newTransform = camera.transform;
             GameObject blast = Instantiate(stormBlastPF, bulletEmitter.transform);
             Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
             blast.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[1];
             blast.transform.SetParent(projectileManager.transform);
             blast.GetComponent<StormBlast>().SetCreator(owner);
-            fireAudio.Play();
+            AudioFire2.Play();
+
+            fireAnimation.enabled = true;
+            fireAnimation.StopPlayback();
+            fireAnimation.Play("Fire2");
+
+            fireAnimation.speed = 1 / (float)elapsedBetweenEachShot[0];
+
         }
     }
 

@@ -41,13 +41,14 @@ public class PlayerEntity : EntityBase
     {
         FPSScript = this.GetComponent<FPS>();
         base.Start();
+        Start();
         uiKillFeedCanvas = GameObject.Find("Canvas/KillerFeedUI");
     }
 
     void Start()
     {
-        equipped = FPSScript.currentEquipped;
-        GameObject rightHand = equipped.transform.Find("Right Hand").gameObject;
+        //equipped = FPSScript.currentEquipped;
+        GameObject rightHand =/* equipped.*/transform.Find("Right Hand").gameObject;
         for (int i = 0; i != rightHand.transform.childCount; i++)
         {
             equippedWeaponList[i] = rightHand.transform.GetChild(i).gameObject;
@@ -57,7 +58,7 @@ public class PlayerEntity : EntityBase
         activeWeapon = equippedWeaponList[0];
         previousWeapon = activeWeapon;
 
-        if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
+        //if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
 
         playerCanvasParent = Instantiate(PlayerCanvasParentPF, this.transform);
         uiWeaponWheelCanvas = playerCanvasParent.transform.Find("Weapon Wheel Canvas V2").gameObject;

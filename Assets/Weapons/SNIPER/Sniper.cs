@@ -27,6 +27,10 @@ public class Sniper : WeaponBase
     const float trailSpeed = 200f;
     FPS player;
 
+    [Header("Audio References")]
+    public AudioSource AudioFire1;
+    public AudioSource AudioFire2;
+
     //private void Awake()
     //{
     //    storeOGPosition = transform.Find("Gun/AWP").localPosition;
@@ -226,7 +230,7 @@ public class Sniper : WeaponBase
                     StartCoroutine(SpawnTrail(trail, bulletEmitter.transform.position + front * 200, Vector3.zero, null, false));
                 }
                 animator.SetBool("isActive", true);
-                fireAudio.Play();
+                AudioFire1.Play();
 
             }
         }

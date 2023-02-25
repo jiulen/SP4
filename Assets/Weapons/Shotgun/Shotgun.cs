@@ -11,15 +11,27 @@ public class Shotgun : WeaponBase
     [SerializeField] TrailRenderer bulletTrail;
     const float trailSpeed = 200f;
 
+    [Header("Audio References")]
+    public AudioSource AudioFire1;
+    public AudioSource AudioFire2;
+
     void Start()
     {
         base.Start();
+        fireAnimation = weaponModel.transform.Find("Bennelli_M4").GetComponent<Animator>();
+
     }
 
     override protected void Fire1Once()
     {
         if (CheckCanFire(1))
         {
+            AudioFire1.Play();
+            fireAnimation.speed = 1 / (float)elapsedBetweenEachShot[0];
+            fireAnimation.PlayInFixedTime("Fire", -1, 0);
+            muzzleFlash.GetComponent<ParticleSystem>().Stop();
+            muzzleFlash.GetComponent<ParticleSystem>().Play();
+
             Transform newTransform = camera.transform;
             for (int bullets = 0; bullets < bulletsPerShot[0]; ++bullets)
             {
@@ -132,7 +144,7 @@ public class Shotgun : WeaponBase
                 }
             }
             //shootingSystem.Play();
-            fireAudio.Play();
+            AudioFire1.Play();
         }
     }
 

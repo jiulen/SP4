@@ -316,7 +316,7 @@ public class FPS : NetworkBehaviour
 
         camera.transform.position = head.transform.position;
 
-        currentEquipped.transform.position = head.transform.position;
+        //currentEquipped.transform.position = head.transform.position;
 
         if (isSlide || isWallrunning)
         {

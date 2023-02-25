@@ -15,6 +15,10 @@ public class RPG : WeaponBase
     private Quaternion storeOGRotation;
     FPS player;
 
+    [Header("Audio References")]
+    public AudioSource AudioFire1;
+    public AudioSource AudioFire2;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -91,7 +95,7 @@ public class RPG : WeaponBase
                 go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[0] * PowerCurrentScale;
                 go.transform.SetParent(projectileManager.transform);
                 PowerCurrentScale = 1;
-                fireAudio.Play();
+                AudioFire1.Play();
                 RocketMuzzle.SetActive(false);
                 animator.SetBool("isActive", true);
             }
