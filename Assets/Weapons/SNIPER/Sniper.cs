@@ -4,6 +4,7 @@ using System.Security.Claims;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Netcode;
 
 public class Sniper : WeaponBase
 {
@@ -105,6 +106,7 @@ public class Sniper : WeaponBase
                 AudioFire1.Play();
 
                 Transform newTransform = camera.transform;
+                int hitType = -1;
                 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
 
                 if (Scoped.enabled)
@@ -128,106 +130,73 @@ public class Sniper : WeaponBase
                                     EntityBase player2 = hit2.collider.gameObject.GetComponent<PlayerHitBox>().owner.GetComponent<EntityBase>();
                                     //Shouldnt need to check for own player again
 
-                                    //Do bullet tracer (if hit)
-                                    trail = Instantiate(bulletTrail, bulletEmitter.transform.position, Quaternion.identity);
-                                    //Spawn bullet tracer
-                                    StartCoroutine(SpawnTrail(trail, hit2.point, hit2.normal, hit2.collider, true));
-
                                     if (hit2.collider.name == "Head")
                                     {
-                                        particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit2.point, hit2.normal, 15);
+                                        hitType = 2;
                                         player2.TakeDamage(damage[0] * 2, front, owner, gameObject);
                                     }
                                     else
                                     {
-                                        particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit2.point, hit2.normal);
+                                        hitType = 3;
                                         player2.TakeDamage(damage[0] * 2, front, owner, gameObject);
                                     }
+
+                                    CreateTrailServerRpc(hit2.point, hit2.normal, hitType);
                                 }
                                 else
                                 {
-                                    //Do bullet tracer (if hit)
-                                    trail = Instantiate(bulletTrail, bulletEmitter.transform.position, Quaternion.identity);
-                                    //Spawn bullet tracer
-                                    StartCoroutine(SpawnTrail(trail, hit2.point, hit2.normal, hit2.collider, true));
-
-                                    particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hit2.point, hit2.normal);
+                                    hitType = 1;
 
                                     EntityBase entity2 = hit2.transform.gameObject.GetComponent<EntityBase>();
                                     if (entity2 != null)
                                     {
                                         entity2.TakeDamage(damage[0], front, owner, gameObject);
                                     }
+
+                                    CreateTrailServerRpc(hit2.point, hit2.normal, hitType);
                                 }
                             }
                             else
                             {
-                                //Do bullet tracer (if no hit)
-                                trail = Instantiate(bulletTrail, bulletEmitter.transform.position, Quaternion.identity);
+                                hitType = 0;
 
-                                //Spawn bullet tracer
-                                StartCoroutine(SpawnTrail(trail, bulletEmitter.transform.position + front * 200, Vector3.zero, null, false));
+                                CreateTrailServerRpc(bulletEmitter.transform.position + front * 200, Vector3.zero, hitType);
                             }
                         }
                         else
                         {
-                            //Do bullet tracer (if hit)
-                            trail = Instantiate(bulletTrail, bulletEmitter.transform.position, Quaternion.identity);
-                            //Spawn bullet tracer
-                            StartCoroutine(SpawnTrail(trail, hit.point, hit.normal, hit.collider, true));
-
                             if (hit.collider.name == "Head")
                             {
-                                particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
+                                hitType = 2;
                                 player.TakeDamage(damage[0] * 2, front, owner, gameObject);
                             }
                             else
                             {
-                                particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
+                                hitType = 3;
                                 player.TakeDamage(damage[0] * 2, front, owner, gameObject);
                             }
-                        }
 
-                        //Do bullet tracer (if hit)
-                        trail = Instantiate(bulletTrail, bulletEmitter.transform.position, Quaternion.identity);
-                        //Spawn bullet tracer
-                        StartCoroutine(SpawnTrail(trail, hit.point, hit.normal, hit.collider, true));
-
-                        if (hit.collider.name == "Head")
-                        {
-                            particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
-                            player.TakeDamage(damage[0] * 2, front, owner, this.gameObject);
-                        }
-                        else
-                        {
-                            particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
-                            player.TakeDamage(damage[0], front, owner, this.gameObject);
-
+                            CreateTrailServerRpc(hit.point, hit.normal, hitType);
                         }
                     }
                     else
                     {
-                        //Do bullet tracer (if hit)
-                        trail = Instantiate(bulletTrail, bulletEmitter.transform.position, Quaternion.identity);
-                        //Spawn bullet tracer
-                        StartCoroutine(SpawnTrail(trail, hit.point, hit.normal, hit.collider, true));
-
-                        particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hit.point, hit.normal);
+                        hitType = 1;
 
                         EntityBase entity = hit.transform.gameObject.GetComponent<EntityBase>();
                         if (entity != null)
                         {
                             entity.TakeDamage(damage[0], front, owner, this.gameObject);
                         }
+
+                        CreateTrailServerRpc(hit.point, hit.normal, hitType);
                     }
                 }
                 else
                 {
-                    //Do bullet tracer (if no hit)
-                    trail = Instantiate(bulletTrail, bulletEmitter.transform.position, Quaternion.identity);
-
-                    //Spawn bullet tracer
-                    StartCoroutine(SpawnTrail(trail, bulletEmitter.transform.position + front * 200, Vector3.zero, null, false));
+                    hitType = 0; 
+                    
+                    CreateTrailServerRpc(bulletEmitter.transform.position + front * 200, Vector3.zero, hitType);
                 }
                 animator.SetBool("isActive", true);
                 AudioFire1.Play();
@@ -253,10 +222,6 @@ public class Sniper : WeaponBase
         ScopeDesiredPosition = desiredPositionAnimation = new Vector3(0.0f, -0.15f, 0.58f);
         player.candash = false;
     }
-
-
-
-
 
     void UpdateStablize()
     {
@@ -288,7 +253,7 @@ public class Sniper : WeaponBase
     }
 
 
-    IEnumerator SpawnTrail(TrailRenderer trail, Vector3 hitPoint, Vector3 hitNormal, Collider hitCollider, bool madeImpact)
+    IEnumerator SpawnTrail(TrailRenderer trail, Vector3 hitPoint)
     {
         Vector3 startPos = trail.transform.position;
 
@@ -305,11 +270,36 @@ public class Sniper : WeaponBase
 
         trail.transform.position = hitPoint;
 
-        if (madeImpact && hitCollider)
-        {
-            //do hit effects here
-        }
-
         Destroy(trail.gameObject, trail.time);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void CreateTrailServerRpc(Vector3 hitPoint, Vector3 hitNormal, int hitType) //Calls the ClientRpc function
+    {
+        CreateTrailClientRpc(hitPoint, hitNormal, hitType);
+    }
+
+    [ClientRpc]
+    private void CreateTrailClientRpc(Vector3 hitPoint, Vector3 hitNormal, int hitType) //hitType: 0 - no hit, 1 - hit terrain, 2 - hit player head, 3 - hit player body
+    {
+        //Make trail renderer
+        TrailRenderer trail = Instantiate(bulletTrail, bulletEmitter.transform.position, Quaternion.identity);
+
+        //Spawn bullet tracer
+        StartCoroutine(SpawnTrail(trail, hitPoint));
+
+        //Hit particle effects
+        switch (hitType)
+        {
+            case 1:
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hitPoint, hitNormal);
+                break;
+            case 2:
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hitPoint, hitNormal, 15);
+                break;
+            case 3:
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hitPoint, hitNormal);
+                break;
+        }
     }
 }
