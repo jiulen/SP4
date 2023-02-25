@@ -92,19 +92,23 @@ public class PlayerEntity : EntityBase
             networkObject1.gameObject.transform.Find("PlayerDeath").GetComponent<Text>().text = name2;
             if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObject2, out NetworkObject networkObject22))
             {
-                networkObject1.gameObject.transform.Find("KillerWeapon").GetComponent<Image>().sprite = networkObject22.gameObject.GetComponent<WeaponBase>().GetComponent<Image>().sprite;
+                networkObject1.gameObject.transform.Find("KillerWeapon").GetComponent<Image>().sprite = networkObject22.gameObject.GetComponent<WeaponBase>().WeaponIcon;
             }
         }
     }
 
-    public void SpawnKillFeed(GameObject playerkills, GameObject playerdeath, GameObject typeofWeapon)
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnKillFeedServerRpc(ulong playerkills, ulong playerdeath, ulong typeofWeapon)
     {
+        GameObject t1 = null, t2 = null;
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerkills, out NetworkObject networkObject1))
+            t1 = networkObject1.gameObject;
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerdeath, out NetworkObject networkObject2))
+            t2 = networkObject2.gameObject;
+
         GameObject spawnFeed = Instantiate(KillFeedPrefab, uiKillFeedCanvas.transform);
         spawnFeed.GetComponent<NetworkObject>().Spawn();
-        //spawnFeed.transform.Find("PlayerKill").GetComponent<Text>().text = playerkills.name;
-        //spawnFeed.transform.Find("PlayerDeath").GetComponent<Text>().text = playerdeath.name;
-        //spawnFeed.transform.Find("KillerWeapon").GetComponent<Image>().sprite = typeofWeapon;
-        UpdateKillFeedClientRpc(spawnFeed.GetComponent<NetworkObject>().NetworkObjectId, typeofWeapon.GetComponent<NetworkObject>().NetworkObjectId, playerkills.name, playerdeath.name);
+        UpdateKillFeedClientRpc(spawnFeed.GetComponent<NetworkObject>().NetworkObjectId, typeofWeapon, t1.name, t2.name);
         spawnFeed.GetComponent<NetworkObject>().TrySetParent(uiKillFeedCanvas);
         KillPrefabList.Insert(0, spawnFeed);
 
@@ -146,7 +150,7 @@ public class PlayerEntity : EntityBase
         if (Health <= 0)
         {
             uiDeathCanvas.SetActive(true);
-            UpdateDead();
+            UpdateDead(GetComponent<NetworkObject>().NetworkObjectId);
         }
         else
         {
@@ -206,32 +210,49 @@ public class PlayerEntity : EntityBase
 
         if (Health <= 0)
         {
-            SpawnKillFeed(source, this.gameObject, weaponUsed);
+            SpawnKillFeedServerRpc(source.GetComponent<NetworkObject>().NetworkObjectId, this.gameObject.GetComponent<NetworkObject>().NetworkObjectId, weaponUsed.GetComponent<NetworkObject>().NetworkObjectId);
         }
     }
 
 
-    public void UpdateDead()
+    public void UpdateDead(ulong lastTouchSource)
     {
         uiDeathCanvas.transform.Find("DeathTimerTxt").GetComponent<Text>().text = ((int)currentrespawnelaspe).ToString();
-        uiDeathCanvas.transform.Find("DeathTxt").GetComponent<Text>().text = "You are killed by " + GetLastTouch();
+
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(lastTouchSource, out NetworkObject networkObject2))
+            uiDeathCanvas.transform.Find("DeathTxt").GetComponent<Text>().text = "You are killed by " + networkObject2.gameObject.GetComponent<NetworkObject>().name;
 
         if ((int)currentrespawnelaspe <= 0)
         {
-            FPSScript.enabled = true;
-            transform.GetComponent<Teleport>().enabled = true;
-            transform.GetComponent<PickupCollectibles>().enabled = true;
-            transform.Find("Head").gameObject.SetActive(true);
-            SetHealth(MaxHealth);
-            currentrespawnelaspe = respawncountdown;
+            ResetPlayerServerRpc();
         }
         else
         {
             FPSScript.enabled = false;
-            transform.Find("Head").gameObject.SetActive(false);
+            transform.Find("PlayerPivot").gameObject.SetActive(false);
             transform.GetComponent<Teleport>().enabled = false;
             transform.GetComponent<PickupCollectibles>().enabled = false;
             currentrespawnelaspe -= Time.deltaTime;
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ResetPlayerServerRpc()
+    {
+        NotifyResetPlayerClientRpc();
+    }
+
+    [ClientRpc]
+    private void NotifyResetPlayerClientRpc()
+    {
+        if (Health <= 0)
+        {
+            FPSScript.enabled = true;
+            transform.GetComponent<Teleport>().enabled = true;
+            transform.GetComponent<PickupCollectibles>().enabled = true;
+            transform.Find("PlayerPivot").gameObject.SetActive(true);
+            SetHealth(MaxHealth);
+            currentrespawnelaspe = respawncountdown;
         }
     }
 
