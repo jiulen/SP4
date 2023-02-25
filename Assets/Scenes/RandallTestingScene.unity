@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1124,6 +1124,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1284438815699559394, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3976503784
+      objectReference: {fileID: 0}
     - target: {fileID: 4967288081962424361, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
       propertyPath: m_RootOrder
       value: 10
@@ -1845,6 +1849,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1284438815699559394, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 766578237
+      objectReference: {fileID: 0}
     - target: {fileID: 4967288081962424361, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -1910,6 +1918,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1284438815699559394, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1384756704
+      objectReference: {fileID: 0}
     - target: {fileID: 4967288081962424361, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -3419,6 +3431,46 @@ MonoBehaviour:
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 285726465535699707, guid: c8a74160b55dc8a429d2a617fc546e54, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 6872861683082529165, guid: 5ece3f84ec25ab846b860fe54837874a, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 5763653507336855649, guid: efb8f11a8e8b5e242a2a41863b610af1, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 4136986527977053402, guid: 7fe315266963d914284057486c11b524, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 2619753917312295667, guid: 9fe55b738caafe64c80315106c77d353, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 8676091470326512184, guid: 13f964860fbd257408c5384d352a7198, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 3752969223430749533, guid: 5feb953a6fb7c9a499a9109e323ff671, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 673387428329875730, guid: a6bb5ddbc7c87094ab321ddf47647e26, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
     TickRate: 30
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 0
@@ -3740,6 +3792,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1284438815699559394, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3306024569
+      objectReference: {fileID: 0}
     - target: {fileID: 4967288081962424361, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
       propertyPath: m_RootOrder
       value: 5
@@ -5778,6 +5834,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1284438815699559394, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3609256978
+      objectReference: {fileID: 0}
     - target: {fileID: 4967288081962424361, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
       propertyPath: m_RootOrder
       value: 8
@@ -6868,6 +6928,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1284438815699559394, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 4014993538
+      objectReference: {fileID: 0}
     - target: {fileID: 4967288081962424361, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
       propertyPath: m_RootOrder
       value: 7
@@ -7028,6 +7092,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1284438815699559394, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3246990637
+      objectReference: {fileID: 0}
     - target: {fileID: 4967288081962424361, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -7883,6 +7951,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1284438815699559394, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1432770003
+      objectReference: {fileID: 0}
     - target: {fileID: 4967288081962424361, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
       propertyPath: m_RootOrder
       value: 9
@@ -8282,6 +8354,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1284438815699559394, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2034288155
+      objectReference: {fileID: 0}
     - target: {fileID: 4967288081962424361, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
       propertyPath: m_RootOrder
       value: 6
@@ -8347,6 +8423,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1284438815699559394, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3299839159
+      objectReference: {fileID: 0}
     - target: {fileID: 4967288081962424361, guid: 9a1ac023ed6c350498e6f062130da71a, type: 3}
       propertyPath: m_RootOrder
       value: 0

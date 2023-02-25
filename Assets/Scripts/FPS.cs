@@ -196,10 +196,10 @@ public class FPS : NetworkBehaviour
             AddEquippedServerRpc();
 
         if (Input.GetKeyDown(KeyCode.P) && IsOwner)
+        {
             AddWeaponServerRpc("Shotgun");
-
-        if (Input.GetKeyDown(KeyCode.LeftBracket) && IsOwner)
-            SetWeaponsClientRpc();
+            AddWeaponServerRpc("Sniper");
+        }
 
         if (Input.GetKeyDown(KeyCode.Alpha7) && IsOwner)
             SetCharacterServerRpc("Rhino");
@@ -209,6 +209,9 @@ public class FPS : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.Alpha9) && IsOwner)
             SetCharacterServerRpc("Winton");
+
+        if (Input.GetKeyDown(KeyCode.LeftBracket) && IsOwner)
+            SetWeaponsClientRpc();
         //
 
         // Reset position and velocity if player goes out of bounds for debugging

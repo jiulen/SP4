@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1731033394657316590}
   - component: {fileID: 6882997998716364004}
   - component: {fileID: 7680918170657144317}
+  - component: {fileID: -7965484810318845850}
   m_Layer: 0
   m_Name: SwordProjectile
   m_TagString: Untagged
@@ -65,6 +66,22 @@ MonoBehaviour:
   duration: 1
   bloodEffect: {fileID: 2305821162208844719, guid: 042f5cddfa0450d45b346081207b21bf, type: 3}
   sparkEffect: {fileID: 2907902898773258639, guid: 7b77a91ec9a07a2468091790b6471b8e, type: 3}
+--- !u!114 &-7965484810318845850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673387428329875730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &8366367071312369856
 GameObject:
   m_ObjectHideFlags: 0
