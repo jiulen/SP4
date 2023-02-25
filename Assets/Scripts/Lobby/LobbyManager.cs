@@ -22,6 +22,8 @@ public class LobbyManager : NetworkBehaviour {
     public const string KEY_GAME_MODE = "GameMode";
     public const string KEY_MAP_SELECT = "Map";
     public const string KEY_START_GAME = "0";
+    public const string KEY_LOBBY_SELECT = "Selection";
+    public const string KEY_IS_LOCKED = "locked";
 
 
 
@@ -32,6 +34,8 @@ public class LobbyManager : NetworkBehaviour {
     public event EventHandler<LobbyEventArgs> OnKickedFromLobby;
     public event EventHandler<LobbyEventArgs> OnLobbyGameModeChanged;
     public event EventHandler<LobbyEventArgs> OnLobbyMapChanged;
+    public event EventHandler<LobbyEventArgs> OnCharSelect;
+    public event EventHandler<LobbyEventArgs> OnSelect;
     public event EventHandler<EventArgs> OnGameStarted;
     public class LobbyEventArgs : EventArgs {
         public Lobby lobby;
@@ -65,6 +69,11 @@ public class LobbyManager : NetworkBehaviour {
         Zombie
     }
 
+    public enum LobbyState
+    {
+        Lobby,
+        CharSelection
+    }
 
 
     private float heartbeatTimer;
@@ -134,9 +143,25 @@ public class LobbyManager : NetworkBehaviour {
                 float lobbyPollTimerMax = 1.1f;
                 lobbyPollTimer = lobbyPollTimerMax;
 
-                joinedLobby = await LobbyService.Instance.GetLobbyAsync(joinedLobby.Id);
 
-                OnJoinedLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+                LobbyState lobbystate = 
+                EnumUtils.Parse<LobbyState>(joinedLobby.Data[KEY_LOBBY_SELECT].Value);
+
+                joinedLobby = await LobbyService.Instance.GetLobbyAsync(joinedLobby.Id);
+                switch (lobbystate)
+                {
+                    default:
+                    case LobbyState.Lobby:
+                        OnJoinedLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+                        break;
+                    case LobbyState.CharSelection:
+                        OnCharSelect?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+                        break;
+                }
+
+                
+
+                
 
                 if (!IsPlayerInLobby()) {
                     // Player was kicked out of this lobby
@@ -156,6 +181,11 @@ public class LobbyManager : NetworkBehaviour {
                     joinedLobby = null;
                     OnGameStarted?.Invoke(this, EventArgs.Empty); 
                 }
+                //if (joinedLobby.Data[KEY_LOBBY_SELECT].Value != "0")
+                //{
+                //    // change to char select
+                //    OnCharSelect?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+                //}
             }
         }
     }
@@ -237,7 +267,9 @@ public class LobbyManager : NetworkBehaviour {
             Data = new Dictionary<string, DataObject> {
                 { KEY_GAME_MODE, new DataObject(DataObject.VisibilityOptions.Public, gameMode.ToString()) },
                 { KEY_MAP_SELECT, new DataObject(DataObject.VisibilityOptions.Public, mapSelect.ToString()) },
-                { KEY_START_GAME, new DataObject(DataObject.VisibilityOptions.Member, "0") }
+                { KEY_START_GAME, new DataObject(DataObject.VisibilityOptions.Member, "0") },
+                { KEY_LOBBY_SELECT, new DataObject(DataObject.VisibilityOptions.Public, "Lobby") },
+                { KEY_IS_LOCKED, new DataObject(DataObject.VisibilityOptions.Public, "false") }
             }
         };
 
@@ -302,7 +334,7 @@ public class LobbyManager : NetworkBehaviour {
 
     public async void UpdatePlayerName(string playerName) {
         this.playerName = playerName;
-
+        
         if (joinedLobby != null) {
             try {
                 UpdatePlayerOptions options = new UpdatePlayerOptions();
@@ -350,6 +382,33 @@ public class LobbyManager : NetworkBehaviour {
                 Debug.Log(e);
             }
         }
+    }
+    public async void CharSelect(LobbyState lobbyselect)
+    {
+        if (joinedLobby != null)
+        {
+            try
+            {
+                UpdatePlayerOptions options = new UpdatePlayerOptions();
+
+                Lobby lobby = await Lobbies.Instance.UpdateLobbyAsync(joinedLobby.Id, new UpdateLobbyOptions
+                {
+                    Data = new Dictionary<string, DataObject>
+                    {
+                        { KEY_LOBBY_SELECT, new DataObject(DataObject.VisibilityOptions.Public, lobbyselect.ToString()) }
+                    }
+                });
+                joinedLobby = lobby;
+
+                OnSelect?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+                OnCharSelect?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+        }
+
     }
 
     public async void QuickJoinLobby() {
@@ -430,11 +489,39 @@ public class LobbyManager : NetworkBehaviour {
         }
     }
 
-    public void CharSelect()
+
+
+    public async void UpdatePlayerLock()
     {
-        lobbyCanvas.SetActive(false);
-        charSelectCanvas.SetActive(true);
+        if (joinedLobby != null)
+        {
+            try
+            {
+                UpdatePlayerOptions options = new UpdatePlayerOptions();
+
+                options.Data = new Dictionary<string, PlayerDataObject>() {
+                    {
+                        KEY_IS_LOCKED, new PlayerDataObject(
+                            visibility: PlayerDataObject.VisibilityOptions.Public,
+                            value: "true")
+                    }
+                };
+
+                string playerId = AuthenticationService.Instance.PlayerId;
+
+                Lobby lobby = await LobbyService.Instance.UpdatePlayerAsync(joinedLobby.Id, playerId, options);
+                joinedLobby = lobby;
+
+                OnSelect?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+        }
     }
+
+
     public async void StartGame()
     {
         if(IsLobbyHost())
@@ -451,8 +538,8 @@ public class LobbyManager : NetworkBehaviour {
                     }
                 });
                 joinedLobby = lobby;
-                //NetworkManager.SceneManager.LoadScene(joinedLobby.Data[KEY_MAP_SELECT].Value, LoadSceneMode.Single);
-                NetworkManager.SceneManager.LoadScene("CharSelect", LoadSceneMode.Single);
+                NetworkManager.SceneManager.LoadScene(joinedLobby.Data[KEY_MAP_SELECT].Value, LoadSceneMode.Single);
+                //NetworkManager.SceneManager.LoadScene("CharSelect", LoadSceneMode.Single);
             }
             catch (LobbyServiceException e)
             {

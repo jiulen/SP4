@@ -7,14 +7,13 @@ using UnityEngine.EventSystems;
 using System;
 using Unity.Netcode;
 
-// Player script for UI, playerstats 
+// Player script for UI, playerstats
 public class PlayerEntity : EntityBase
 {
     private FPS FPSScript;
     public GameObject[] equippedWeaponList = new GameObject[3];
-    private GameObject equipped;
     public GameObject activeWeapon;
-    private GameObject previousWeapon;
+    public GameObject previousWeapon;
     private float respawncountdown = 5, currentrespawnelaspe;
     private Image uiCurrentWeaponIcon;
     private Image cameraEffectInjured, cameraEffectBlood;
@@ -33,7 +32,6 @@ public class PlayerEntity : EntityBase
     //public GameObject CrosshairCanvasPF;
     //public GameObject DeathCanvasPF;
     //public GameObject CameraEffectsCanvasPF;
-    public Image DamageIndicatorImagePF;
     public GameObject KillFeedPrefab;
     private static List<GameObject> KillPrefabList = new List<GameObject>();
 
@@ -47,18 +45,7 @@ public class PlayerEntity : EntityBase
 
     void Start()
     {
-        //equipped = FPSScript.currentEquipped;
-        GameObject rightHand =/* equipped.*/transform.Find("Right Hand").gameObject;
-        for (int i = 0; i != rightHand.transform.childCount; i++)
-        {
-            equippedWeaponList[i] = rightHand.transform.GetChild(i).gameObject;
-            if (i != 0)
-                equippedWeaponList[i].SetActive(false);
-        }
-        activeWeapon = equippedWeaponList[0];
-        previousWeapon = activeWeapon;
-
-        //if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
+        if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
 
         playerCanvasParent = Instantiate(PlayerCanvasParentPF, this.transform);
         uiWeaponWheelCanvas = playerCanvasParent.transform.Find("Weapon Wheel Canvas V2").gameObject;
@@ -98,13 +85,32 @@ public class PlayerEntity : EntityBase
     }
 
     [ClientRpc]
-    public void SpawnKillFeed(GameObject playerkills, GameObject playerdeath, Sprite typeofWeapon)
+    private void UpdateKillFeedClientRpc(ulong networkObject, ulong networkObject2, string name1, string name2)
     {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObject, out NetworkObject networkObject1))
+        {
+            networkObject1.gameObject.transform.Find("PlayerKill").GetComponent<Text>().text = name1;
+            networkObject1.gameObject.transform.Find("PlayerDeath").GetComponent<Text>().text = name2;
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObject2, out NetworkObject networkObject22))
+            {
+                networkObject1.gameObject.transform.Find("KillerWeapon").GetComponent<Image>().sprite = networkObject22.gameObject.GetComponent<WeaponBase>().WeaponIcon;
+            }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnKillFeedServerRpc(ulong playerkills, ulong playerdeath, ulong typeofWeapon)
+    {
+        GameObject t1 = null, t2 = null;
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerkills, out NetworkObject networkObject1))
+            t1 = networkObject1.gameObject;
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerdeath, out NetworkObject networkObject2))
+            t2 = networkObject2.gameObject;
+
         GameObject spawnFeed = Instantiate(KillFeedPrefab, uiKillFeedCanvas.transform);
-        spawnFeed.transform.Find("PlayerKill").GetComponent<Text>().text = playerkills.name;
-        spawnFeed.transform.Find("PlayerDeath").GetComponent<Text>().text = playerdeath.name;
-        spawnFeed.transform.Find("KillerWeapon").GetComponent<Image>().sprite = typeofWeapon;
-        spawnFeed.transform.parent = uiKillFeedCanvas.transform;
+        spawnFeed.GetComponent<NetworkObject>().Spawn();
+        UpdateKillFeedClientRpc(spawnFeed.GetComponent<NetworkObject>().NetworkObjectId, typeofWeapon, t1.name, t2.name);
+        spawnFeed.GetComponent<NetworkObject>().TrySetParent(uiKillFeedCanvas);
         KillPrefabList.Insert(0, spawnFeed);
 
         if (KillPrefabList.Count >= 5)
@@ -133,19 +139,10 @@ public class PlayerEntity : EntityBase
         //Debug.Log(Health);
         if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
 
-        // For debugging
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            Debug.LogError("RESETTING UI");
-            Destroy(uiStaminaCanvas);
-            uiStaminaCanvas = Instantiate(StaminaCanvasPF, this.transform);
-            uiStaminaCanvas.GetComponent<StaminaUI>().InitBars();
-        }
-
         if (Health <= 0)
         {
-            UpdateDead();
             uiDeathCanvas.SetActive(true);
+            UpdateDead(GetComponent<NetworkObject>().NetworkObjectId);
         }
         else
         {
@@ -166,45 +163,88 @@ public class PlayerEntity : EntityBase
     }
 
     [ClientRpc]
+    private void SpawnDamageIndicatorClientRpc(Vector3 dir, ClientRpcParams clientRpcParams = default)
+    {
+        GameObject dmgImg = FetchDamageIndicator();
+        dmgImg.GetComponent<DamageIndicator>().SetSourcePos(dir);
+        cameraEffectBlood.GetComponent<BloodEffects>().ResetStartDuration();
+    }
+
+    private GameObject FetchDamageIndicator()
+    {
+        for (int i = 0; i < cameraEffectsCanvas.transform.GetChild(0).childCount; i++)
+        {
+            Transform cSolidObj = cameraEffectsCanvas.transform.GetChild(0).GetChild(i);
+            if (cSolidObj.GetComponent<Image>().enabled)
+            {
+                continue;
+            }
+            cSolidObj.GetComponent<Image>().enabled = true;
+            return cSolidObj.gameObject;
+        }
+
+        int prevSize = cameraEffectsCanvas.transform.GetChild(0).childCount;
+        cameraEffectsCanvas.transform.GetChild(0).GetChild(prevSize).GetComponent<Image>().enabled = true;
+        return cameraEffectsCanvas.transform.GetChild(0).GetChild(prevSize).gameObject;
+    }
     public override void TakeDamage(float hp, Vector3 dir, GameObject source, GameObject weaponUsed)
     {
-        //Debug.Log(cameraEffectsCanvas);
-        //Image dmgImg = Instantiate(DamageIndicatorImagePF) as Image;
-        //dmgImg.GetComponent<DamageIndicator>().SetSourcePos(dir);
-        //dmgImg.transform.parent = cameraEffectsCanvas.transform;
-        //cameraEffectBlood.GetComponent<BloodEffects>().ResetStartDuration();
-        //Debug.Log(cameraEffectBlood);
+        SpawnDamageIndicatorClientRpc(dir, new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { gameObject.GetComponent<NetworkBehaviour>().OwnerClientId }
+            }
+        });
+
         SetLastTouch(source);
         SetHealth(GetHealth() - hp);
 
         if (Health <= 0)
         {
-            SpawnKillFeed(source, this.gameObject, weaponUsed.GetComponent<WeaponBase>().WeaponIcon);
+            SpawnKillFeedServerRpc(source.GetComponent<NetworkObject>().NetworkObjectId, this.gameObject.GetComponent<NetworkObject>().NetworkObjectId, weaponUsed.GetComponent<NetworkObject>().NetworkObjectId);
         }
     }
 
 
-    public void UpdateDead()
+    public void UpdateDead(ulong lastTouchSource)
     {
         uiDeathCanvas.transform.Find("DeathTimerTxt").GetComponent<Text>().text = ((int)currentrespawnelaspe).ToString();
-        uiDeathCanvas.transform.Find("DeathTxt").GetComponent<Text>().text = "You are killed by " + GetLastTouch().name;
+
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(lastTouchSource, out NetworkObject networkObject2))
+            uiDeathCanvas.transform.Find("DeathTxt").GetComponent<Text>().text = "You are killed by " + networkObject2.gameObject.GetComponent<NetworkObject>().name;
 
         if ((int)currentrespawnelaspe <= 0)
         {
-            FPSScript.enabled = true;
-            transform.GetComponent<Teleport>().enabled = true;
-            transform.GetComponent<PickupCollectibles>().enabled = true;
-            transform.Find("Head").gameObject.SetActive(true);
-            SetHealth(MaxHealth);
-            currentrespawnelaspe = respawncountdown;
+            ResetPlayerServerRpc();
         }
         else
         {
             FPSScript.enabled = false;
-            transform.Find("Head").gameObject.SetActive(false);
+            transform.Find("PlayerPivot").gameObject.SetActive(false);
             transform.GetComponent<Teleport>().enabled = false;
             transform.GetComponent<PickupCollectibles>().enabled = false;
             currentrespawnelaspe -= Time.deltaTime;
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ResetPlayerServerRpc()
+    {
+        NotifyResetPlayerClientRpc();
+    }
+
+    [ClientRpc]
+    private void NotifyResetPlayerClientRpc()
+    {
+        if (Health <= 0)
+        {
+            FPSScript.enabled = true;
+            transform.GetComponent<Teleport>().enabled = true;
+            transform.GetComponent<PickupCollectibles>().enabled = true;
+            transform.Find("PlayerPivot").gameObject.SetActive(true);
+            SetHealth(MaxHealth);
+            currentrespawnelaspe = respawncountdown;
         }
     }
 
@@ -222,8 +262,6 @@ public class PlayerEntity : EntityBase
     {
         return uiWeaponWheelCanvas;
     }
-
-    [ClientRpc]
     public void SetActiveWeapon(int i)
     {
         //if (activeWeapon != null)
@@ -244,6 +282,6 @@ public class PlayerEntity : EntityBase
             previousWeapon = activeWeapon;
             activeWeapon = equippedWeaponList[i];
         }
-       
+
     }
 }

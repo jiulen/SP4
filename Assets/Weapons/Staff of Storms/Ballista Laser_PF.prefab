@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8396390690856839014}
   - component: {fileID: 5789516407436567949}
   - component: {fileID: 8340949891476430683}
+  - component: {fileID: -5345957608283168474}
   m_Layer: 0
   m_Name: Ballista Laser_PF
   m_TagString: Untagged
@@ -145,6 +146,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 0
   duration: 1
+  bloodEffect: {fileID: 0}
+  sparkEffect: {fileID: 0}
+--- !u!114 &-5345957608283168474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8676091470326512184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1001 &2522550764038749922
 PrefabInstance:
   m_ObjectHideFlags: 0

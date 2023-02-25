@@ -49,7 +49,7 @@ public class CharSelectManager : NetworkBehaviour
     private void Update()
     {
         //HandleRefreshLobbyList(); // Disabled Auto Refresh for testing with multiple builds
-        //LobbyManager.Instance.Update();
+        //CharSelectUI.Instance.Update();
     }
     public async void UpdatePlayerLock()
     {

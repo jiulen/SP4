@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
@@ -20,7 +21,8 @@ public class Explosion : ProjectileBase
 
     }
 
-    public void Explode()
+    [ServerRpc]
+    private void ExplodeServerRPC()
     {
         Collider[] colliders = Physics.OverlapSphere(transform.position, radius);
         List<GameObject> emptycollider = new List<GameObject>();
@@ -75,5 +77,9 @@ public class Explosion : ProjectileBase
         AudioSource.PlayClipAtPoint(clip, transform.position);
 
         emptycollider.Clear();
+    }
+    public void Explode()
+    {
+        ExplodeServerRPC();
     }
 }

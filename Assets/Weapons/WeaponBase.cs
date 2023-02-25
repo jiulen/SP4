@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
-public class WeaponBase : MonoBehaviour
+using Unity.Netcode;
+public class WeaponBase : NetworkBehaviour
 {
     public float[] fireRate;
     public int[] damage;
