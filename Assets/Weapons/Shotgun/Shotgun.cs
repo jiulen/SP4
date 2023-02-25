@@ -47,12 +47,12 @@ public class Shotgun : WeaponBase
                                     if (hit2.collider.name == "Head")
                                     {
                                         hitType = 2;
-                                        player2.TakeDamage(damage[0] * 2, -bulletDir, owner, this.gameObject);
+                                        player2.TakeDamage(damage[0] * 2, bulletDir, owner, this.gameObject);
                                     }
                                     else
                                     {
                                         hitType = 3;
-                                        player2.TakeDamage(damage[0] * 2, -bulletDir, owner, this.gameObject);
+                                        player2.TakeDamage(damage[0] * 2, bulletDir, owner, this.gameObject);
                                     }
 
                                     CreateTrailServerRpc(hit2.point, hit2.normal, hitType);
@@ -64,7 +64,7 @@ public class Shotgun : WeaponBase
                                     EntityBase entity2 = hit2.transform.gameObject.GetComponent<EntityBase>();
                                     if (entity2 != null)
                                     {
-                                        entity2.TakeDamage(damage[0], -bulletDir, owner, this.gameObject);
+                                        entity2.TakeDamage(damage[0], bulletDir, owner, this.gameObject);
                                     }
 
                                     CreateTrailServerRpc(hit2.point, hit2.normal, hitType);
@@ -81,12 +81,12 @@ public class Shotgun : WeaponBase
                             if (hit.collider.name == "Head")
                             {
                                 hitType = 2;
-                                player.TakeDamage(damage[0] * 2, -bulletDir, owner, this.gameObject);
+                                player.TakeDamage(damage[0] * 2, bulletDir, owner, this.gameObject);
                             }
                             else
                             {
                                 hitType = 3;
-                                player.TakeDamage(damage[0] * 2, -bulletDir, owner, this.gameObject);
+                                player.TakeDamage(damage[0] * 2, bulletDir, owner, this.gameObject);
                             }
 
                             CreateTrailServerRpc(hit.point, hit.normal, hitType);
@@ -99,7 +99,7 @@ public class Shotgun : WeaponBase
                         EntityBase entity = hit.transform.gameObject.GetComponent<EntityBase>();
                         if (entity != null)
                         {
-                            entity.TakeDamage(damage[0], -bulletDir, owner, this.gameObject);
+                            entity.TakeDamage(damage[0], bulletDir, owner, this.gameObject);
                         }
 
                         CreateTrailServerRpc(hit.point, hit.normal, hitType);
