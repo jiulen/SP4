@@ -12,9 +12,8 @@ public class PlayerEntity : EntityBase
 {
     private FPS FPSScript;
     public GameObject[] equippedWeaponList = new GameObject[3];
-    private GameObject equipped;
     public GameObject activeWeapon;
-    private GameObject previousWeapon;
+    public GameObject previousWeapon;
     private float respawncountdown = 5, currentrespawnelaspe;
     private Image uiCurrentWeaponIcon;
     private Image cameraEffectInjured, cameraEffectBlood;
@@ -45,17 +44,6 @@ public class PlayerEntity : EntityBase
 
     void Start()
     {
-        equipped = FPSScript.currentEquipped;
-        GameObject rightHand = equipped.transform.Find("Right Hand").gameObject;
-        for (int i = 0; i != rightHand.transform.childCount; i++)
-        {
-            equippedWeaponList[i] = rightHand.transform.GetChild(i).gameObject;
-            if (i != 0)
-                equippedWeaponList[i].SetActive(false);
-        }
-        activeWeapon = equippedWeaponList[0];
-        previousWeapon = activeWeapon;
-
         if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
 
         playerCanvasParent = Instantiate(PlayerCanvasParentPF, this.transform);

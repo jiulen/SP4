@@ -109,6 +109,8 @@ public class FPS : NetworkBehaviour
 
     [SerializeField] GameObject[] hatsList; //Stores all possible hats but only 1 will be active
 
+    PlayerEntity playerEntity;
+
     void Awake()
     {
         Init();
@@ -134,6 +136,8 @@ public class FPS : NetworkBehaviour
         transform.position = new Vector3(transform.position.x, 2.0f, transform.position.z);
         rigidbody = this.GetComponent<Rigidbody>();
         rigidbody.velocity.Set(0, 0, 0);
+
+        playerEntity = GetComponent<PlayerEntity>();
 
         if (!IsOwner && !debugBelongsToPlayer) return;
 
@@ -193,6 +197,9 @@ public class FPS : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.P) && IsOwner)
             AddWeaponServerRpc("Shotgun");
+
+        if (Input.GetKeyDown(KeyCode.LeftBracket) && IsOwner)
+            SetWeaponsClientRpc();
 
         if (Input.GetKeyDown(KeyCode.Alpha7) && IsOwner)
             SetCharacterServerRpc("Rhino");
@@ -657,5 +664,18 @@ public class FPS : NetworkBehaviour
     private void SetHatClientRpc(int hatNum)
     {
         hatsList[hatNum].SetActive(true);
+    }
+
+    [ClientRpc]
+    public void SetWeaponsClientRpc()
+    {
+        for (int i = 0; i != rightHand.transform.childCount; i++)
+        {
+            playerEntity.equippedWeaponList[i] = rightHand.transform.GetChild(i).gameObject;
+            if (i != 0)
+                playerEntity.equippedWeaponList[i].SetActive(false);
+        }
+        playerEntity.activeWeapon = playerEntity.equippedWeaponList[0];
+        playerEntity.previousWeapon = playerEntity.activeWeapon;
     }
 }
