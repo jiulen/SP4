@@ -29,6 +29,9 @@ public class DeRoloGrappleHook : MonoBehaviour
 
     private double grappleElapsed = 0;
 
+    public AudioSource AudioGrappleShoot;
+    public AudioSource AudioGrappling;
+
     private enum GrappleType
     {
         PULLUSER,
@@ -38,7 +41,7 @@ public class DeRoloGrappleHook : MonoBehaviour
 
     void Start()
     {
-        player = transform.parent.parent.gameObject; // de rolo > right hand > equipped > player
+        player = transform.parent.parent./*parent.*/gameObject; // de rolo > right hand > equipped > player
         playerScript = player.GetComponent<FPS>();
         playerRigidBody = player.GetComponent<Rigidbody>();
         camera = player.GetComponent<FPS>().camera;
@@ -139,7 +142,8 @@ public class DeRoloGrappleHook : MonoBehaviour
         }
         else if (playerScript.staminaAmount >= playerScript.staminaGrappleCost)
         {
-
+            AudioGrappleShoot.Play();
+            AudioGrappling.Play();
 
             //Ray laserRayCast = new Ray(body.transform.position, 5 * (hook.transform.position - body.transform.position));
             Ray laserRayCast = new Ray(camera.transform.position, camera.transform.forward);
@@ -187,6 +191,8 @@ public class DeRoloGrappleHook : MonoBehaviour
         }
         else
         {
+            AudioGrappling.Stop();
+
             hook.transform.parent = this.transform;
             if (grappledRigidBody != null)
                 grappledRigidBody.useGravity = true;

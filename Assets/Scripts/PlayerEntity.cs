@@ -25,6 +25,8 @@ public class PlayerEntity : EntityBase
     private GameObject crosshairCanvas;
     private GameObject cameraEffectsCanvas;
     private GameObject playerCanvasParent;
+    private GameObject dashEffectCanvas;
+    private ParticleSystem dashParticleSystem;
     public GameObject PlayerCanvasParentPF;
     //public GameObject UIWeaponWheelPF;
     //public GameObject PlayerStatsCanvasPF;
@@ -39,11 +41,11 @@ public class PlayerEntity : EntityBase
     {
         FPSScript = this.GetComponent<FPS>();
         base.Start();
-        Start();
+        InitialiseUI();
         uiKillFeedCanvas = GameObject.Find("Canvas/KillerFeedUI");
     }
 
-    void Start()
+    void InitialiseUI()
     {
         if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
 
@@ -62,6 +64,16 @@ public class PlayerEntity : EntityBase
         crosshairCanvas = playerCanvasParent.transform.Find("Custom Crosshair Canvas").gameObject;
         crosshairCanvas.GetComponent<CustomCrosshair>().doUpdate = true;
 
+        dashEffectCanvas = playerCanvasParent.transform.Find("Dash Canvas").gameObject;
+        dashParticleSystem = dashEffectCanvas.transform.GetChild(0).GetComponent<ParticleSystem>();
+
+        // I am too lazy to make sure that the start functions are called in the right order so I just grab the camera from the top of the hierarchy
+        dashEffectCanvas.GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+
+    }
+
+    void Start()
+    {
         currentrespawnelaspe = respawncountdown;
     }
 
@@ -283,5 +295,15 @@ public class PlayerEntity : EntityBase
             activeWeapon = equippedWeaponList[i];
         }
 
+    }
+
+    public void StartDashEffect()
+    {
+        dashParticleSystem.Play();
+    }
+
+    public void StopDashEffect()
+    {
+        dashParticleSystem.Stop();
     }
 }

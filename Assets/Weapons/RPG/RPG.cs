@@ -79,6 +79,7 @@ public class RPG : WeaponBase
     override protected void Fire1Up()
     {
         slider.enabled = false;
+
     }
 
     override protected void Fire1UpOnce()
@@ -87,6 +88,8 @@ public class RPG : WeaponBase
         {
             if (CheckCanFire(1))
             {
+                AudioFire1.Play();
+
                 ShootRocket();
                 PowerCurrentScale = 1;
                 AudioFire1.Play();

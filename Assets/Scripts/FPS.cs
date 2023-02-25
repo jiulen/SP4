@@ -53,6 +53,7 @@ public class FPS : NetworkBehaviour
 
     // Jump
     public float jumpForce = 250;
+    private int jumpCount = 0;
 
     // Dash
     public float dashSpeed = 5;
@@ -104,6 +105,8 @@ public class FPS : NetworkBehaviour
     //Wallrunning
     public bool canWallrun = true;
     public bool isWallrunning = false;
+
+    public AudioSource AudioDash;
 
     [SerializeField] GameObject[] weaponPrefabList;
 
@@ -376,6 +379,7 @@ public class FPS : NetworkBehaviour
         {
             if (isGround)
             {
+                
                 if(isGrapple)
                     rigidbody.AddForce(0, jumpForce * 2.5f, 0);
                 else
@@ -387,11 +391,14 @@ public class FPS : NetworkBehaviour
 
                 }
             }
-            else if(staminaAmount >= staminaJumpCost)
+            else if(staminaAmount >= staminaJumpCost * jumpCount)
             {
                 rigidbody.AddForce(0, jumpForce, 0);
-                staminaAmount -= staminaJumpCost;
-               
+                jumpCount++;
+                staminaAmount -= staminaJumpCost* jumpCount;
+              
+
+
             }
         }
 
@@ -403,6 +410,8 @@ public class FPS : NetworkBehaviour
 
         if ((Input.GetKeyDown(KeyCode.LeftShift) || forcedash) && staminaAmount >= staminaDashCost && candash)
         {
+            playerEntity.StartDashEffect();
+            AudioDash.Play();
             // If no keyboard input, use camera direction
             if (moveVector.magnitude == 0 || forcedash)
             {
@@ -441,12 +450,12 @@ public class FPS : NetworkBehaviour
 
             if (candash)
             {
-                zoomOutCoroutine = StartCoroutine(DoFOV(75f, 200f));
+                zoomOutCoroutine = StartCoroutine(DoFOV(65f, 200f));
             }
         }
         else
         {
-
+            playerEntity.StopDashEffect();
             if (zoomInCoroutine != null) StopCoroutine(zoomInCoroutine);
             if (zoomOutCoroutine != null) StopCoroutine(zoomOutCoroutine);
 
@@ -510,6 +519,7 @@ public class FPS : NetworkBehaviour
         Debug.DrawRay(this.transform.position, new Vector3(0, -valueToUse - 0.01f, 0 ), Color.red);
         if (Physics.Raycast(laserRayCast, out RaycastHit hit, valueToUse + 0.01f))
         {
+            jumpCount = 0;
             isGround = true;
             airTimer = 0;
             return;

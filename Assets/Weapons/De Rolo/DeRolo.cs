@@ -31,7 +31,6 @@ public class DeRolo : WeaponBase
     [Header("Audio References")]
     public AudioSource AudioNormalFire;
     public AudioSource AudioExplosiveFire;
-    public AudioSource AudioGrappleFire;
     public AudioSource AudioReload;
     public AudioSource AudioCycle;
 
@@ -239,7 +238,7 @@ public class DeRolo : WeaponBase
             return;
 
         hasUpdatedAfterReloadFinished = true;
-        //fireAnimation.enabled = false;
+        fireAnimation.enabled = false;
     }
 
     // Is called once after the cycling is done cycling
@@ -347,7 +346,6 @@ public class DeRolo : WeaponBase
                     break;
                 case BulletTypes.GRAPPLE:
                     {
-                        AudioGrappleFire.Play();
                         GrappleHookScript.FireGrapple();
                     }
                     break;
@@ -387,7 +385,7 @@ public class DeRolo : WeaponBase
         fireAnimation.enabled = true;
         fireAnimation.StopPlayback();
         fireAnimation.PlayInFixedTime("Cycle Cylinder",-1,0);
-        fireAnimation.speed = 1/*/ cycleDuration*/;
+        fireAnimation.speed = 1 / cycleDuration;
         
         cycleElapsed = 0;
         activeChamber++;

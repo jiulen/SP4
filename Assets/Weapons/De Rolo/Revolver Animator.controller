@@ -34,7 +34,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Cycle Cylinder
-  m_Speed: 10
+  m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -4886890015554525595}
@@ -67,10 +67,10 @@ AnimatorStateMachine:
     m_Position: {x: 436.33197, y: 161.48752, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2224429140462801554}
-    m_Position: {x: 349.1684, y: 269.08014, z: 0}
+    m_Position: {x: 210, y: 270, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6356557596200462397}
-    m_Position: {x: 298.77692, y: 342.62445, z: 0}
+    m_Position: {x: 420, y: 350, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 4700270684222599976}
     m_Position: {x: 280, y: 420, z: 0}

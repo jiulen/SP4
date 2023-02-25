@@ -36,9 +36,12 @@ public class GrappleHook : MonoBehaviour
     }
     private GrappleType grappleType = GrappleType.PULLUSER;
 
+    public AudioSource AudioGrappleShoot;
+    public AudioSource AudioGrappling;
+
     void Start()
     {
-        player = transform.parent.parent.parent.gameObject; // this > left hand > equipped > player
+        player = transform.parent./*parent.*/parent.gameObject; // this > left hand > equipped > player
         playerScript = player.GetComponent<FPS>();
         playerRigidBody = player.GetComponent<Rigidbody>();
         camera = player.GetComponent<FPS>().camera;
@@ -104,7 +107,8 @@ public class GrappleHook : MonoBehaviour
             }
             else if(playerScript.staminaAmount >= playerScript.staminaGrappleCost)
             {
-              
+                AudioGrappleShoot.Play();
+                AudioGrappling.Play();
 
                 //Ray laserRayCast = new Ray(body.transform.position, 5 * (hook.transform.position - body.transform.position));
                 Ray laserRayCast = new Ray(camera.transform.position,camera.transform.forward);
@@ -188,6 +192,7 @@ public class GrappleHook : MonoBehaviour
         }
         else
         {
+            AudioGrappling.Stop();
             hook.transform.parent = this.transform;
             if (grappledRigidBody != null)
                 grappledRigidBody.useGravity = true;

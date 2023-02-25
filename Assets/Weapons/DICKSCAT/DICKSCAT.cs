@@ -153,6 +153,8 @@ public class DICKSCAT : WeaponBase
                     }
                     if (CheckCanFire(1) && steamCurrent< steamMax)
                     {
+                        AudioFire1.Play();
+
                         Transform portal = portalParent.transform.GetChild(currentFiringPortal);
                         Vector3 laserDirection = (DICKFocalPoint.transform.position - portal.position).normalized;
                         Ray laserRayCast = new Ray(portal.position, laserDirection);
@@ -196,7 +198,6 @@ public class DICKSCAT : WeaponBase
                             laserLine.SetPosition(1, position);
 
                         }
-                        AudioFire1.Play();
 
                         currentFiringPortal++;
                         if(currentFiringPortal == numPortals)
@@ -273,6 +274,8 @@ public class DICKSCAT : WeaponBase
             case mode.SCAT:
                 modeText.text = "D.I.C.K Mode";
                 currentMode = mode.DICK;
+                fireAnimation.enabled = false;
+
                 break;
         }
     }
