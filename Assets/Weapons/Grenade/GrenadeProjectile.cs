@@ -6,57 +6,26 @@ using Unity.Netcode;
 public class GrenadeProjectile : ProjectileBase
 {
     private Explosion explosion;
-    private Rigidbody rb;
 
-
-    [ClientRpc]
-    private void SetColliderClientRpc(bool collider)
-    {
-        GetComponent<MeshCollider>().enabled = collider;
-    }
-
-    [ServerRpc]
-    private void SetColliderServerRpc(bool collider)
-    {
-        SetColliderClientRpc(collider);
-    }
-
-    public void SetCollider(bool collider)
-    {
-        SetColliderServerRpc(collider);
-    }
-
-    public enum GrenadeState
-    {
-        NONE,
-        EXPLODE
-    }
-    public GrenadeState state;
 
     // Start is called before the first frame update
     void Start()
     {
-        state = GrenadeState.NONE;
-        rb = GetComponent<Rigidbody>();
         explosion = GetComponent<Explosion>();
         explosion.SetCreator(creator);
         explosion.SetWeaponUsed(weaponused);
         explosion.damage = damage;
-        rb.isKinematic = true;
         duration = 3;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (state == GrenadeState.EXPLODE)
+        elapsed += Time.deltaTime;
+        if (elapsed >= duration)
         {
-            elapsed += Time.deltaTime;
-            if (elapsed >= duration)
-            {
-                GrenadeExplode();
-                Destroy(this.gameObject);
-            }
+            GrenadeExplode();
+            Destroy(this.gameObject);
         }
     }
 
@@ -77,5 +46,25 @@ public class GrenadeProjectile : ProjectileBase
     private void MakeExplosionEffectClientRpc(Vector3 position, Vector3 normal)
     {
         particleManager.GetComponent<ParticleManager>().CreateEffect("Explosion_PE", position, normal);
+    }
+
+
+
+
+    [ClientRpc]
+    private void SetVelocityClientRpc(Vector3 velocity)
+    {
+        GetComponent<Rigidbody>().AddForce(velocity, ForceMode.Impulse);
+    }
+
+    [ServerRpc]
+    private void SetVelocityServerRpc(Vector3 velocity)
+    {
+        SetVelocityClientRpc(velocity);
+    }
+
+    public void SetVelocity(Vector3 velocity)
+    {
+        SetVelocityServerRpc(velocity);
     }
 }
