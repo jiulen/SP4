@@ -35,12 +35,10 @@ public class PlayerCard : MonoBehaviour
         {
             default:
             case LobbyManager.ReadyState.True:
-                Debug.Log("true");
                 Locked.SetActive(true);
                 break;
             case LobbyManager.ReadyState.False:
                 Locked.SetActive(false);
-                Debug.Log("false");
                 break;
         }
     }

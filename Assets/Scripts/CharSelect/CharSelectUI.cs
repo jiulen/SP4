@@ -56,7 +56,7 @@ public class CharSelectUI : MonoBehaviour
 
         LockBtn.onClick.AddListener(() => {
             LobbyManager.Instance.UpdatePlayerLock();
-            Debug.Log("debug");
+
         });
 
         //changeGameModeButton.onClick.AddListener(() => {

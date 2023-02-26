@@ -89,7 +89,7 @@ public class LobbyManager : NetworkBehaviour {
 
     private void Awake() {
         Instance = this;
-        //DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Update() {
@@ -278,7 +278,6 @@ public class LobbyManager : NetworkBehaviour {
                 { KEY_MAP_SELECT, new DataObject(DataObject.VisibilityOptions.Public, mapSelect.ToString()) },
                 { KEY_START_GAME, new DataObject(DataObject.VisibilityOptions.Member, "0") },
                 { KEY_LOBBY_SELECT, new DataObject(DataObject.VisibilityOptions.Public, "Lobby") }
-                //{ KEY_IS_LOCKED, new DataObject(DataObject.VisibilityOptions.Public, "False") }
             }
         };
 
