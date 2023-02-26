@@ -36,6 +36,11 @@ public class GrenadeProjectile : ProjectileBase
         MakeExplosionEffectServerRpc(transform.position, transform.forward);
     }
 
+    protected void OnTriggerEnter(Collider other) //override projectile base - do nothing
+    {
+
+    }
+
     [ServerRpc(RequireOwnership = false)]
     private void MakeExplosionEffectServerRpc(Vector3 position, Vector3 normal)
     {

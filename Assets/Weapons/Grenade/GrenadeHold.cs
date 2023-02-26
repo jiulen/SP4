@@ -67,7 +67,6 @@ public class GrenadeHold : WeaponBase
         grenade.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
         grenade.GetComponent<GrenadeProjectile>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
                                                                                particleManager.GetComponent<NetworkObject>().NetworkObjectId);
-        grenade.transform.SetParent(projectileManager.transform);
         grenade.GetComponent<GrenadeProjectile>().SetVelocity(front.normalized * ThrowForce);
         SetKnifeModelActiveServerRpc(false);
     }
