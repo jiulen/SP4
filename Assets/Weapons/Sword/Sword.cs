@@ -152,7 +152,7 @@ public class Sword : WeaponBase
         go.GetComponent<SwordProjectile>().damage = damage[0];
         go.GetComponent<ProjectileBase>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
                                                                        particleManager.GetComponent<NetworkObject>().NetworkObjectId);
-        go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[0];
+        go.GetComponent<SwordProjectile>().SetVelocity(front.normalized * projectileVel[0]);
         currentStrength = 0;
         SetKnifeModelActiveClientRpc(false);
     }

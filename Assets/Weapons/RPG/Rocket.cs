@@ -5,24 +5,6 @@ using UnityEngine;
 
 public class Rocket : ProjectileBase
 {
-
-    [ClientRpc]
-    private void SetVelocityClientRpc(Vector3 velocity)
-    {
-        GetComponent<Rigidbody>().velocity = velocity;
-    }
-
-    [ServerRpc]
-    private void SetVelocityServerRpc(Vector3 velocity)
-    {
-        SetVelocityClientRpc(velocity);
-    }
-
-    public void SetVelocity(Vector3 velocity)
-    {
-        SetVelocityServerRpc(velocity);
-    }
-
     private Explosion explosion;
     // Start is called before the first frame update
     void Start()

@@ -74,7 +74,7 @@ public class PlayerEntity : EntityBase
 
 
         Transform rightHand = this.transform.Find("Right Hand");
-        for (int i = 0; i != rightHand.GetChildCount(); i++)
+        for (int i = 0; i != rightHand.childCount; i++)
         {
             equippedWeaponList[i] = rightHand.GetChild(i).gameObject;
         }

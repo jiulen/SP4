@@ -513,7 +513,7 @@ public class DeRolo : WeaponBase
             GameObject bullet = Instantiate(ExplosiveBulletPF, bulletEmitter.transform);
             bullet.GetComponent<NetworkObject>().Spawn();
             bullet.GetComponent<NetworkObject>().TrySetParent(projectileManager);
-            bullet.GetComponent<Rigidbody>().velocity = front.normalized * 100;
+            bullet.GetComponent<ExplosiveBullet>().SetVelocity(front.normalized * 100);
             bullet.GetComponent<ExplosiveBullet>().armingDistance = 0;
             bullet.GetComponent<ExplosiveBullet>().maxDistance = 5;
             bullet.GetComponent<ProjectileBase>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
