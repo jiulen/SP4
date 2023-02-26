@@ -15,7 +15,7 @@ public class GrappleHook : NetworkBehaviour
     private FPS playerScript;
     private Rigidbody playerRigidBody;
 
-    private bool hookActive = false;
+    private NetworkVariable<bool> hookActive = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     public float grappleDuration = 5;
     public float grapplePullForce = 5;
@@ -47,11 +47,6 @@ public class GrappleHook : NetworkBehaviour
         playerScript = player.GetComponent<FPS>();
         playerRigidBody = player.GetComponent<Rigidbody>();
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
-
-        //GameObject test = transform.parent.gameObject;
-        //GameObject test2 = test.transform.parent.gameObject;
-        //GameObject test3 = test2.transform.Find("Player Entity").gameObject;
-        //Debug.Log("Hello everynyan" + test3.name);
    
     }
 
@@ -63,7 +58,7 @@ public class GrappleHook : NetworkBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("Scene Loaded : " + scene.name);
-        if (scene.name == "RandallTestingScene")
+        if (scene.name == "RandallTestingScene" || scene.name == "Parallel_Pillars")
         {
             camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         }
@@ -76,85 +71,84 @@ public class GrappleHook : NetworkBehaviour
 
     // Update is called once per frame
     void Update()
-    {    
-
-        // Deactiveate grapple after a certain period of time
-        grappleElapsed += Time.deltaTime;
-        if (grappleElapsed >= grappleDuration)
+    {        
+        if (IsOwner)
         {
-            SetHookActive(false);
-        }
-
-        // Deactiveate grapple after player starts moving away from it
-        Vector3 playerToHook = (hook.transform.position - player.transform.position).normalized;
-        float dotProduct = Vector3.Dot(player.GetComponent<Rigidbody>().velocity.normalized, playerToHook);
-
-        
-        // Player is moving towards
-        if(dotProduct > 0)
-        {
-            grappleMaintainStarted = true;
-        }
-        // Player is moving towards, plus some leeway to allow the player to pivot around the hook point
-        else if (dotProduct > -0.3) 
-        {
-            grappleMaintainElapsed = 0;
-        }
-        // Only deactivate the hook when the player is going away from the hookPosition IF the player had already been moving towards the hook since the beginning
-        else if (grappleMaintainStarted)
-        {
-            grappleMaintainElapsed += Time.deltaTime;
-            if (grappleMaintainElapsed > grappleMaintainDuration)
+            // Deactiveate grapple after a certain period of time
+            grappleElapsed += Time.deltaTime;
+            if (grappleElapsed >= grappleDuration)
             {
                 SetHookActive(false);
             }
-        }
-     
 
-        // Deactivate hook once player is close to it
-        if ((hook.transform.position - player.transform.position).magnitude <= 1)
-        {
-            SetHookActive(false);
-        }
+            // Deactiveate grapple after player starts moving away from it
+            Vector3 playerToHook = (hook.transform.position - player.transform.position).normalized;
+            float dotProduct = Vector3.Dot(player.GetComponent<Rigidbody>().velocity.normalized, playerToHook);
 
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            if (hookActive)
+            // Player is moving towards
+            if (dotProduct > 0)
             {
-                SetHookActive(false);
+                grappleMaintainStarted = true;
             }
-            else if(playerScript.staminaAmount >= playerScript.staminaGrappleCost)
+            // Player is moving towards, plus some leeway to allow the player to pivot around the hook point
+            else if (dotProduct > -0.3)
             {
-                AudioGrappleShoot.Play();
-                AudioGrappling.Play();
-
-                //Ray laserRayCast = new Ray(body.transform.position, 5 * (hook.transform.position - body.transform.position));
-                Ray laserRayCast = new Ray(camera.transform.position,camera.transform.forward);
-                Debug.DrawRay(camera.transform.position, 50 * (camera.transform.forward), Color.blue);
-                if (Physics.Raycast(laserRayCast, out RaycastHit hit, 100))
+                grappleMaintainElapsed = 0;
+            }
+            // Only deactivate the hook when the player is going away from the hookPosition IF the player had already been moving towards the hook since the beginning
+            else if (grappleMaintainStarted)
+            {
+                grappleMaintainElapsed += Time.deltaTime;
+                if (grappleMaintainElapsed > grappleMaintainDuration)
                 {
-                    Debug.LogWarning(hit.rigidbody);
-                    hook.transform.SetParent(hit.transform, true);
-                    hook.transform.position = hit.point;
+                    SetHookActive(false);
+                }
+            }
 
-                    playerScript.staminaAmount -= playerScript.staminaGrappleCost;
-                    Debug.DrawRay(grappleBody.transform.position, 5 * (hook.transform.position - grappleBody.transform.position), Color.red);
-                    hook.transform.position = hit.point;
-                    SetHookActive(true);
-                    grappleElapsed = 0;
+            // Deactivate hook once player is close to it
+            if ((hook.transform.position - player.transform.position).magnitude <= 1)
+            {
+                SetHookActive(false);
+            }
 
-                    if (hit.transform.tag == "Player")
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                if (hookActive.Value)
+                {
+                    SetHookActive(false);
+                }
+                else if (playerScript.staminaAmount >= playerScript.staminaGrappleCost)
+                {
+                    AudioGrappleShoot.Play();
+                    AudioGrappling.Play();
+
+                    //Ray laserRayCast = new Ray(body.transform.position, 5 * (hook.transform.position - body.transform.position));
+                    Ray laserRayCast = new Ray(camera.transform.position, camera.transform.forward);
+                    Debug.DrawRay(camera.transform.position, 50 * (camera.transform.forward), Color.blue);
+                    if (Physics.Raycast(laserRayCast, out RaycastHit hit, 100))
                     {
-                        grappleType = GrappleType.PULLGRAPPLED;
-                        grappledRigidBody = hit.rigidbody;
+                        hook.transform.SetParent(hit.transform, true);
+                        hook.transform.position = hit.point;
+
+                        playerScript.staminaAmount -= playerScript.staminaGrappleCost;
+                        Debug.DrawRay(grappleBody.transform.position, 5 * (hook.transform.position - grappleBody.transform.position), Color.red);
+                        hook.transform.position = hit.point;
+                        SetHookActive(true);
+                        grappleElapsed = 0;
+
+                        if (hit.transform.tag == "Player")
+                        {
+                            grappleType = GrappleType.PULLGRAPPLED;
+                            grappledRigidBody = hit.rigidbody;
+
+                        }
+                        else
+                        {
+                            grappleType = GrappleType.PULLUSER;
+
+                        }
 
                     }
-                    else
-                    {
-                        grappleType = GrappleType.PULLUSER;
-                        
-                    }
-
                 }
             }
         }
@@ -162,16 +156,14 @@ public class GrappleHook : NetworkBehaviour
 
     void LateUpdate()
     {
-        if (hookActive)
+        if (hookActive.Value)
         {
-            SetHookLineObjActiveServerRpc(true, true);
+            if (IsServer)
+            {
+                SetHookLineObjActiveServerRpc(true, true);
 
-            //player.GetComponent<Rigidbody>().velocity = ((hook.transform.position - player.transform.position).normalized * 30 );
-
-            LineRenderer grappleLine = line.GetComponent<LineRenderer>();
-            grappleLine.positionCount = 2;
-            grappleLine.SetPosition(0, grappleBody.transform.position);
-            grappleLine.SetPosition(1, hook.transform.position);
+                SetHookLineRendererServerRpc(grappleBody.transform.position, hook.transform.position);
+            }
 
             Vector3 playerToHookDirection = (hook.transform.position - player.transform.position).normalized;
             if (grappleType == GrappleType.PULLUSER)
@@ -190,13 +182,17 @@ public class GrappleHook : NetworkBehaviour
         }
         else
         {
-            SetHookLineObjActiveServerRpc(false, false);
+            if (IsServer)
+            {
+                SetHookLineObjActiveServerRpc(false, false);
+            }
         }
     }
 
     private void SetHookActive(bool active)
     {
-        hookActive = active;
+        hookActive.Value = active;
+
         player.GetComponent<FPS>().isGrapple = active;  
         if(active == true)
         {
@@ -221,10 +217,25 @@ public class GrappleHook : NetworkBehaviour
     {
         SetHookLineObjActiveClientRpc(hookActive, lineActive);
     }
+
     [ClientRpc]
     private void SetHookLineObjActiveClientRpc(bool hookActive, bool lineActive)
     {
         hook.SetActive(hookActive);
         line.SetActive(lineActive);
+    }
+
+    [ServerRpc (RequireOwnership = false)]
+    private void SetHookLineRendererServerRpc(Vector3 grappleBodyPos, Vector3 hookPos)
+    {
+        SetHookLineRendererClientRpc(grappleBodyPos, hookPos);
+    }
+    [ClientRpc]
+    private void SetHookLineRendererClientRpc(Vector3 grappleBodyPos, Vector3 hookPos)
+    {
+        LineRenderer grappleLine = line.GetComponent<LineRenderer>();
+        grappleLine.positionCount = 2;
+        grappleLine.SetPosition(0, grappleBodyPos);
+        grappleLine.SetPosition(1, hookPos);
     }
 }
