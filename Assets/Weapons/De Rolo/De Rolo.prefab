@@ -1609,7 +1609,7 @@ MonoBehaviour:
   camera: {fileID: 0}
   hookActive: 0
   grappleDuration: 5
-  grapplePullForce: 10
+  grapplePullForce: 5
   grappleMaintainDuration: 0.2
   AudioGrappleShoot: {fileID: 4222496128453575405}
   AudioGrappling: {fileID: 5433772583252860651}

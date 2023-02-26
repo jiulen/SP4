@@ -14,6 +14,9 @@ public class Sword : WeaponBase
     [SerializeField] MeshCollider swordModelCollider;
 
     private float KnifeThrowCooldown = 2.0f, elaspe = 0;
+
+    public AudioSource AudioThrow;
+
     public Animator GetAnimator()
     {
         return animator;
@@ -53,6 +56,7 @@ public class Sword : WeaponBase
 
                     Transform newTransform = camera.transform;
                     Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
+                    AudioThrow.Play();
 
                     ThrowKnifeServerRpc(front);
                     weaponModel.SetActive(false);
@@ -149,7 +153,7 @@ public class Sword : WeaponBase
 
     [ServerRpc(RequireOwnership = false)]
     private void ThrowKnifeServerRpc(Vector3 front)
-    {        
+    {
         GameObject go = Instantiate(KnifeProjectile, bulletEmitter.transform);
         go.GetComponent<NetworkObject>().Spawn();
         go.GetComponent<NetworkObject>().TrySetParent(projectileManager);

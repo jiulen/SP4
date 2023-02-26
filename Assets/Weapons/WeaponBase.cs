@@ -70,6 +70,7 @@ public class WeaponBase : NetworkBehaviour
     // Update is called once per frame
     public void Update()
     {
+      
         if (IsOwner)
         {
             for (int i = 0; i != elapsedSinceLastShot.Length; i++)

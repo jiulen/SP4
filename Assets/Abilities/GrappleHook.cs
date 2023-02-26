@@ -41,7 +41,7 @@ public class GrappleHook : MonoBehaviour
 
     void Start()
     {
-        player = transform.parent./*parent.*/parent.gameObject; // this > left hand > equipped > player
+        player = transform.parent.parent.parent.gameObject; // this > left hand > equipped > player
         playerScript = player.GetComponent<FPS>();
         playerRigidBody = player.GetComponent<Rigidbody>();
         camera = player.GetComponent<FPS>().camera;
