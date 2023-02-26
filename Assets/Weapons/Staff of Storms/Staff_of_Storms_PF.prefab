@@ -466,7 +466,7 @@ MonoBehaviour:
   fireRate:
   - 1
   - 1
-  damage: 0100000001000000
+  damage: 0f00000001000000
   bulletsPerShot: 0100000001000000
   inaccuracy:
   - 0
