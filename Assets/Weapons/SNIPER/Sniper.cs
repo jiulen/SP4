@@ -17,7 +17,7 @@ public class Sniper : WeaponBase
     private bool animationdone = true;
     private float DmgReduction;
     public float stablizeElasped = 0;
-    float StablizeDuration = 10f, StablizeProgress, AnimationRate = 0.5f;
+    float StablizeDuration = 10f, StablizeProgress, AnimationRate = 0.1f;
     private bool PlayOnce = false;
     private Text DmgReductionTxt;
     private Vector3 ScopeDesiredPosition;

@@ -5,26 +5,32 @@ using UnityEngine.UI;
 
 public class HitMarker : MonoBehaviour
 {
-    Image[] hitMarkerImage;
-    RectTransform[] hitMarkerTransform;
+
+    public List<Image> hitMarkerImage = new List<Image>();
+    public List<RectTransform> hitMarkerTransform = new List<RectTransform>();
 
     float sizeCurrent = 0;
     float sizeMin = 25;
-    float sizeMax = 125;
-    float sizeIteration = 25;
+    float sizeMax = 45;
+    float sizeIteration = 5;
     float opacityCurrent = 0;
     float opacityMax = 1;
     public float opacityRate = 2;
 
+    public AudioSource AudioNormalHit;
+    public AudioSource AudioCriticalHit;
+
+    private Color currentColor = new Color(1,1,1,0);
+
     void Start()
     {
-        Debug.LogError(transform.GetChild(0));
+        Debug.LogError(transform.GetChild(0).GetChild(0));  
 
         for (int i = 0; i != 4; i++)
         {
             Debug.LogError(transform.GetChild(i));
-            hitMarkerImage[i] = this.transform.GetChild(i).GetChild(0).GetComponent<Image>();
-            hitMarkerTransform[i] = hitMarkerImage[i].GetComponent<RectTransform>();
+            hitMarkerImage.Add(this.transform.GetChild(i).GetChild(0).GetComponent<Image>());
+            hitMarkerTransform.Add(hitMarkerImage[i].GetComponent<RectTransform>());
 
         }
 
@@ -39,7 +45,7 @@ public class HitMarker : MonoBehaviour
 
         if (opacityCurrent < 0)
         {
-            sizeCurrent = 0;
+            sizeCurrent = sizeMin;
             opacityCurrent = 0;
         }
 
@@ -48,19 +54,37 @@ public class HitMarker : MonoBehaviour
 
         for (int i = 0; i != 4; i++)
         {
-            hitMarkerImage[i].color = new Color(1, 1, 1, opacityCurrent);
+            currentColor.a = opacityCurrent;
+            hitMarkerImage[i].color = currentColor;
             hitMarkerTransform[i].sizeDelta = new Vector2(25, sizeCurrent);
         }
       
         if (Input.GetKeyDown(KeyCode.L))
-            ActivateHitMarker();
+            ActivateHitMarker(false);
+
+        if (Input.GetKeyDown(KeyCode.K))
+            ActivateHitMarker(true);
+
     }
 
-    public void ActivateHitMarker()
+    public void ActivateHitMarker(bool isCritical)
     {
         opacityCurrent = opacityMax;
-        sizeCurrent += sizeIteration;
-        if (sizeCurrent > sizeMax)
+        if (isCritical)
+        {
             sizeCurrent = sizeMax;
+            currentColor = new Color(1, 0, 0, 1);
+            AudioCriticalHit.Play();
+        }
+        else
+        {
+            currentColor = new Color(1, 1, 1, 1);
+
+            sizeCurrent += sizeIteration;
+            if (sizeCurrent > sizeMax)
+                sizeCurrent = sizeMax;
+
+            AudioNormalHit.Play();
+        }
     }
 }
