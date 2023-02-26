@@ -1,5 +1,6 @@
 using Unity.Burst.CompilerServices;
 using UnityEngine;
+using Unity.Netcode;
 
 public class Sword : WeaponBase
 {
@@ -30,38 +31,42 @@ public class Sword : WeaponBase
     {
         base.Update();
 
-        if (animator != null)
+        if (IsOwner)
         {
-            minStrength = animator.GetCurrentAnimatorStateInfo(0).length;
-            currentStrength = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
-
-            if ((AnimatorIsPlaying("Throw") && animator.GetBool("TrThrow")) || (AnimatorIsPlaying("Slash") && animator.GetBool("TrSlice")))
+            if (animator != null)
             {
-                animator.SetBool("TrHold", false);
-                animator.SetBool("TrThrow", false);
-                animator.SetBool("TrSlice", false);
+                minStrength = animator.GetCurrentAnimatorStateInfo(0).length;
+                currentStrength = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+
+                if ((AnimatorIsPlaying("Throw") && animator.GetBool("TrThrow")) || (AnimatorIsPlaying("Slash") && animator.GetBool("TrSlice")))
+                {
+                    animator.SetBool("TrHold", false);
+                    animator.SetBool("TrThrow", false);
+                    animator.SetBool("TrSlice", false);
+                }
+
+                if ((AnimatorIsPlaying("Throw") && !animator.GetBool("TrThrow")))
+                {
+                    //if (currentStrength > minStrength)
+                    ThrowKnifeServerRpc();
+                }
+
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
+                {
+                    transform.Find("Gun/sword").localPosition = storeOGPosition;
+                    transform.Find("Gun/sword").localRotation = storeOGRotation;
+                }
             }
 
-            if ((AnimatorIsPlaying("Throw") && !animator.GetBool("TrThrow"))) {
-                //if (currentStrength > minStrength)
-                    ThrowKnife();
-            }
-
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
+            if (!weaponModel.activeSelf)
             {
-                transform.Find("Gun/sword").localPosition = storeOGPosition;
-                transform.Find("Gun/sword").localRotation = storeOGRotation;
+                if (elaspe >= KnifeThrowCooldown)
+                {
+                    SetKnifeModelActiveServerRpc(true);
+                    elaspe = 0;
+                }
+                elaspe += Time.deltaTime;
             }
-        }
-
-        if (!weaponModel.activeSelf)
-        {
-            if (elaspe >= KnifeThrowCooldown)
-            {
-                weaponModel.SetActive(true);
-                elaspe = 0;
-            }
-            elaspe += Time.deltaTime;
         }
     }
 
@@ -100,13 +105,13 @@ public class Sword : WeaponBase
                     {
                         if (other.name == "Head")
                         {
-                            particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
-                            player.TakeDamage(damage * 2, dir, owner, this.gameObject);
+                            SpawnHitParticleServerRpc(hit.point, hit.normal, 2);
+                            player.TakeDamage(damage * 2, dir, owner, gameObject);
                         }
                         else
                         {
-                            particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
-                            player.TakeDamage(damage, dir, owner, this.gameObject);
+                            SpawnHitParticleServerRpc(hit.point, hit.normal, 3);
+                            player.TakeDamage(damage, dir, owner, gameObject);
                         }
                     }
                 }
@@ -124,7 +129,7 @@ public class Sword : WeaponBase
                 }
             }
             if (Physics.Raycast(camera.transform.position, camera.transform.forward, out RaycastHit hit))
-                particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hit.point, hit.normal);
+                SpawnHitParticleServerRpc(hit.point, hit.normal, 1);
         }
     }
 
@@ -135,19 +140,55 @@ public class Sword : WeaponBase
         animator.SetBool("TrSlice", false);
     }
 
-
-    void ThrowKnife()
+    [ServerRpc(RequireOwnership = false)]
+    private void ThrowKnifeServerRpc()
     {
         Transform newTransform = camera.transform;
         Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
         GameObject go = Instantiate(KnifeProjectile, bulletEmitter.transform);
-        go.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
-        go.GetComponent<ProjectileBase>().SetObjectReferences(owner, particleManager);
+        go.GetComponent<NetworkObject>().Spawn();
+        go.GetComponent<NetworkObject>().TrySetParent(projectileManager);
+        go.GetComponent<ProjectileBase>().SetWeaponUsed(gameObject);
         go.GetComponent<SwordProjectile>().damage = damage[0];
+        go.GetComponent<ProjectileBase>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
+                                                                       particleManager.GetComponent<NetworkObject>().NetworkObjectId);
         go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[0];
-        go.transform.SetParent(projectileManager.transform);
         currentStrength = 0;
-        weaponModel.SetActive(false);
-        //fireAudio.Play();
+        SetKnifeModelActiveClientRpc(false);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetKnifeModelActiveServerRpc(bool active)
+    {
+        SetKnifeModelActiveClientRpc(active);
+    }
+
+    [ClientRpc]
+    private void SetKnifeModelActiveClientRpc(bool active)
+    {
+        weaponModel.SetActive(active);
+    }
+
+    [ServerRpc]
+    private void SpawnHitParticleServerRpc(Vector3 hitPoint, Vector3 hitNormal, int hitType)
+    {
+        SpawnHitParticleClientRpc(hitPoint, hitNormal, hitType);
+    }
+
+    [ClientRpc]
+    private void SpawnHitParticleClientRpc(Vector3 hitPoint, Vector3 hitNormal, int hitType)
+    {
+        switch (hitType)
+        {
+            case 1:
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hitPoint, hitNormal);
+                break;
+            case 2:
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hitPoint, hitNormal, 15);
+                break;
+            case 3:
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hitPoint, hitNormal);
+                break;
+        }
     }
 }

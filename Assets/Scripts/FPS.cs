@@ -201,7 +201,7 @@ public class FPS : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.P) && IsOwner)
         {
-            AddWeaponServerRpc("Grenade");
+            AddWeaponServerRpc("Sword");
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha7) && IsOwner)
@@ -616,7 +616,7 @@ public class FPS : NetworkBehaviour
                 weapon = Instantiate(weaponPrefabList[8], rightHand.transform.position, rightHand.transform.rotation);
                 break;
             case "Sword":
-                weapon = Instantiate(weaponPrefabList[9]);
+                weapon = Instantiate(weaponPrefabList[9], rightHand.transform.position, rightHand.transform.rotation);
                 break;
         }
 

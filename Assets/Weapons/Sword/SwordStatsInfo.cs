@@ -15,7 +15,10 @@ public class SwordStatsInfo : MonoBehaviour
     // Start is called before the first frame update
     private void OnTriggerEnter(Collider other)
     {
-        if (sword.GetAnimator().GetBool("TrSlice"))
-            sword.OnChildTriggerEnter(other, damage);
+        if (sword.IsOwner)
+        {
+            if (sword.GetAnimator().GetBool("TrSlice"))
+                sword.OnChildTriggerEnter(other, damage);
+        }
     }
 }

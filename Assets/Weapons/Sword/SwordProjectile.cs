@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 public class SwordProjectile : ProjectileBase
 {
@@ -30,26 +31,28 @@ public class SwordProjectile : ProjectileBase
             {
                 EntityBase player = other.gameObject.GetComponent<PlayerHitBox>().owner.GetComponent<EntityBase>();
                 Vector3 dir = player.transform.position - transform.position;
-
+                Debug.Log("Creator : " + creator.GetComponent<NetworkObject>().OwnerClientId);
+                Debug.Log("Tag : " + other.tag);
+                Debug.Log("Name : " + other.name);
                 if (player.gameObject != creator)
                 {
                     if (other.name == "Head")
                     {
-                        particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 15);
-                        player.TakeDamage(damage * 2, -dir, creator, weaponused);
+                        SpawnHitParticleServerRpc(hit.point, hit.normal, 2);
+                        player.TakeDamage(damage * 2, dir, creator, weaponused);
 
                     }
                     else
                     {
-                        particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
-                        player.TakeDamage(damage, -dir, creator, weaponused);
+                        SpawnHitParticleServerRpc(hit.point, hit.normal, 3);
+                        player.TakeDamage(damage, dir, creator, weaponused);
 
                     }
                 }
             }
             else
             {
-                particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hit.point, hit.normal);
+                SpawnHitParticleServerRpc(hit.point, hit.normal, 1);
                 EntityBase entity = other.gameObject.GetComponent<EntityBase>();
 
                 if (entity != null)
@@ -62,6 +65,28 @@ public class SwordProjectile : ProjectileBase
         }
 
         Destroy(gameObject);
+    }
 
+    [ServerRpc]
+    private void SpawnHitParticleServerRpc(Vector3 hitPoint, Vector3 hitNormal, int hitType)
+    {
+        SpawnHitParticleClientRpc(hitPoint, hitNormal, hitType);
+    }
+
+    [ClientRpc]
+    private void SpawnHitParticleClientRpc(Vector3 hitPoint, Vector3 hitNormal, int hitType)
+    {
+        switch (hitType)
+        {
+            case 1:
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hitPoint, hitNormal);
+                break;
+            case 2:
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hitPoint, hitNormal, 15);
+                break;
+            case 3:
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hitPoint, hitNormal);
+                break;
+        }
     }
 }
