@@ -7,7 +7,7 @@ public class GrenadeHold : WeaponBase
 {
     private float Cooldown = 5f, currentCooldownElaspe = 0f;
     public float ThrowForce;
-    [SerializeField] Transform grenade;
+    [SerializeField] GameObject grenade;
     [SerializeField] GameObject grenadePrefab;
 
     public AudioSource AudioThrow;
@@ -31,16 +31,15 @@ public class GrenadeHold : WeaponBase
     [ServerRpc(RequireOwnership = false)]
     void SpawnGrenadeWeaponHoldServerRpc()
     {
-        GameObject go = Instantiate(grenadePrefab, new Vector3(0, 0, 0), Quaternion.identity);
-        go.GetComponent<GrenadeProjectile>().damage = damage[0];
-        go.GetComponent<MeshCollider>().enabled = false;
-        go.GetComponent<NetworkObject>().Spawn();
-        go.GetComponent<NetworkObject>().TrySetParent(this.transform);
-        go.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
-        go.GetComponent<GrenadeProjectile>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
+        grenade = Instantiate(grenadePrefab, new Vector3(0,0,0), Quaternion.identity);
+        grenade.GetComponent<GrenadeProjectile>().SetCollider(false);
+        grenade.GetComponent<GrenadeProjectile>().damage = damage[0];
+        grenade.GetComponent<NetworkObject>().Spawn();
+        grenade.GetComponent<NetworkObject>().TrySetParent(gameObject);
+        grenade.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
+        grenade.GetComponent<GrenadeProjectile>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
                                                                                particleManager.GetComponent<NetworkObject>().NetworkObjectId);
-        go.transform.localPosition = Vector3.zero;
-        grenade = go.transform;
+        grenade.transform.localPosition = Vector3.zero;
     }
 
     // Update is called once per frame
@@ -68,19 +67,27 @@ public class GrenadeHold : WeaponBase
         {
             AudioThrow.Play();
             ThrowServerRpc();
-            grenade.GetComponent<GrenadeProjectile>().state = GrenadeProjectile.GrenadeState.EXPLODE;
+            SetExplosionstateServerRpc();
             grenadestate = GrenadeWeaponState.THROW;
         }
     }
+    [ServerRpc(RequireOwnership = false)]
+    private void SetExplosionstateServerRpc()
+    {
+        if (grenadestate == GrenadeWeaponState.NONE)
+        {
+            grenade.GetComponent<GrenadeProjectile>().state = GrenadeProjectile.GrenadeState.EXPLODE;
 
+        }
+    }
 
     [ServerRpc(RequireOwnership = false)]
     void ThrowServerRpc()
     {
         Rigidbody rb = grenade.GetComponent<Rigidbody>();
-        grenade.GetComponent<MeshCollider>().enabled = true;
         rb.isKinematic = false;
         rb.useGravity = true;
+        grenade.GetComponent<GrenadeProjectile>().SetCollider(true);
         grenade.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
         grenade.GetComponent<GrenadeProjectile>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
                                                                                particleManager.GetComponent<NetworkObject>().NetworkObjectId);

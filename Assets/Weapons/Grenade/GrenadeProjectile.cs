@@ -8,6 +8,24 @@ public class GrenadeProjectile : ProjectileBase
     private Explosion explosion;
     private Rigidbody rb;
 
+
+    [ClientRpc]
+    private void SetColliderClientRpc(bool collider)
+    {
+        GetComponent<MeshCollider>().enabled = collider;
+    }
+
+    [ServerRpc]
+    private void SetColliderServerRpc(bool collider)
+    {
+        SetColliderClientRpc(collider);
+    }
+
+    public void SetCollider(bool collider)
+    {
+        SetColliderServerRpc(collider);
+    }
+
     public enum GrenadeState
     {
         NONE,

@@ -188,7 +188,6 @@ MonoBehaviour:
   duration: 1
   bloodEffect: {fileID: 0}
   sparkEffect: {fileID: 0}
-  grenadeWeapon: {fileID: 4627015878036272592, guid: 4a22ee1dcda35d940a3453feb0d171a3, type: 3}
   state: 0
 --- !u!82 &2880290388505636715
 AudioSource:
