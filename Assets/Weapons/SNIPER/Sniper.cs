@@ -71,30 +71,35 @@ public class Sniper : WeaponBase
     {
         base.Update();
 
-        if ((AnimatorIsPlaying("SniperRecoil") && animator.GetBool("isActive")))
+        if (IsOwner)
         {
-            animator.SetBool("isActive", false);
+            if ((AnimatorIsPlaying("SniperRecoil") && animator.GetBool("isActive")))
+            {
+                animator.SetBool("isActive", false);
+            }
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
+            {
+                transform.Find("Gun/AWP").localPosition = storeOGPosition;
+                transform.Find("Gun/AWP").localRotation = storeOGRotation;
+            }
+            transform.localPosition = Vector3.SmoothDamp(transform.localPosition, desiredPositionAnimation, ref velocity, AnimationRate);
+
+            if ((transform.localPosition - ScopeDesiredPosition).magnitude <= 0.01f)
+                animationdone = true;
+            else
+                animationdone = false;
+
+            UpdateStablize();
         }
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
-        {
-            transform.Find("Gun/AWP").localPosition = storeOGPosition;
-            transform.Find("Gun/AWP").localRotation = storeOGRotation;
-        }
-        transform.localPosition = Vector3.SmoothDamp(transform.localPosition, desiredPositionAnimation, ref velocity, AnimationRate);
-
-        if ((transform.localPosition - ScopeDesiredPosition).magnitude <= 0.01f)
-            animationdone = true;
-        else
-            animationdone = false;
-
-        UpdateStablize();
-
     }
 
     private void LateUpdate()
     {
-        if (Scoped.enabled)
-            camera.transform.position += camera.transform.up * (Mathf.Sin(stablizeElasped * 2) / 2) * 0.4f + camera.transform.right * Mathf.Cos(stablizeElasped) * 0.4f;
+        if (IsOwner)
+        {
+            if (Scoped.enabled)
+                camera.transform.position += camera.transform.up * (Mathf.Sin(stablizeElasped * 2) / 2) * 0.4f + camera.transform.right * Mathf.Cos(stablizeElasped) * 0.4f;
+        }
     }
 
     protected override void Fire2Up()

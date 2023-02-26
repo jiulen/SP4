@@ -40,20 +40,23 @@ public class RPG : WeaponBase
     {
         base.Update();
 
-        if ((AnimatorIsPlaying("RPGRecoil") && animator.GetBool("isActive")))
+        if (IsOwner)
         {
-            RocketMuzzle.SetActive(true);
-            animator.SetBool("isActive", false);
-        }
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
-        {
-            transform.Find("Gun/RPG7").localPosition = storeOGPosition;
-            transform.Find("Gun/RPG7").localRotation = storeOGRotation;
-        }
+            if ((AnimatorIsPlaying("RPGRecoil") && animator.GetBool("isActive")))
+            {
+                RocketMuzzle.SetActive(true);
+                animator.SetBool("isActive", false);
+            }
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
+            {
+                transform.Find("Gun/RPG7").localPosition = storeOGPosition;
+                transform.Find("Gun/RPG7").localRotation = storeOGRotation;
+            }
 
-        transform.localPosition = Vector3.SmoothDamp(transform.localPosition, desiredPositionAnimation, ref velocity, AnimationRate);
+            transform.localPosition = Vector3.SmoothDamp(transform.localPosition, desiredPositionAnimation, ref velocity, AnimationRate);
 
-        UpdateSlider();
+            UpdateSlider();
+        }        
     }
 
     protected override void Fire2Up()
