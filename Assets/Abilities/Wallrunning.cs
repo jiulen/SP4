@@ -7,13 +7,13 @@ public class Wallrunning : MonoBehaviour
     LayerMask terrain;
     float wallRunForce = 200;
     float wallCheckDist = 2.0f;
-    float wallRunSpeed = 15.0f;
+    float wallRunSpeed = 7.5f;
     RaycastHit leftWallHit, rightWallHit;
     bool wallLeft = false, wallRight = false;
     bool wallRunningLeft = false; //check which direction wallrunning on - doesnt matter when not wallrunning
 
     //Wall jump
-    float wallJumpUpForce = 5, wallJumpSideForce = 15;
+    float wallJumpUpForce = 5, wallJumpSideForce = 10;
     float minJumpHeight = 1.5f;
 
     //Exit wall

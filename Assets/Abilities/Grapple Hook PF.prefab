@@ -130,7 +130,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camera: {fileID: 0}
   grappleDuration: 5
-  grapplePullForce: 10
+  grapplePullForce: 5
   grappleMaintainDuration: 0.2
   AudioGrappleShoot: {fileID: 4128407197866467205}
   AudioGrappling: {fileID: 3983178469221111233}

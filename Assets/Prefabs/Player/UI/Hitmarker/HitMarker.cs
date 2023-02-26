@@ -24,11 +24,9 @@ public class HitMarker : MonoBehaviour
 
     void Start()
     {
-        Debug.LogError(transform.GetChild(0).GetChild(0));  
 
         for (int i = 0; i != 4; i++)
         {
-            Debug.LogError(transform.GetChild(i));
             hitMarkerImage.Add(this.transform.GetChild(i).GetChild(0).GetComponent<Image>());
             hitMarkerTransform.Add(hitMarkerImage[i].GetComponent<RectTransform>());
 
@@ -41,7 +39,6 @@ public class HitMarker : MonoBehaviour
     {
 
         opacityCurrent -= opacityRate * Time.deltaTime;
-        Debug.Log(opacityCurrent);
 
         if (opacityCurrent < 0)
         {
