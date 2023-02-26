@@ -33,10 +33,13 @@ public class Rocket : ProjectileBase
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision != null && collision.gameObject != creator)
+        if (IsServer)
         {
-            RocketExplode();
-            Destroy(this.gameObject);
+            if (collision != null && collision.gameObject != creator)
+            {
+                RocketExplode();
+                Destroy(this.gameObject);
+            }
         }
     }
 

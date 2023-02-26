@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
 using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
 // Player script for UI, playerstats
 public class PlayerEntity : EntityBase
@@ -41,7 +42,6 @@ public class PlayerEntity : EntityBase
     {
         FPSScript = this.GetComponent<FPS>();
         base.Start();
-        //InitialiseUI();
         uiKillFeedCanvas = GameObject.Find("Canvas/KillerFeedUI");
     }
 
@@ -71,21 +71,33 @@ public class PlayerEntity : EntityBase
         // I am too lazy to make sure that the start functions are called in the right order so I just grab the camera from the top of the hierarchy
         dashEffectCanvas.GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         dashEffectCanvas.GetComponent<Canvas>().planeDistance = 50f;
-
-
-        Transform rightHand = this.transform.Find("Right Hand");
-        for (int i = 0; i != rightHand.childCount; i++)
-        {
-            equippedWeaponList[i] = rightHand.GetChild(i).gameObject;
-        }
-        activeWeapon = equippedWeaponList[0];
-
     }
 
     void Start()
     {
         InitialiseUI();
         currentrespawnelaspe = respawncountdown;
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("Scene Loaded : " + scene.name);
+        if (scene.name == "RandallTestingScene")
+        {
+            uiKillFeedCanvas = GameObject.Find("Canvas/KillerFeedUI");
+            dashEffectCanvas.GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+            dashEffectCanvas.GetComponent<Canvas>().planeDistance = 50f;
+        }
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void OnPointerEnterDelegate(BaseEventData eventData, Button items, int idx)
@@ -233,10 +245,10 @@ public class PlayerEntity : EntityBase
     {
         TakeDmgServerRpc(hp, dir, source.gameObject.GetComponent<NetworkObject>().NetworkObjectId);
 
-        //if (Health <= 0)
-        //{
-        SpawnKillFeedServerRpc(source.gameObject.GetComponent<NetworkObject>().NetworkObjectId, this.gameObject.GetComponent<NetworkObject>().NetworkObjectId, weaponUsed.gameObject.GetComponent<NetworkObject>().NetworkObjectId);
-        //}
+        if (Health <= 0)
+        {
+            SpawnKillFeedServerRpc(source.gameObject.GetComponent<NetworkObject>().NetworkObjectId, this.gameObject.GetComponent<NetworkObject>().NetworkObjectId, weaponUsed.gameObject.GetComponent<NetworkObject>().NetworkObjectId);
+        }
     }
 
 
