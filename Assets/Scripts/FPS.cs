@@ -168,9 +168,6 @@ public class FPS : NetworkBehaviour
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         body.GetComponent<MeshRenderer>().enabled = false;
         visorMR.enabled = false;
-
-        //Make equipped
-        AddEquippedServerRpc();
     }
 
     private void OnEnable()
@@ -198,6 +195,9 @@ public class FPS : NetworkBehaviour
     void Update()
     {
         //Debug multiplayer
+
+        if (Input.GetKeyDown(KeyCode.O) && IsOwner)
+            AddEquippedServerRpc();
 
         if (Input.GetKeyDown(KeyCode.P) && IsOwner)
         {
