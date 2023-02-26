@@ -21,18 +21,12 @@ public class CharSelectUI : MonoBehaviour
     [SerializeField] private GameObject Chars;
     [SerializeField] private GameObject Primaries;
     [SerializeField] private GameObject Secondaries;
-    //[SerializeField] private Button WintonBtn;
 
     [SerializeField] private Button LockBtn;
 
-    [SerializeField] private CharacterDatabase characterDatabase;
-    [SerializeField] private Transform charactersHolder;
-    //[SerializeField] private CharacterSelectButton selectButtonPrefab;
     [SerializeField] private Transform container;
     [SerializeField] private Transform playerCard;
-    [SerializeField] private GameObject characterInfoPanel;
-    [SerializeField] private TMP_Text characterNameText;
-    [SerializeField] private Transform introSpawnPoint;
+
 
 
 
@@ -43,8 +37,6 @@ public class CharSelectUI : MonoBehaviour
 
         playerCard.gameObject.SetActive(false);
 
-        //UpdateLobby(LobbyManager.Instance.GetJoinedLobby());
-
         CharBtn.onClick.AddListener(() =>
         {
             loadoutUI.SetActive(false);
@@ -52,11 +44,13 @@ public class CharSelectUI : MonoBehaviour
         });
         PrimaryBtn.onClick.AddListener(() =>
         {
-            //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Angler);
+            loadoutUI.SetActive(false);
+            Primaries.SetActive(true);
         });
         SecondaryBtn.onClick.AddListener(() =>
         {
-            //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Winton);
+            loadoutUI.SetActive(false);
+            Secondaries.SetActive(true);
         });
 
         LockBtn.onClick.AddListener(() => {
@@ -96,7 +90,6 @@ public class CharSelectUI : MonoBehaviour
     private void UpdateLobby(Lobby lobby)
     {
         ClearLobby();
-
         foreach (Player player in lobby.Players)
         {
             Transform playerSingleTransform = Instantiate(playerCard, container);
@@ -104,11 +97,10 @@ public class CharSelectUI : MonoBehaviour
             PlayerCard lobbyPlayerSingleUI = playerSingleTransform.GetComponent<PlayerCard>();
             lobbyPlayerSingleUI.UpdatePlayer(player);
         }
-        
         Show();
     }
 
-        private void ClearLobby() {
+    private void ClearLobby() {
         foreach (Transform child in container) {
             if (child == playerCard) continue;
             Destroy(child.gameObject);

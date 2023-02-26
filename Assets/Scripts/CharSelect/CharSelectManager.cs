@@ -24,14 +24,6 @@ public class CharSelectManager : NetworkBehaviour
         public Lobby lobby;
     }
 
-    public enum CharSelect
-    {
-        Rhino,
-        Angler,
-        Winton
-    }
-
-
     public static class EnumUtils
     {
         public static TEnum Parse<TEnum>(String value) where TEnum : struct

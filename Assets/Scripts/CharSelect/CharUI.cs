@@ -20,6 +20,7 @@ public class CharUI : MonoBehaviour
     [SerializeField] private Button changeWintonButton;
     [SerializeField] private Button changeBeastButton;
 
+    [SerializeField] private TextMeshProUGUI equippedChar;
 
     private void Awake()
     {
@@ -29,22 +30,26 @@ public class CharUI : MonoBehaviour
 
         changeRhinoButton.onClick.AddListener(() => {
             LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Rhino);
+            equippedChar.text = "Rhino";
             Hide();
             loadoutUI.SetActive(true);
         });
         changeAnglerButton.onClick.AddListener(() => {
             LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Angler);
+            equippedChar.text = "Angler";
             Hide();
             loadoutUI.SetActive(true);
         });
         changeWintonButton.onClick.AddListener(() => {
             LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Winton);
+            equippedChar.text = "Winston";
             Hide();
             loadoutUI.SetActive(true);
         });
         changeBeastButton.onClick.AddListener(() =>
         {
             //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Beast);
+            equippedChar.text = "Beast";
             Hide();
             loadoutUI.SetActive(true);
         });

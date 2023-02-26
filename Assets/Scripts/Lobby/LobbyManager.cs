@@ -76,9 +76,22 @@ public class LobbyManager : NetworkBehaviour {
         Beast
     }
 
-    public enum PlayerPrimary
+    public enum PlayerWeapon
     {
+        DickScat,
+        Grenade,
+        RPG,
+        Shotgun,
+        Sniper,
+        Staff,
+        Sword
+    }
 
+    public enum PlayerSpecial
+    {
+        DeRolo,
+        FishingRod,
+        Bananarang
     }
     public enum LobbyState
     {
@@ -241,6 +254,8 @@ public class LobbyManager : NetworkBehaviour {
         return new Player(AuthenticationService.Instance.PlayerId, null, new Dictionary<string, PlayerDataObject> {
             { KEY_PLAYER_NAME, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, playerName) },
             { KEY_PLAYER_CHARACTER, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, PlayerCharacter.Rhino.ToString()) },
+            { KEY_PLAYER_PRIMARY, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, PlayerWeapon.Staff.ToString()) },
+            { KEY_PLAYER_SECONDARY, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, PlayerWeapon.Shotgun.ToString()) },
             { KEY_IS_LOCKED, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public,ReadyState.False.ToString()) }
 
         });
@@ -411,6 +426,67 @@ public class LobbyManager : NetworkBehaviour {
             }
         }
     }
+
+    public async void UpdatePlayerWeaponPrimary(PlayerWeapon playerWeapon)
+    {
+        if (joinedLobby != null)
+        {
+            try
+            {
+                UpdatePlayerOptions options = new UpdatePlayerOptions();
+
+                options.Data = new Dictionary<string, PlayerDataObject>() {
+                    {
+                        KEY_PLAYER_PRIMARY, new PlayerDataObject(
+                            visibility: PlayerDataObject.VisibilityOptions.Public,
+                            value: playerWeapon.ToString())
+                    }
+                };
+
+                string playerId = AuthenticationService.Instance.PlayerId;
+
+                Lobby lobby = await LobbyService.Instance.UpdatePlayerAsync(joinedLobby.Id, playerId, options);
+                joinedLobby = lobby;
+
+                OnSelect?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+        }
+    }
+
+    public async void UpdatePlayerWeaponSecondary(PlayerWeapon playerWeapon)
+    {
+        if (joinedLobby != null)
+        {
+            try
+            {
+                UpdatePlayerOptions options = new UpdatePlayerOptions();
+
+                options.Data = new Dictionary<string, PlayerDataObject>() {
+                    {
+                        KEY_PLAYER_SECONDARY, new PlayerDataObject(
+                            visibility: PlayerDataObject.VisibilityOptions.Public,
+                            value: playerWeapon.ToString())
+                    }
+                };
+
+                string playerId = AuthenticationService.Instance.PlayerId;
+
+                Lobby lobby = await LobbyService.Instance.UpdatePlayerAsync(joinedLobby.Id, playerId, options);
+                joinedLobby = lobby;
+
+                OnSelect?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+        }
+    }
+
     public async void CharSelect(LobbyState lobbyselect)
     {
         if (joinedLobby != null)
