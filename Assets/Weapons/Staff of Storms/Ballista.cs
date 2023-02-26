@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 public class Ballista : WeaponBase
 {
@@ -40,51 +41,131 @@ public class Ballista : WeaponBase
             fireAnimation.speed = 1 / (float)elapsedBetweenEachShot[0];
 
             Ray laserRayCast = new Ray(camera.transform.position + camera.transform.forward * 0.5f, camera.transform.forward);
-            GameObject laser = Instantiate(ballistaLaserPF, projectileManager.transform);
-            BallistaLaser laserScript = laser.GetComponent<BallistaLaser>();
-            
+
+            int hitType = -1;
             if (Physics.Raycast(laserRayCast, out RaycastHit hit, 1000))
             {
-                
                 Vector3 direction = hit.point - bulletEmitter.transform.position;
-                laserScript.InitParticleSystem(bulletEmitter.transform.position, direction, hit.distance);
+                
+
                 if(hit.collider.transform.tag == "PlayerHitBox")
                 {
-                    if (hit.collider.name == "Head")
+                    EntityBase player = hit.collider.gameObject.GetComponent<PlayerHitBox>().owner.GetComponent<EntityBase>();
+
+                    if (player.gameObject == owner)
                     {
-                        particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 45);
+                        Ray laserRayCast2 = new Ray(hit.point + camera.transform.forward * 0.1f, camera.transform.forward);
+                        if (Physics.Raycast(laserRayCast2, out RaycastHit hit2, 1000))
+                        {
+                            if (hit.collider.transform.tag == "PlayerHitBox")
+                            {
+                                EntityBase player2 = hit2.collider.gameObject.GetComponent<PlayerHitBox>().owner.GetComponent<EntityBase>();
+
+                                if (hit2.collider.name == "Head")
+                                {
+                                    hitType = 2;
+                                    player2.TakeDamage(damage[0] * 2, camera.transform.forward, owner, this.gameObject);
+                                }
+                                else
+                                {
+                                    hitType = 3;
+                                    player2.TakeDamage(damage[0], camera.transform.forward, owner, this.gameObject);
+                                }
+                                CreateLaserServerRpc(hit2.point, hit2.normal, hitType, bulletEmitter.transform.position, camera.transform.forward, hit2.distance);
+                            }
+                            else
+                            {
+                                hitType = 1;
+                                CreateLaserServerRpc(hit2.point, hit2.normal, hitType, bulletEmitter.transform.position, camera.transform.forward, hit2.distance);
+                            }
+                        }
+                        else
+                        {
+                            hitType = 0;
+
+                            EntityBase entity = hit.transform.gameObject.GetComponent<EntityBase>();
+                            if (entity != null)
+                            {
+                                entity.TakeDamage(damage[0], camera.transform.forward, owner, gameObject);
+                            }
+
+                            CreateLaserServerRpc(Vector3.zero, Vector3.zero, hitType, bulletEmitter.transform.position, camera.transform.forward, 1000);
+                        }
                     }
                     else
                     {
-                        particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
+                        if (hit.collider.name == "Head")
+                        {
+                            hitType = 2;
+                            player.TakeDamage(damage[0] * 2, camera.transform.forward, owner, this.gameObject);
+                            
+                        }
+                        else
+                        {
+                            hitType = 3;
+                            player.TakeDamage(damage[0], camera.transform.forward, owner, this.gameObject);
 
+                        }
+                        CreateLaserServerRpc(hit.point, hit.normal, hitType, bulletEmitter.transform.position, camera.transform.forward, hit.distance);
                     }
-                    particleManager.GetComponent<ParticleManager>().CreateEffect("ElectricExplosion_PE", hit.point, hit.normal);
-
                 }
                 else
                 {
-                    particleManager.GetComponent<ParticleManager>().CreateEffect("ElectricExplosion_PE", hit.point, hit.normal);
+                    hitType = 1;
 
+                    EntityBase entity = hit.transform.gameObject.GetComponent<EntityBase>();
+                    if (entity != null)
+                    {
+                        entity.TakeDamage(damage[0], camera.transform.forward, owner, gameObject);
+                    }
+
+                    CreateLaserServerRpc(hit.point, hit.normal, hitType, bulletEmitter.transform.position, camera.transform.forward, hit.distance);
                 }
             }
             else
             {
-                //Vector3 test = bulletEmitter.transform.position;
-                //test = camera.transform.position;
-                //test = laser.transform.position;
-                Vector3 direction = camera.transform.forward * 1000 - bulletEmitter.transform.position;
-                laserScript.InitParticleSystem(bulletEmitter.transform.position, camera.transform.forward, 1000);
-
+                hitType = 0;
+                CreateLaserServerRpc(Vector3.zero, Vector3.zero, hitType, bulletEmitter.transform.position, camera.transform.forward, 1000);
             }
-            Debug.DrawRay(camera.transform.position, 50 * (camera.transform.forward), Color.blue);
 
             Vector3 knockBackDirection = camera.transform.forward;
             knockBackDirection.y = 0;
             knockBackDirection.Normalize();
             owner.GetComponent<Rigidbody>().AddForce(-knockBackDirection * fire1KnockbackForce);
         }
+    }
 
+    [ServerRpc(RequireOwnership = false)]
+    private void CreateLaserServerRpc(Vector3 hitPoint, Vector3 hitNormal, int hitType, Vector3 startPoint, Vector3 direction, float distance) //Calls the ClientRpc function
+    {
+        CreateLaserClientRpc(hitPoint, hitNormal, hitType, startPoint, direction, distance);
+    }
+
+    [ClientRpc]
+    private void CreateLaserClientRpc(Vector3 hitPoint, Vector3 hitNormal, int hitType, Vector3 startPoint, Vector3 direction, float distance)
+    {
+        GameObject laser = Instantiate(ballistaLaserPF, startPoint, Quaternion.identity);
+        BallistaLaser laserScript = laser.GetComponent<BallistaLaser>();
+
+        if (hitType >= 1)
+            laserScript.InitParticleSystem(startPoint, direction, distance);
+        else
+            laserScript.InitParticleSystem(startPoint, direction, distance);
+                                           
+        //Particle effects
+        switch (hitType)
+        {
+            case 2:
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hitPoint, hitNormal, 45);
+                break;
+            case 3:
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hitPoint, hitNormal);
+                break;
+        }
+
+        //Explosion
+        if (hitType >= 1 && hitType <= 3)
+            particleManager.GetComponent<ParticleManager>().CreateEffect("ElectricExplosion_PE", hitPoint, hitNormal);
     }
 
     override protected void Fire2Once()
