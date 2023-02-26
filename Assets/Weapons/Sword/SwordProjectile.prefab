@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 7680918170657144317}
   - component: {fileID: -7965484810318845850}
   - component: {fileID: 9126767893007926797}
-  - component: {fileID: -8420695201908183905}
   m_Layer: 0
   m_Name: SwordProjectile
   m_TagString: Untagged
@@ -110,18 +109,6 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
---- !u!114 &-8420695201908183905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 673387428329875730}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8366367071312369856
 GameObject:
   m_ObjectHideFlags: 0

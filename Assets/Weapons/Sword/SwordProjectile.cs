@@ -27,6 +27,7 @@ public class SwordProjectile : ProjectileBase
         Ray laserRayCast = new Ray(debugOnTriggerBackwardsPosition, vel);
         if (Physics.Raycast(laserRayCast, out RaycastHit hit, 1))
         {
+            Debug.LogWarning("Name : " + other.name);
             if (other.tag == "PlayerHitBox")
             {
                 EntityBase player = other.gameObject.GetComponent<PlayerHitBox>().owner.GetComponent<EntityBase>();

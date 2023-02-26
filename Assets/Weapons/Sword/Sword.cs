@@ -47,10 +47,11 @@ public class Sword : WeaponBase
                     animator.SetBool("TrSlice", false);
                 }
 
-                if ((AnimatorIsPlaying("Throw") && !animator.GetBool("TrThrow")))
+                if (AnimatorIsPlaying("Throw") && !animator.GetBool("TrThrow") && weaponModel.activeSelf)
                 {
-                    if (currentStrength > minStrength)
-                        ThrowKnifeServerRpc();
+                    //if (currentStrength > minStrength)
+                    ThrowKnifeServerRpc();
+                    weaponModel.SetActive(false);
                 }
 
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
@@ -142,10 +143,9 @@ public class Sword : WeaponBase
         animator.SetBool("TrSlice", false);
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void ThrowKnifeServerRpc()
     {
-        Debug.LogWarning("KNIFE");
         Transform newTransform = camera.transform;
         Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
         GameObject go = Instantiate(KnifeProjectile, bulletEmitter.transform);
