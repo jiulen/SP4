@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class AmmoWheel : MonoBehaviour
 {
@@ -46,12 +47,9 @@ public class AmmoWheel : MonoBehaviour
 
         FPSScript = DeRoloScript.owner.GetComponent<FPS>(); // this > canvas parent > player
         PlayerEntityScript = FPSScript.GetComponent<PlayerEntity>(); // this > canvas parent > player
-   
-        this.GetComponent<Canvas>().worldCamera = FPSScript.camera;
-        this.GetComponent<Canvas>().planeDistance = 0.2f;
 
         segmentNum = Enum.GetNames(typeof(DeRolo.BulletTypes)).Length - 1;
-        InitMeshes();   
+        InitMeshes();
     }
 
     public void InitMeshes()
@@ -96,6 +94,25 @@ public class AmmoWheel : MonoBehaviour
             ammoImage.GetComponent<RectTransform>().localPosition = new Vector3(0, centreRadius + centreToSegmentGap + strokeSize/ 2, -0.1f);
             ammoImage.GetComponent<Image>().color = DeRoloScript.bulletColors[i + 1];
         }
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "RandallTestingScene" || scene.name == "SampleScene")
+        {
+            GetComponent<Canvas>().worldCamera = FPSScript.camera;
+            GetComponent<Canvas>().planeDistance = 0.2f;
+        }
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     void Update()

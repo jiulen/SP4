@@ -168,6 +168,9 @@ public class FPS : NetworkBehaviour
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         body.GetComponent<MeshRenderer>().enabled = false;
         visorMR.enabled = false;
+
+        //Make equipped
+        AddEquippedServerRpc();
     }
 
     private void OnEnable()
@@ -195,12 +198,10 @@ public class FPS : NetworkBehaviour
     void Update()
     {
         //Debug multiplayer
-        if (Input.GetKeyDown(KeyCode.O) && IsOwner)
-            AddEquippedServerRpc();
 
         if (Input.GetKeyDown(KeyCode.P) && IsOwner)
         {
-            AddWeaponServerRpc("RPG");
+            AddWeaponServerRpc("Shotgun");
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha7) && IsOwner)
@@ -557,29 +558,29 @@ public class FPS : NetworkBehaviour
         return isGround;
     }
 
-    [ServerRpc] //do this first - only run when both clients connected
+    [ServerRpc] //do this first
     public void AddEquippedServerRpc()
     {
         GameObject spawnedEquipped;
         spawnedEquipped = Instantiate(equippedPrefab, head.transform.position, head.transform.rotation);
-        spawnedEquipped.GetComponent<NetworkObject>().Spawn(true);
+        spawnedEquipped.GetComponent<NetworkObject>().SpawnWithOwnership(GetComponent<NetworkObject>().OwnerClientId, true);
         spawnedEquipped.GetComponent<NetworkObject>().TrySetParent(gameObject);
 
         GameObject spawnedLeftHand;
         spawnedLeftHand = Instantiate(leftHandPrefab, head.transform.position, head.transform.rotation);
-        spawnedLeftHand.GetComponent<NetworkObject>().Spawn(true);
+        spawnedLeftHand.GetComponent<NetworkObject>().SpawnWithOwnership(GetComponent<NetworkObject>().OwnerClientId, true);
         spawnedLeftHand.GetComponent<NetworkObject>().TrySetParent(spawnedEquipped);
 
         GameObject spawnedRightHand;
         spawnedRightHand = Instantiate(rightHandPrefab, head.transform.position, head.transform.rotation);
-        spawnedRightHand.GetComponent<NetworkObject>().Spawn(true);
+        spawnedRightHand.GetComponent<NetworkObject>().SpawnWithOwnership(GetComponent<NetworkObject>().OwnerClientId, true);
         spawnedRightHand.GetComponent<NetworkObject>().TrySetParent(spawnedEquipped);
 
         OnEquippedChangedClientRpc(spawnedEquipped.GetComponent<NetworkObject>().NetworkObjectId,
             spawnedLeftHand.GetComponent<NetworkObject>().NetworkObjectId, spawnedRightHand.GetComponent<NetworkObject>().NetworkObjectId);
     }
 
-    [ServerRpc] //do this after equipped added - only run when both clients connected
+    [ServerRpc] //do this after equipped added
     public void AddWeaponServerRpc(string weaponName) //For adding general weapons (character specific weapons added separately)
     {
         // List of weapon names:
@@ -621,12 +622,12 @@ public class FPS : NetworkBehaviour
 
         if (weapon)
         {
-            weapon.GetComponent<NetworkObject>().Spawn(true);
+            weapon.GetComponent<NetworkObject>().SpawnWithOwnership(GetComponent<NetworkObject>().OwnerClientId, true);
             weapon.GetComponent<NetworkObject>().TrySetParent(rightHand);
         }
     }
 
-    [ServerRpc] //do this after equipped added - only run when both clients connected
+    [ServerRpc] //do this after equipped added
     public void SetCharacterServerRpc(string charName)
     {
         // List of character names:
@@ -654,7 +655,7 @@ public class FPS : NetworkBehaviour
 
         if (weapon)
         {
-            weapon.GetComponent<NetworkObject>().Spawn(true);
+            weapon.GetComponent<NetworkObject>().SpawnWithOwnership(GetComponent<NetworkObject>().OwnerClientId, true);
             weapon.GetComponent<NetworkObject>().TrySetParent(rightHand);
         }
     }

@@ -41,7 +41,7 @@ public class DeRoloGrappleHook : MonoBehaviour
 
     void Start()
     {
-        player = transform.parent.parent./*parent.*/gameObject; // de rolo > right hand > equipped > player
+        player = transform.parent.parent.parent.gameObject; // de rolo > right hand > equipped > player
         playerScript = player.GetComponent<FPS>();
         playerRigidBody = player.GetComponent<Rigidbody>();
         camera = player.GetComponent<FPS>().camera;

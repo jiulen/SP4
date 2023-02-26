@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Netcode;
 
 public class DeRolo : WeaponBase
 {
@@ -73,7 +74,7 @@ public class DeRolo : WeaponBase
 
     private void Awake()
     {
-        owner = transform.parent.parent./*parent.*/gameObject;   // this > right hand > equipped > player
+        //owner = transform.parent.parent./*parent.*/gameObject;   // this > right hand > equipped > player
     }
 
     void Start()
@@ -106,7 +107,17 @@ public class DeRolo : WeaponBase
         ammoWheel = transform.Find("Ammo Wheel").GetComponent<AmmoWheel>();
 
         GrappleHookScript = this.GetComponent<DeRoloGrappleHook>();
-        
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        if (IsOwner)
+        {
+            ui = transform.Find("UI Canvas").gameObject;
+            ui.SetActive(true);
+        }
     }
 
     void Update()
@@ -277,45 +288,96 @@ public class DeRolo : WeaponBase
             switch(cylinder[activeChamber])
             {
                 case BulletTypes.NORMAL:
-                {
-                    AudioNormalFire.Play();
-                    Ray laserRayCast = new Ray(camera.transform.position + camera.transform.forward * 0.5f, camera.transform.forward);
-                
-
-                    if (Physics.Raycast(laserRayCast, out RaycastHit hit, 1000))
                     {
+                        int hitType = -1;
+                        AudioNormalFire.Play();
+                        Ray laserRayCast = new Ray(camera.transform.position + camera.transform.forward * 0.5f, camera.transform.forward);
 
-                        Vector3 direction = hit.point - bulletEmitter.transform.position;
-                        TrailRenderer trail = Instantiate(bulletTrail, bulletEmitter.transform.position, Quaternion.identity);
-                        StartCoroutine(SpawnTrail(trail, hit.point, hit.normal, hit.collider, true));
 
-
-                        if (hit.collider.transform.tag == "PlayerHitBox")
+                        if (Physics.Raycast(laserRayCast, out RaycastHit hit, 1000))
                         {
-                            if (hit.collider.name == "Head")
+                            if (hit.collider.transform.tag == "PlayerHitBox")
                             {
-                                particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal, 45);
+                                EntityBase player = hit.collider.gameObject.GetComponent<PlayerHitBox>().owner.GetComponent<EntityBase>();
+
+                                if (player.gameObject == owner)
+                                {
+                                    if (Physics.Raycast(hit.point + camera.transform.forward * 0.1f, camera.transform.forward, out RaycastHit hit2, 1000))
+                                    {
+
+                                        if (hit2.collider.transform.tag == "PlayerHitBox")
+                                        {
+                                            EntityBase player2 = hit2.collider.gameObject.GetComponent<PlayerHitBox>().owner.GetComponent<EntityBase>();
+
+                                            if (hit2.collider.name == "Head")
+                                            {
+                                                hitType = 2;
+                                                player2.TakeDamage(damage[0] * 2, camera.transform.forward, owner, gameObject);
+                                            }
+                                            else
+                                            {
+                                                hitType = 3;
+                                                player2.TakeDamage(damage[0], camera.transform.forward, owner, gameObject);
+                                            }
+
+                                            CreateTrailServerRpc(hit2.point, hit2.normal, hitType);
+                                        }
+                                        else
+                                        {
+                                            hitType = 1;
+
+                                            EntityBase entity2 = hit2.transform.gameObject.GetComponent<EntityBase>();
+                                            if (entity2 != null)
+                                            {
+                                                entity2.TakeDamage(damage[0], camera.transform.forward, owner, gameObject);
+                                            }
+
+                                            CreateTrailServerRpc(hit2.point, hit2.normal, hitType);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        hitType = 0;
+                                        CreateTrailServerRpc(bulletEmitter.transform.position + camera.transform.forward * 200, Vector3.zero, hitType);
+                                    }
+                                }
+                                else
+                                {
+                                    if (hit.collider.name == "Head")
+                                    {
+                                        hitType = 2;
+                                        player.TakeDamage(damage[0] * 2, camera.transform.forward, owner, gameObject);
+                                    }
+                                    else
+                                    {
+                                        hitType = 3;
+                                        player.TakeDamage(damage[0], camera.transform.forward, owner, gameObject);
+                                    }
+
+                                    CreateTrailServerRpc(hit.point, hit.normal, hitType);
+                                }
                             }
                             else
                             {
-                                particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hit.point, hit.normal);
+                                hitType = 1;
 
+                                EntityBase entity = hit.transform.gameObject.GetComponent<EntityBase>();
+                                if (entity != null)
+                                {
+                                    entity.TakeDamage(damage[0], camera.transform.forward, owner, gameObject);
+                                }
+
+                                CreateTrailServerRpc(hit.point, hit.normal, hitType);
                             }
-                            particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hit.point, hit.normal);
-
                         }
                         else
                         {
-                            particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hit.point, hit.normal);
+                            hitType = 0;
+
+                            CreateTrailServerRpc(bulletEmitter.transform.position + camera.transform.forward * 200, Vector3.zero, hitType);
                         }
                     }
-                    else
-                    {
-                        TrailRenderer trail = Instantiate(bulletTrail, bulletEmitter.transform.position, Quaternion.identity);
-                        StartCoroutine(SpawnTrail(trail, bulletEmitter.transform.position + camera.transform.forward * 200, Vector3.zero, null, false));
-                    }
-                }
-                break;
+                    break;
                 case BulletTypes.SHORTEXPLOSIVE:
                     {
                         AudioExplosiveFire.Play();
@@ -407,7 +469,7 @@ public class DeRolo : WeaponBase
     }
 
 
-    IEnumerator SpawnTrail(TrailRenderer trail, Vector3 hitPoint, Vector3 hitNormal, Collider hitCollider, bool madeImpact)
+    IEnumerator SpawnTrail(TrailRenderer trail, Vector3 hitPoint)
     {
         Vector3 startPos = trail.transform.position;
 
@@ -424,11 +486,36 @@ public class DeRolo : WeaponBase
 
         trail.transform.position = hitPoint;
 
-        if (madeImpact && hitCollider)
-        {
-            //do hit effects here
-        }
-
         Destroy(trail.gameObject, trail.time);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void CreateTrailServerRpc(Vector3 hitPoint, Vector3 hitNormal, int hitType) //Calls the ClientRpc function
+    {
+        CreateTrailClientRpc(hitPoint, hitNormal, hitType);
+    }
+
+    [ClientRpc]
+    private void CreateTrailClientRpc(Vector3 hitPoint, Vector3 hitNormal, int hitType) //hitType: 0 - no hit, 1 - hit terrain, 2 - hit player head, 3 - hit player body
+    {
+        //Make trail renderer
+        TrailRenderer trail = Instantiate(bulletTrail, bulletEmitter.transform.position, Quaternion.identity);
+
+        //Spawn bullet tracer
+        StartCoroutine(SpawnTrail(trail, hitPoint));
+
+        //Hit particle effects
+        switch (hitType)
+        {
+            case 1:
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Sparks_PE", hitPoint, hitNormal);
+                break;
+            case 2:
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hitPoint, hitNormal, 15);
+                break;
+            case 3:
+                particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hitPoint, hitNormal);
+                break;
+        }
     }
 }
