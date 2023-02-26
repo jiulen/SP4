@@ -55,6 +55,9 @@ public class FPS : NetworkBehaviour
     public float jumpForce = 250;
     private int jumpCount = 0;
 
+    // Multi jump
+    public bool canMultiJump = false;
+
     // Dash
     public float dashSpeed = 5;
     public float dashDuration = 0.2f;
@@ -403,12 +406,12 @@ public class FPS : NetworkBehaviour
             }
             else if(staminaAmount >= staminaJumpCost * jumpCount)
             {
-                rigidbody.AddForce(0, jumpForce, 0);
-                jumpCount++;
-                staminaAmount -= staminaJumpCost* jumpCount;
-              
-
-
+                if (canMultiJump)
+                {
+                    rigidbody.AddForce(0, jumpForce, 0);
+                    jumpCount++;
+                    staminaAmount -= staminaJumpCost * jumpCount;
+                }
             }
         }
 
