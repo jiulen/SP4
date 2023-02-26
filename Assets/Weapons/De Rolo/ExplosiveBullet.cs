@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Unity.Netcode;
 
 public class ExplosiveBullet : ProjectileBase
 {
@@ -25,7 +25,7 @@ public class ExplosiveBullet : ProjectileBase
     void Awake()
     {
         playerManager = GameObject.Find("Player Manager");
-        particleManager = GameObject.Find("Particle Manager");
+        //particleManager = GameObject.Find("Particle Manager");
     }
 
     void Update()
@@ -84,7 +84,21 @@ public class ExplosiveBullet : ProjectileBase
 
 
         }
-        particleManager.GetComponent<ParticleManager>().CreateEffect("Explosion_PE", transform.position, Vector3.up);
+
+        MakeExplosionEffectServerRpc(transform.position, Vector3.up);
+
         Destroy(gameObject);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void MakeExplosionEffectServerRpc(Vector3 position, Vector3 normal)
+    {
+        MakeExplosionEffectClientRpc(position, normal);
+    }
+
+    [ClientRpc]
+    private void MakeExplosionEffectClientRpc(Vector3 position, Vector3 normal)
+    {
+        particleManager.GetComponent<ParticleManager>().CreateEffect("Explosion_PE", position, normal);
     }
 }

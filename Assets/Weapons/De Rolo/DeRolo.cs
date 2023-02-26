@@ -516,7 +516,8 @@ public class DeRolo : WeaponBase
             bullet.GetComponent<Rigidbody>().velocity = front.normalized * 100;
             bullet.GetComponent<ExplosiveBullet>().armingDistance = 0;
             bullet.GetComponent<ExplosiveBullet>().maxDistance = 5;
-            bullet.GetComponent<ProjectileBase>().SetCreator(owner);
+            bullet.GetComponent<Rocket>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
+                                                               particleManager.GetComponent<NetworkObject>().NetworkObjectId);
         }
         else if (bulletType == 1)
         {
@@ -525,7 +526,8 @@ public class DeRolo : WeaponBase
             bullet.GetComponent<NetworkObject>().Spawn();
             bullet.GetComponent<NetworkObject>().TrySetParent(projectileManager);
             bullet.GetComponent<Rigidbody>().velocity = front.normalized * 50;
-            bullet.GetComponent<ProjectileBase>().SetCreator(owner);
+            bullet.GetComponent<Rocket>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
+                                                               particleManager.GetComponent<NetworkObject>().NetworkObjectId);
         }
     }
 
