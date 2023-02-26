@@ -23,7 +23,7 @@ public class LobbyManager : NetworkBehaviour {
     public const string KEY_MAP_SELECT = "Map";
     public const string KEY_START_GAME = "0";
     public const string KEY_LOBBY_SELECT = "Selection";
-    public const string KEY_IS_LOCKED = "locked";
+    public const string KEY_IS_LOCKED = "Locked";
 
 
 
@@ -75,7 +75,11 @@ public class LobbyManager : NetworkBehaviour {
         CharSelection
     }
 
-
+    public enum ReadyState
+    {
+        True,
+        False
+    }
     private float heartbeatTimer;
     private float lobbyPollTimer;
     private float refreshLobbyListTimer = 5f;
@@ -155,7 +159,10 @@ public class LobbyManager : NetworkBehaviour {
                         OnJoinedLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
                         break;
                     case LobbyState.CharSelection:
-                        OnCharSelect?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+                        {
+                            OnCharSelect?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+                            OnSelect?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+                        }
                         break;
                 }
 
@@ -213,7 +220,9 @@ public class LobbyManager : NetworkBehaviour {
     public Player GetPlayer() {
         return new Player(AuthenticationService.Instance.PlayerId, null, new Dictionary<string, PlayerDataObject> {
             { KEY_PLAYER_NAME, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, playerName) },
-            { KEY_PLAYER_CHARACTER, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, PlayerCharacter.Marine.ToString()) }
+            { KEY_PLAYER_CHARACTER, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, PlayerCharacter.Marine.ToString()) },
+            { KEY_IS_LOCKED, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public,ReadyState.False.ToString()) }
+
         });
     }
 
@@ -268,8 +277,8 @@ public class LobbyManager : NetworkBehaviour {
                 { KEY_GAME_MODE, new DataObject(DataObject.VisibilityOptions.Public, gameMode.ToString()) },
                 { KEY_MAP_SELECT, new DataObject(DataObject.VisibilityOptions.Public, mapSelect.ToString()) },
                 { KEY_START_GAME, new DataObject(DataObject.VisibilityOptions.Member, "0") },
-                { KEY_LOBBY_SELECT, new DataObject(DataObject.VisibilityOptions.Public, "Lobby") },
-                { KEY_IS_LOCKED, new DataObject(DataObject.VisibilityOptions.Public, "false") }
+                { KEY_LOBBY_SELECT, new DataObject(DataObject.VisibilityOptions.Public, "Lobby") }
+                //{ KEY_IS_LOCKED, new DataObject(DataObject.VisibilityOptions.Public, "False") }
             }
         };
 
@@ -389,8 +398,6 @@ public class LobbyManager : NetworkBehaviour {
         {
             try
             {
-                UpdatePlayerOptions options = new UpdatePlayerOptions();
-
                 Lobby lobby = await Lobbies.Instance.UpdateLobbyAsync(joinedLobby.Id, new UpdateLobbyOptions
                 {
                     Data = new Dictionary<string, DataObject>
@@ -503,7 +510,7 @@ public class LobbyManager : NetworkBehaviour {
                     {
                         KEY_IS_LOCKED, new PlayerDataObject(
                             visibility: PlayerDataObject.VisibilityOptions.Public,
-                            value: "true")
+                            value: ReadyState.True.ToString())
                     }
                 };
 

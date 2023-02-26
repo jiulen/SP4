@@ -21,53 +21,27 @@ public class PlayerCard : MonoBehaviour
         }
     }
 
-    //public void UpdateDisplay(Player player)
-    //{
-    //    this.player = player;
-    //    playerNameText.text = player.Data[LobbyManager.KEY_PLAYER_NAME].Value;
-    //    LobbyManager.PlayerCharacter playerCharacter =
-    //        EnumUtils.Parse<LobbyManager.PlayerCharacter>(player.Data[LobbyManager.KEY_PLAYER_CHARACTER].Value);
-    //    characterIconImage.sprite = LobbyAssets.Instance.GetSprite(playerCharacter);
-
-    //    Locked.SetActive(bool.Parse(player.Data[CharSelectManager.KEY_IS_LOCKED].Value));
-    //    gameObject.SetActive(true);
-    //}
-
     public void UpdatePlayer(Player player)
     {
         this.player = player;
         playerNameText.text = player.Data[LobbyManager.KEY_PLAYER_NAME].Value;
-        LobbyManager.PlayerCharacter playerCharacter =
-            EnumUtils.Parse<LobbyManager.PlayerCharacter>(player.Data[LobbyManager.KEY_PLAYER_CHARACTER].Value);
+        LobbyManager.PlayerCharacter playerCharacter = EnumUtils.Parse<LobbyManager.PlayerCharacter>(player.Data[LobbyManager.KEY_PLAYER_CHARACTER].Value);
         characterIconImage.sprite = LobbyAssets.Instance.GetSprite(playerCharacter);
-        Locked.SetActive(bool.Parse(player.Data[LobbyManager.KEY_IS_LOCKED].Value));
-        Debug.Log("debug");
+
+        LobbyManager.ReadyState readyState =
+                EnumUtils.Parse<LobbyManager.ReadyState>(player.Data[LobbyManager.KEY_IS_LOCKED].Value);
+
+        switch (readyState)
+        {
+            default:
+            case LobbyManager.ReadyState.True:
+                Debug.Log("true");
+                Locked.SetActive(true);
+                break;
+            case LobbyManager.ReadyState.False:
+                Locked.SetActive(false);
+                Debug.Log("false");
+                break;
+        }
     }
-    //public void UpdateDisplay(CharacterSelectState state)
-    //{
-    //    if (state.CharacterId != -1)
-    //    {
-    //        //var character = characterDatabase.GetCharacterById(state.CharacterId);
-    //        //characterIconImage.sprite = character.Icon;
-    //        //characterIconImage.enabled = true;
-    //    }
-    //    else
-    //    {
-    //        //characterIconImage.enabled = false;
-    //    }
-
-    //    //playerNameText.text = state.IsLockedIn ? $"Player {state.ClientId}" : $"Player {state.ClientId} (Picking...)";
-
-    //    Locked.SetActive(state.IsLockedIn);
-    //    gameObject.SetActive(true);
-    //}
-
-    //public void SetDisplay(string playername)
-    //{
-    //    playerNameText.text = playername;
-    //}
-    //public void DisableDisplay()
-    //{
-    //    gameObject.SetActive(false);
-    //}
 }

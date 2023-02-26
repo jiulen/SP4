@@ -43,15 +43,10 @@ public class CharSelectManager : NetworkBehaviour
     void Awake()
     {
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
-    // Update is called once per frame
-    private void Update()
-    {
-        //HandleRefreshLobbyList(); // Disabled Auto Refresh for testing with multiple builds
-        //CharSelectUI.Instance.Update();
-    }
-    public async void UpdatePlayerLock()
+    public async void UpdatePlayerLock(LobbyManager.ReadyState readyState)
     {
         if (LobbyManager.Instance.joinedLobby != null)
         {
@@ -63,7 +58,7 @@ public class CharSelectManager : NetworkBehaviour
                     {
                         KEY_IS_LOCKED, new PlayerDataObject(
                             visibility: PlayerDataObject.VisibilityOptions.Public,
-                            value: "true")
+                            value: readyState.ToString())
                     }
                 };
 

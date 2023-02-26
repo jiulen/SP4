@@ -56,7 +56,7 @@ public class CharSelectUI : MonoBehaviour
 
         LockBtn.onClick.AddListener(() => {
             LobbyManager.Instance.UpdatePlayerLock();
-            
+            Debug.Log("debug");
         });
 
         //changeGameModeButton.onClick.AddListener(() => {
@@ -85,6 +85,7 @@ public class CharSelectUI : MonoBehaviour
     private void UpdateLobby()
     {
         UpdateLobby(LobbyManager.Instance.GetJoinedLobby());
+        
     }
 
     private void UpdateLobby(Lobby lobby)
@@ -96,7 +97,6 @@ public class CharSelectUI : MonoBehaviour
             Transform playerSingleTransform = Instantiate(playerCard, container);
             playerSingleTransform.gameObject.SetActive(true);
             PlayerCard lobbyPlayerSingleUI = playerSingleTransform.GetComponent<PlayerCard>();
-            //playerSingleTransform.Find("Locked").gameObject.SetActive(bool.Parse(lobby.Data[LobbyManager.KEY_LOBBY_SELECT].Value));
             lobbyPlayerSingleUI.UpdatePlayer(player);
         }
         
