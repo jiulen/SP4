@@ -380,30 +380,12 @@ public class DeRolo : WeaponBase
                     break;
                 case BulletTypes.SHORTEXPLOSIVE:
                     {
-                        AudioExplosiveFire.Play();
-                        Transform newTransform = camera.transform;
-                        GameObject bullet = Instantiate(ExplosiveBulletPF, bulletEmitter.transform);
-                        Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
-                        bullet.GetComponent<Rigidbody>().velocity = front.normalized * 100;
-                        bullet.transform.SetParent(projectileManager.transform);
-                        bullet.GetComponent<ProjectileBase>().SetCreator(owner);
-                        bullet.GetComponent<ExplosiveBullet>().armingDistance = 0;
-                        bullet.GetComponent<ExplosiveBullet>().maxDistance = 5;
-
-                        Quaternion rotation = Quaternion.LookRotation(front.normalized, Vector3.up);
+                        ShootExplodeBulletServerRpc(0);
                     }
                     break;
                 case BulletTypes.MEDIUMEXPLOSIVE:
                     {
-                        AudioExplosiveFire.Play();
-                        Transform newTransform = camera.transform;
-                        GameObject bullet = Instantiate(ExplosiveBulletPF, bulletEmitter.transform);
-                        Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
-                        bullet.GetComponent<Rigidbody>().velocity = front.normalized * 50;
-                        bullet.transform.SetParent(projectileManager.transform);
-                        bullet.GetComponent<ProjectileBase>().SetCreator(owner);
-                        Quaternion rotation = Quaternion.LookRotation(front.normalized, Vector3.up);
-                        bullet.transform.rotation = rotation;
+                        ShootExplodeBulletServerRpc(1);
                     }
                     break;
                 case BulletTypes.GRAPPLE:
@@ -517,5 +499,39 @@ public class DeRolo : WeaponBase
                 particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hitPoint, hitNormal);
                 break;
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ShootExplodeBulletServerRpc(int bulletType) // 0 - SHORTEXPLOSIVE, 1 - MEDIUMEXPLOSIVE
+    {
+        PlayExplodeSoundClientRpc();
+
+        Transform newTransform = camera.transform;
+        Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
+        if (bulletType == 0)
+        {
+            GameObject bullet = Instantiate(ExplosiveBulletPF, bulletEmitter.transform);
+            bullet.GetComponent<NetworkObject>().Spawn();
+            bullet.GetComponent<NetworkObject>().TrySetParent(projectileManager);
+            bullet.GetComponent<Rigidbody>().velocity = front.normalized * 100;
+            bullet.GetComponent<ExplosiveBullet>().armingDistance = 0;
+            bullet.GetComponent<ExplosiveBullet>().maxDistance = 5;
+            bullet.GetComponent<ProjectileBase>().SetCreator(owner);
+        }
+        else if (bulletType == 1)
+        {
+            Quaternion rotation = Quaternion.LookRotation(front.normalized, Vector3.up);
+            GameObject bullet = Instantiate(ExplosiveBulletPF, bulletEmitter.transform.position, rotation);
+            bullet.GetComponent<NetworkObject>().Spawn();
+            bullet.GetComponent<NetworkObject>().TrySetParent(projectileManager);
+            bullet.GetComponent<Rigidbody>().velocity = front.normalized * 50;
+            bullet.GetComponent<ProjectileBase>().SetCreator(owner);
+        }
+    }
+
+    [ClientRpc]
+    private void PlayExplodeSoundClientRpc()
+    {
+        AudioExplosiveFire.Play();
     }
 }
