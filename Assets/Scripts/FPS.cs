@@ -201,7 +201,7 @@ public class FPS : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.P) && IsOwner)
         {
-            AddWeaponServerRpc("Shotgun");
+            AddWeaponServerRpc("RPG");
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha7) && IsOwner)
@@ -558,7 +558,7 @@ public class FPS : NetworkBehaviour
         return isGround;
     }
 
-    [ServerRpc] //do this first
+    [ServerRpc (RequireOwnership = false)] //do this first
     public void AddEquippedServerRpc()
     {
         GameObject spawnedEquipped;
@@ -580,7 +580,7 @@ public class FPS : NetworkBehaviour
             spawnedLeftHand.GetComponent<NetworkObject>().NetworkObjectId, spawnedRightHand.GetComponent<NetworkObject>().NetworkObjectId);
     }
 
-    [ServerRpc] //do this after equipped added
+    [ServerRpc (RequireOwnership = false)] //do this after equipped added
     public void AddWeaponServerRpc(string weaponName) //For adding general weapons (character specific weapons added separately)
     {
         // List of weapon names:
