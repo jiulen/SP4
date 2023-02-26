@@ -105,7 +105,8 @@ public class RPG : WeaponBase
             {
                 Transform newTransform = camera.transform;
                 Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
-                ShootRocketServerRpc(front, bulletEmitter.transform.position);
+                Vector3 speed = front.normalized * projectileVel[0] * PowerCurrentScale;
+                ShootRocketServerRpc(front, bulletEmitter.transform.position, speed);
                 AudioFire1.Play();
                 PowerCurrentScale = 1;
                 RocketMuzzle.SetActive(false);
@@ -116,7 +117,7 @@ public class RPG : WeaponBase
 
 
     [ServerRpc(RequireOwnership = false)]
-    private void ShootRocketServerRpc(Vector3 front, Vector3 spawnposition)
+    private void ShootRocketServerRpc(Vector3 front, Vector3 spawnposition, Vector3 speed)
     {
         GameObject go = Instantiate(Rocket, spawnposition, Quaternion.identity);
         go.GetComponent<NetworkObject>().Spawn();
@@ -125,7 +126,7 @@ public class RPG : WeaponBase
         go.GetComponent<Rocket>().damage = damage[0];
         go.GetComponent<Rocket>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId, 
                                                                particleManager.GetComponent<NetworkObject>().NetworkObjectId);
-        go.GetComponent<Rocket>().SetVelocity(front.normalized * projectileVel[0] * PowerCurrentScale);
+        go.GetComponent<Rocket>().SetVelocity(speed);
     }
 
     private void UpdateSlider()
