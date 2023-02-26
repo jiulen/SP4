@@ -205,7 +205,7 @@ public class FPS : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.P) && IsOwner)
         {
-            AddWeaponServerRpc("Sword");
+            AddWeaponServerRpc("Grenade");
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha7) && IsOwner)

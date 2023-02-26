@@ -12,15 +12,16 @@ public class CharSelectUI : MonoBehaviour
 {
     public static CharSelectUI Instance { get; private set; }
 
+    [SerializeField] private GameObject loadoutUI;
     [SerializeField] private Button CharBtn;
     [SerializeField] private Button PrimaryBtn;
     [SerializeField] private Button SecondaryBtn;
     [SerializeField] private Button SpecialBtn;
 
-    [SerializeField] private Button RhinoBtn;
-    [SerializeField] private Button BeastBtn;
-    [SerializeField] private Button AnglerBtn;
-    [SerializeField] private Button WintonBtn;
+    [SerializeField] private GameObject Chars;
+    [SerializeField] private GameObject Primaries;
+    [SerializeField] private GameObject Secondaries;
+    //[SerializeField] private Button WintonBtn;
 
     [SerializeField] private Button LockBtn;
 
@@ -44,15 +45,19 @@ public class CharSelectUI : MonoBehaviour
 
         //UpdateLobby(LobbyManager.Instance.GetJoinedLobby());
 
-        //RhinoBtn.onClick.AddListener(() => {
-        //    //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Rhino);
-        //});
-        //AnglerBtn.onClick.AddListener(() => {
-        //    //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Angler);
-        //});
-        //WintonBtn.onClick.AddListener(() => {
-        //    //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Winton);
-        //});
+        CharBtn.onClick.AddListener(() =>
+        {
+            loadoutUI.SetActive(false);
+            Chars.SetActive(true);
+        });
+        PrimaryBtn.onClick.AddListener(() =>
+        {
+            //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Angler);
+        });
+        SecondaryBtn.onClick.AddListener(() =>
+        {
+            //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Winton);
+        });
 
         LockBtn.onClick.AddListener(() => {
             LobbyManager.Instance.UpdatePlayerLock();

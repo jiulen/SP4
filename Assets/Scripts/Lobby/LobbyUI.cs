@@ -33,13 +33,13 @@ public class LobbyUI : MonoBehaviour {
         playerSingleTemplate.gameObject.SetActive(false);
 
         changeMarineButton.onClick.AddListener(() => {
-            LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Marine);
+            //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Rhino);
         });
         changeNinjaButton.onClick.AddListener(() => {
-            LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Ninja);
+            //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Angler);
         });
         changeZombieButton.onClick.AddListener(() => {
-            LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Zombie);
+            //LobbyManager.Instance.UpdatePlayerCharacter(LobbyManager.PlayerCharacter.Winton);
         });
 
         leaveLobbyButton.onClick.AddListener(() => {
@@ -75,12 +75,6 @@ public class LobbyUI : MonoBehaviour {
     {
         Hide();
     }
-
-    //private void switchChar()
-    //{
-    //    UpdateChar(LobbyManager.Instance.GetJoinedLobby());
-    //}
-
     private void UpdateLobby_Event(object sender, LobbyManager.LobbyEventArgs e) {
         UpdateLobby();
     }
@@ -122,13 +116,6 @@ public class LobbyUI : MonoBehaviour {
         Show();
 
     }
-
-    //private void UpdateChar(Lobby lobby)
-    //{
-    //    ClearLobby();
-
-    //    LobbyManager.Instance.CharSelect();
-    //}
 
     private void ClearLobby() {
         foreach (Transform child in container) {

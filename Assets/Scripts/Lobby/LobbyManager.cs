@@ -19,6 +19,10 @@ public class LobbyManager : NetworkBehaviour {
 
     public const string KEY_PLAYER_NAME = "PlayerName";
     public const string KEY_PLAYER_CHARACTER = "Character";
+    public const string KEY_PLAYER_PRIMARY = "Primary";
+    public const string KEY_PLAYER_SECONDARY = "Secondary";
+    public const string KEY_PLAYER_SPECIAL = "Special";
+
     public const string KEY_GAME_MODE = "GameMode";
     public const string KEY_MAP_SELECT = "Map";
     public const string KEY_START_GAME = "0";
@@ -53,7 +57,8 @@ public class LobbyManager : NetworkBehaviour {
             return (TEnum)Enum.Parse(typeof(TEnum), value);
         }
     }
-    public enum GameMode {
+    public enum GameMode 
+    {
         DUEL,
         FFA
     }
@@ -63,12 +68,18 @@ public class LobbyManager : NetworkBehaviour {
         Parallel_Pillars,
         Placeholder
     }
-    public enum PlayerCharacter {
-        Marine,
-        Ninja,
-        Zombie
+    public enum PlayerCharacter 
+    {
+        Rhino,
+        Angler,
+        Winton,
+        Beast
     }
 
+    public enum PlayerPrimary
+    {
+
+    }
     public enum LobbyState
     {
         Lobby,
@@ -225,11 +236,11 @@ public class LobbyManager : NetworkBehaviour {
         }
         return false;
     }
-
+    
     public Player GetPlayer() {
         return new Player(AuthenticationService.Instance.PlayerId, null, new Dictionary<string, PlayerDataObject> {
             { KEY_PLAYER_NAME, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, playerName) },
-            { KEY_PLAYER_CHARACTER, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, PlayerCharacter.Marine.ToString()) },
+            { KEY_PLAYER_CHARACTER, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, PlayerCharacter.Rhino.ToString()) },
             { KEY_IS_LOCKED, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public,ReadyState.False.ToString()) }
 
         });
@@ -394,7 +405,7 @@ public class LobbyManager : NetworkBehaviour {
                 Lobby lobby = await LobbyService.Instance.UpdatePlayerAsync(joinedLobby.Id, playerId, options);
                 joinedLobby = lobby;
 
-                OnJoinedLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+                OnSelect?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
             } catch (LobbyServiceException e) {
                 Debug.Log(e);
             }
