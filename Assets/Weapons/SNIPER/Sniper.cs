@@ -56,6 +56,16 @@ public class Sniper : WeaponBase
         storeOGRotation = transform.Find("Gun/AWP").localRotation;
     }
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        if (IsOwner)
+        {
+            transform.Find("SniperUICanvas").gameObject.SetActive(true);
+        }
+    }
+
     //Update is called once per frame
     void Update()
     {
