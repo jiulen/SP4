@@ -107,6 +107,10 @@ public class FPS : NetworkBehaviour
     public bool isWallrunning = false;
 
     public AudioSource AudioDash;
+    public AudioSource AudioSlide;
+    public AudioSource AudioWallrun;
+    public AudioSource AudioGroundPound;
+
 
     [SerializeField] GameObject[] weaponPrefabList;
 
@@ -289,14 +293,16 @@ public class FPS : NetworkBehaviour
             {
                 if (isGround)
                 {
+                    // Manual cancel slide
                     if (isSlide)
                     {
                         isSlide = false;
                         this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
-
+                        AudioSlide.Stop();
                     }
                     else
                     {
+                        AudioSlide.Play();
                         isSlide = true;
                         if (moveVector.magnitude == 0)
                         {
@@ -319,7 +325,10 @@ public class FPS : NetworkBehaviour
             if (dropKickActive)
             {
                 if (isGround)
+                {
                     dropKickActive = false;
+                    AudioGroundPound.Play();
+                }
                 else
                     rigidbody.velocity = new Vector3(0, -50, 0);
             }
@@ -473,9 +482,15 @@ public class FPS : NetworkBehaviour
     {
         if (isSlide)
         {
+            // So the audio won't play during the grace period in which the player can still slide while midair
+            if(isGround && !AudioSlide.isPlaying)
+                AudioSlide.Play();
+            if(!isGround)
+                AudioSlide.Stop();
 
             if (airTimer >= 0.5)
             {
+                AudioSlide.Stop();
                 isSlide = false;
                 return;
             }
@@ -483,6 +498,7 @@ public class FPS : NetworkBehaviour
             staminaAmount -= staminaSlideRate * Time.deltaTime;
             if (staminaAmount < 0)
             {
+                AudioSlide.Stop();
                 staminaAmount = 0;
                 isSlide = false;
                 return;

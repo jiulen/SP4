@@ -21,7 +21,7 @@ public class StormBlast : ProjectileBase
     void Awake()
     {
         playerManager = GameObject.Find("Player Manager");
-
+        particleManager = GameObject.Find("Particle Manager");
     }
 
     void Update()
@@ -68,6 +68,8 @@ public class StormBlast : ProjectileBase
           
 
         }
+        particleManager.GetComponent<ParticleManager>().CreateEffect("WindExplosion_PE", this.transform.position, Vector3.up);
+
         Destroy(gameObject);
     }
 }

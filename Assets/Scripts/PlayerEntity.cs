@@ -43,11 +43,21 @@ public class PlayerEntity : EntityBase
         base.Start();
         //InitialiseUI();
         uiKillFeedCanvas = GameObject.Find("Canvas/KillerFeedUI");
+
+        Transform rightHand = this.transform.Find("Right Hand");
+        for(int i =0; i != rightHand.GetChildCount(); i ++)
+        {
+            equippedWeaponList[i] = rightHand.GetChild(i).gameObject;
+        }
+        activeWeapon = equippedWeaponList[0];
+        InitialiseUI();
+
     }
 
     void InitialiseUI()
     {
         if (!FPSScript.IsOwner && !FPSScript.debugBelongsToPlayer) return;
+
 
         playerCanvasParent = Instantiate(PlayerCanvasParentPF, this.transform);
         uiWeaponWheelCanvas = playerCanvasParent.transform.Find("Weapon Wheel Canvas V2").gameObject;
@@ -69,12 +79,13 @@ public class PlayerEntity : EntityBase
 
         // I am too lazy to make sure that the start functions are called in the right order so I just grab the camera from the top of the hierarchy
         dashEffectCanvas.GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        dashEffectCanvas.GetComponent<Canvas>().planeDistance = 50f;
 
     }
 
     void Start()
     {
-        InitialiseUI();
+        //InitialiseUI();
         currentrespawnelaspe = respawncountdown;
     }
 
