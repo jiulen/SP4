@@ -43,15 +43,6 @@ public class PlayerEntity : EntityBase
         base.Start();
         //InitialiseUI();
         uiKillFeedCanvas = GameObject.Find("Canvas/KillerFeedUI");
-
-        Transform rightHand = this.transform.Find("Right Hand");
-        for(int i =0; i != rightHand.GetChildCount(); i ++)
-        {
-            equippedWeaponList[i] = rightHand.GetChild(i).gameObject;
-        }
-        activeWeapon = equippedWeaponList[0];
-        InitialiseUI();
-
     }
 
     void InitialiseUI()
@@ -81,11 +72,19 @@ public class PlayerEntity : EntityBase
         dashEffectCanvas.GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         dashEffectCanvas.GetComponent<Canvas>().planeDistance = 50f;
 
+
+        Transform rightHand = this.transform.Find("Right Hand");
+        for (int i = 0; i != rightHand.GetChildCount(); i++)
+        {
+            equippedWeaponList[i] = rightHand.GetChild(i).gameObject;
+        }
+        activeWeapon = equippedWeaponList[0];
+
     }
 
     void Start()
     {
-        //InitialiseUI();
+        InitialiseUI();
         currentrespawnelaspe = respawncountdown;
     }
 
