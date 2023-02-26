@@ -1156,14 +1156,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e3de743d182b8e4bbc3d86cae2876ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 0}
   debugBelongsToPlayer: 1
   body: {fileID: 3318107874597486465}
   head: {fileID: 4603872801523213479}
+  playerPivot: {fileID: 0}
   bodyPivot: {fileID: 6576475935346864497}
   headPivot: {fileID: 3655211237552112174}
+  visorMR: {fileID: 0}
   airMovementMultiplier: 2.5
   runSpeed: 10
+  camera: {fileID: 0}
+  cameraMoveEnabled: 1
   staminaJumpCost: 0.5
   staminaDashCost: 1
   staminaGrappleCost: 1
@@ -1173,8 +1176,6 @@ MonoBehaviour:
   staminaAmount: 0
   staminaMax: 3
   staminaRefillRate: 1
-  UIStaminaPF: {fileID: 0}
-  UICrosshairPF: {fileID: 0}
   jumpForce: 250
   dashSpeed: 5
   dashDuration: 0.2
@@ -1183,9 +1184,17 @@ MonoBehaviour:
   slideMultiplier: 5
   isGrapple: 0
   canTeleport: 1
-  isDashing: 0
+  equippedPrefab: {fileID: 0}
+  leftHandPrefab: {fileID: 0}
+  rightHandPrefab: {fileID: 0}
+  currentEquipped: {fileID: 0}
+  leftHand: {fileID: 0}
+  rightHand: {fileID: 0}
   canWallrun: 1
   isWallrunning: 0
+  AudioDash: {fileID: 0}
+  weaponPrefabList: []
+  hatsList: []
 --- !u!54 &1385261873837316817
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1240,11 +1249,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxHealth: 100
-  PlayerStatsCanvasPF: {fileID: 0}
-  CameraEffectsCanvasPF: {fileID: 0}
-  MiniMapPF: {fileID: 0}
-  UIWeaponWheelPF: {fileID: 0}
-  DamageIndicatorImagePF: {fileID: 0}
+  equippedWeaponList:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  activeWeapon: {fileID: 0}
+  previousWeapon: {fileID: 0}
+  PlayerCanvasParentPF: {fileID: 0}
+  StaminaCanvasPF: {fileID: 0}
+  KillFeedPrefab: {fileID: 0}
 --- !u!136 &6599413325296553897
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2895,6 +2908,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4201866794980437238}
     m_Modifications:
+    - target: {fileID: -2758808866984029124, guid: 13137ce11b402d349b05406ef81bf4f0, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
     - target: {fileID: 2360753460710343700, guid: 13137ce11b402d349b05406ef81bf4f0, type: 3}
       propertyPath: m_Name
       value: Sniper
@@ -3053,6 +3070,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4201866794980437238}
     m_Modifications:
+    - target: {fileID: 206792830793501462, guid: 9514ef8ebad0f1944ba5a6ceed364433, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
     - target: {fileID: 275114734655432934, guid: 9514ef8ebad0f1944ba5a6ceed364433, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -3123,6 +3144,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4201866794980437238}
     m_Modifications:
+    - target: {fileID: -810588104068375425, guid: 8e16fb089f8ac4b48b081813b8fbc87b, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
     - target: {fileID: 3420278985504335983, guid: 8e16fb089f8ac4b48b081813b8fbc87b, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -3189,6 +3214,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4201866794980437238}
     m_Modifications:
+    - target: {fileID: -4544296305885812677, guid: b81b0b0421e7b8a4bb256c2aed46551e, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
     - target: {fileID: 2411887577851961006, guid: b81b0b0421e7b8a4bb256c2aed46551e, type: 3}
       propertyPath: m_Name
       value: DICKSCAT_PF
@@ -3345,6 +3374,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4201866794980437238}
     m_Modifications:
+    - target: {fileID: -966970063377190689, guid: dbc00c0177ef92445ad87cbb07d05e02, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
     - target: {fileID: 5557506430343370324, guid: dbc00c0177ef92445ad87cbb07d05e02, type: 3}
       propertyPath: m_Name
       value: Shotgun

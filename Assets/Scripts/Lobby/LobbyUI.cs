@@ -86,7 +86,7 @@ public class LobbyUI : MonoBehaviour {
     }
     private void LobbyManager_GameStarted(object sender, System.EventArgs e)
     {
-        Hide();
+        //Hide();
     }
     private void UpdateLobby() {
         UpdateLobby(LobbyManager.Instance.GetJoinedLobby());

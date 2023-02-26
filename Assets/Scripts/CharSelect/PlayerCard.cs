@@ -6,7 +6,6 @@ using System;
 
 public class PlayerCard : MonoBehaviour
 {
-    //[SerializeField] private CharacterDatabase characterDatabase;
     [SerializeField] private Image characterIconImage;
     [SerializeField] private GameObject Locked;
     [SerializeField] private TMP_Text playerNameText;

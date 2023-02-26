@@ -166,9 +166,18 @@ public class LobbyManager : NetworkBehaviour {
                         break;
                 }
 
-                
+                //bool canStart = false;
+                int i = 0;
+                foreach (Player player in joinedLobby.Players)
+                {
+                    if (player.Data[KEY_IS_LOCKED].Value == "True")
+                        ++i;
+                }
 
-                
+                if(i == joinedLobby.Players.Count)
+                {
+                    StartGame();
+                }
 
                 if (!IsPlayerInLobby()) {
                     // Player was kicked out of this lobby
