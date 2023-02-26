@@ -310,20 +310,23 @@ public class PlayerEntity : EntityBase
     public void SetActiveWeapon(int i)
     {
         //if (activeWeapon != null)
-            activeWeapon.SetActive(false);
+        //activeWeapon.SetActive(false);
+        SetWeaponActiveServerRpc(activeWeapon.GetComponent<NetworkObject>().NetworkObjectId, false);
 
         // Swap to previous weapon
-        if(i == -1)
+        if (i == -1)
         {
             GameObject tempReference = previousWeapon;
-            previousWeapon.SetActive(true);
+            //previousWeapon.SetActive(true);
+            SetWeaponActiveServerRpc(previousWeapon.GetComponent<NetworkObject>().NetworkObjectId, true);
 
             previousWeapon = activeWeapon;
             activeWeapon = tempReference;
         }
         else
         {
-            equippedWeaponList[i].SetActive(true);
+            //equippedWeaponList[i].SetActive(true);
+            SetWeaponActiveServerRpc(equippedWeaponList[i].GetComponent<NetworkObject>().NetworkObjectId, true);
             previousWeapon = activeWeapon;
             activeWeapon = equippedWeaponList[i];
         }
@@ -338,5 +341,18 @@ public class PlayerEntity : EntityBase
     public void StopDashEffect()
     {
         dashParticleSystem.Stop();
+    }
+
+    [ServerRpc]
+    private void SetWeaponActiveServerRpc(ulong weaponID, bool active)
+    {
+        SetWeaponActiveClientRpc(weaponID, active);
+    }
+
+    [ClientRpc]
+    private void SetWeaponActiveClientRpc(ulong weaponID, bool active)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(weaponID, out NetworkObject weaponObject))
+            weaponObject.gameObject.SetActive(active);
     }
 }

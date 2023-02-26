@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Netcode;
 
 public class WeaponWheelV2 : MonoBehaviour
 {
@@ -47,7 +48,7 @@ public class WeaponWheelV2 : MonoBehaviour
         this.GetComponent<Canvas>().planeDistance = 0.2f;
         equippedWeaponList = PlayerEntityScript.equippedWeaponList;
 
-        InitMeshes();
+        //InitMeshes();
 
         //for (int i = 0; i != segmentNum; i++)
         //{
@@ -102,73 +103,71 @@ public class WeaponWheelV2 : MonoBehaviour
 
     void Update()
     {
-
-        if (Input.GetKey(KeyCode.Q))
+        if (transform.parent.parent.GetComponent<NetworkObject>().IsOwner)
         {
-            weaponWheelElapsed += Time.deltaTime;
-
-            if (weaponWheelElapsed >= weaponWheelDelay)
+            if (Input.GetKey(KeyCode.Q))
             {
-                FPSScript.cameraMoveEnabled = false;
-                uiParent.SetActive(true);
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.None;
-                Vector2 currentMousePosRelativeToStart = Input.mousePosition - saveMousePostion;
-                float mouseAngle = Mathf.Atan2(currentMousePosRelativeToStart.x, currentMousePosRelativeToStart.y) * Mathf.Rad2Deg; // Convert the vector to an angle in degrees
-                float normalizedMouseAngle = mouseAngle;
-                if (normalizedMouseAngle < 0)
+                weaponWheelElapsed += Time.deltaTime;
+
+                if (weaponWheelElapsed >= weaponWheelDelay)
                 {
-                    normalizedMouseAngle += 360;
-                }
-                float mouseaA = 360 - mouseAngle;
-                selectorPivot.transform.localRotation = Quaternion.Euler(0, 0, -mouseAngle + 90);
-                for (int i = 0; i != segmentNum; i++)
-                {
-                    float segmentArc = (360 / segmentNum);
-                    float angle = 0 + (segmentArc * i) + startingAngle;
-                    wheelSegmentsParent.transform.GetChild(i).transform.localRotation = Quaternion.Euler(0, 0, 360 - angle);
-
-                    float lowerAngle = angle - segmentArc / 2;
-                    if (lowerAngle < 0)
-                        lowerAngle += 360;
-
-                    float upperAngle = lowerAngle + segmentArc;
-
-                    if (IsAngleBetween(normalizedMouseAngle, lowerAngle, upperAngle))
+                    FPSScript.cameraMoveEnabled = false;
+                    uiParent.SetActive(true);
+                    Cursor.visible = false;
+                    Cursor.lockState = CursorLockMode.None;
+                    Vector2 currentMousePosRelativeToStart = Input.mousePosition - saveMousePostion;
+                    float mouseAngle = Mathf.Atan2(currentMousePosRelativeToStart.x, currentMousePosRelativeToStart.y) * Mathf.Rad2Deg; // Convert the vector to an angle in degrees
+                    float normalizedMouseAngle = mouseAngle;
+                    if (normalizedMouseAngle < 0)
                     {
-                        wheelSegmentsParent.transform.GetChild(i).transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
-                        selectedWeapon = i;
+                        normalizedMouseAngle += 360;
                     }
-                    else
+                    float mouseaA = 360 - mouseAngle;
+                    selectorPivot.transform.localRotation = Quaternion.Euler(0, 0, -mouseAngle + 90);
+                    for (int i = 0; i != segmentNum; i++)
                     {
-                        wheelSegmentsParent.transform.GetChild(i).transform.localScale = new Vector3(1f, 1f, 1f);
+                        float segmentArc = (360 / segmentNum);
+                        float angle = 0 + (segmentArc * i) + startingAngle;
+                        wheelSegmentsParent.transform.GetChild(i).transform.localRotation = Quaternion.Euler(0, 0, 360 - angle);
 
+                        float lowerAngle = angle - segmentArc / 2;
+                        if (lowerAngle < 0)
+                            lowerAngle += 360;
+
+                        float upperAngle = lowerAngle + segmentArc;
+
+                        if (IsAngleBetween(normalizedMouseAngle, lowerAngle, upperAngle))
+                        {
+                            wheelSegmentsParent.transform.GetChild(i).transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
+                            selectedWeapon = i;
+                        }
+                        else
+                        {
+                            wheelSegmentsParent.transform.GetChild(i).transform.localScale = new Vector3(1f, 1f, 1f);
+
+                        }
                     }
                 }
             }
-        }
-        else if (Input.GetKeyUp(KeyCode.Q))
-        {
-            if (weaponWheelElapsed >= weaponWheelDelay)
+            else if (Input.GetKeyUp(KeyCode.Q))
             {
-                PlayerEntityScript.SetActiveWeapon(selectedWeapon);
+                if (weaponWheelElapsed >= weaponWheelDelay)
+                {
+                    PlayerEntityScript.SetActiveWeapon(selectedWeapon);
+                }
+                else
+                    PlayerEntityScript.SetActiveWeapon(-1);
+                weaponWheelElapsed = 0;
             }
             else
-                PlayerEntityScript.SetActiveWeapon(-1);
-            weaponWheelElapsed = 0;
+            {
+                saveMousePostion = Input.mousePosition;
+                FPSScript.cameraMoveEnabled = true;
+                uiParent.SetActive(false);
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+            }
         }
-        else
-        {
-            saveMousePostion = Input.mousePosition;
-            FPSScript.cameraMoveEnabled = true;
-            uiParent.SetActive(false);
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-        }
-
-
-
-
     }
 
     public bool IsAngleBetween(float angleToCheck, float angleStart, float angleEnd)

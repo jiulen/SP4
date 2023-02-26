@@ -209,6 +209,8 @@ public class FPS : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.P) && IsOwner)
         {
             AddWeaponServerRpc("RPG");
+            AddWeaponServerRpc("Sniper");
+            AddWeaponServerRpc("Shotgun");
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha0) && IsOwner)
@@ -224,10 +226,10 @@ public class FPS : NetworkBehaviour
             SetCharacterServerRpc("Winton");
 
         if (Input.GetKeyDown(KeyCode.LeftBracket) && IsOwner)
-            SetWeaponsClientRpc();
+            SetWeaponsServerRpc();
         //
 
-        // Reset position and velocity if player goes out of bounds for debugging
+            // Reset position and velocity if player goes out of bounds for debugging
         if (transform.position.magnitude > 100 || transform.position.y <= -20)
         {
             transform.position = new Vector3(0, 10, 0);
@@ -707,6 +709,12 @@ public class FPS : NetworkBehaviour
         hatsList[hatNum].SetActive(true);
     }
 
+    [ServerRpc]
+    public void SetWeaponsServerRpc()
+    {
+        SetWeaponsClientRpc();
+    }
+
     [ClientRpc]
     public void SetWeaponsClientRpc()
     {
@@ -718,5 +726,9 @@ public class FPS : NetworkBehaviour
         }
         playerEntity.activeWeapon = playerEntity.equippedWeaponList[0];
         playerEntity.previousWeapon = playerEntity.activeWeapon;
+
+        WeaponWheelV2 weaponWheel = playerEntity.GetWeaponWheelCanvas().GetComponent<WeaponWheelV2>();
+        if (weaponWheel)
+            playerEntity.GetWeaponWheelCanvas().GetComponent<WeaponWheelV2>().InitMeshes();
     }
 }
