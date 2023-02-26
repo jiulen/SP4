@@ -16,6 +16,8 @@ public class RPG : WeaponBase
     private Quaternion storeOGRotation;
     FPS player;
 
+    [SerializeField] GameObject ChargeUI;
+
     [Header("Audio References")]
     public AudioSource AudioFire1;
     public AudioSource AudioFire2;
@@ -33,6 +35,16 @@ public class RPG : WeaponBase
 
         storeOGPosition = transform.Find("Gun/RPG7").localPosition;
         storeOGRotation = transform.Find("Gun/RPG7").localRotation;
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        if (IsOwner)
+        {
+            ChargeUI.SetActive(true);
+        }
     }
 
     // Update is called once per frame

@@ -20,13 +20,15 @@ public class Rocket : ProjectileBase
     void Update()
     {
         transform.rotation = Quaternion.LookRotation(-GetComponent<Rigidbody>().velocity);
-        elapsed += Time.deltaTime;
-        if (elapsed >= duration)
+        if (IsServer)
         {
-            RocketExplode();
-            Destroy(gameObject);
+            elapsed += Time.deltaTime;
+            if (elapsed >= duration)
+            {
+                RocketExplode();
+                Destroy(gameObject);
+            }
         }
-
     }
 
     private void OnCollisionEnter(Collision collision)
