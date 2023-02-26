@@ -1,13 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Unity.Netcode;
 
-public class GrappleHook : MonoBehaviour
+public class GrappleHook : NetworkBehaviour
 {
     public Camera camera;
-    private GameObject grappleBody;
-    private GameObject hook;
-    private GameObject line;
+    [SerializeField] GameObject grappleBody;
+    [SerializeField] GameObject hook;
+    [SerializeField] GameObject line;
     private GameObject player;
     private Rigidbody grappledRigidBody;
     private FPS playerScript;
@@ -44,16 +46,32 @@ public class GrappleHook : MonoBehaviour
         player = transform.parent.parent.parent.gameObject; // this > left hand > equipped > player
         playerScript = player.GetComponent<FPS>();
         playerRigidBody = player.GetComponent<Rigidbody>();
-        camera = player.GetComponent<FPS>().camera;
-        grappleBody = this.transform.Find("Grapple Body").gameObject;
-        hook = this.transform.Find("Hook").gameObject;
-        line = this.transform.Find("Line").gameObject;
+        camera = GameObject.Find("Main Camera").GetComponent<Camera>();
 
         //GameObject test = transform.parent.gameObject;
         //GameObject test2 = test.transform.parent.gameObject;
         //GameObject test3 = test2.transform.Find("Player Entity").gameObject;
         //Debug.Log("Hello everynyan" + test3.name);
    
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("Scene Loaded : " + scene.name);
+        if (scene.name == "RandallTestingScene")
+        {
+            camera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        }
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     // Update is called once per frame
@@ -146,8 +164,7 @@ public class GrappleHook : MonoBehaviour
     {
         if (hookActive)
         {
-            hook.SetActive(true);
-            line.SetActive(true);
+            SetHookLineObjActiveServerRpc(true, true);
 
             //player.GetComponent<Rigidbody>().velocity = ((hook.transform.position - player.transform.position).normalized * 30 );
 
@@ -173,8 +190,7 @@ public class GrappleHook : MonoBehaviour
         }
         else
         {
-            hook.SetActive(false);
-            line.SetActive(false);
+            SetHookLineObjActiveServerRpc(false, false);
         }
     }
 
@@ -200,4 +216,15 @@ public class GrappleHook : MonoBehaviour
         }
     }
 
+    [ServerRpc (RequireOwnership = false)]
+    private void SetHookLineObjActiveServerRpc(bool hookActive, bool lineActive)
+    {
+        SetHookLineObjActiveClientRpc(hookActive, lineActive);
+    }
+    [ClientRpc]
+    private void SetHookLineObjActiveClientRpc(bool hookActive, bool lineActive)
+    {
+        hook.SetActive(hookActive);
+        line.SetActive(lineActive);
+    }
 }
