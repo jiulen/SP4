@@ -47,4 +47,21 @@ public class GrenadeProjectile : ProjectileBase
     {
         particleManager.GetComponent<ParticleManager>().CreateEffect("Explosion_PE", position, normal);
     }
+
+    [ClientRpc]
+    private void SetVelocityClientRpc(Vector3 velocity)
+    {
+        GetComponent<Rigidbody>().AddForce(velocity, ForceMode.Impulse);
+    }
+
+    [ServerRpc]
+    private void SetVelocityServerRpc(Vector3 velocity)
+    {
+        SetVelocityClientRpc(velocity);
+    }
+
+    public void SetVelocity(Vector3 velocity)
+    {
+        SetVelocityServerRpc(velocity);
+    }
 }
