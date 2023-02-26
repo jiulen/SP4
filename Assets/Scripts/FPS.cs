@@ -211,6 +211,9 @@ public class FPS : NetworkBehaviour
             AddWeaponServerRpc("RPG");
         }
 
+        if (Input.GetKeyDown(KeyCode.Alpha0) && IsOwner)
+            AddWeaponServerRpc("GrapplingHook");
+
         if (Input.GetKeyDown(KeyCode.Alpha7) && IsOwner)
             SetCharacterServerRpc("Rhino");
 
@@ -603,7 +606,6 @@ public class FPS : NetworkBehaviour
     public void AddWeaponServerRpc(string weaponName) //For adding general weapons (character specific weapons added separately)
     {
         // List of weapon names:
-        // (General)
         // DickScat
         // Grenade
         // RPG
@@ -611,6 +613,7 @@ public class FPS : NetworkBehaviour
         // Sniper
         // Staff
         // Sword
+        // GrapplingHook
 
         GameObject weapon = null;
 
@@ -637,12 +640,18 @@ public class FPS : NetworkBehaviour
             case "Sword":
                 weapon = Instantiate(weaponPrefabList[9], rightHand.transform.position, rightHand.transform.rotation);
                 break;
+            case "GrapplingHook":
+                weapon = Instantiate(weaponPrefabList[10], leftHand.transform.position, leftHand.transform.rotation);
+                break;
         }
 
         if (weapon)
         {
             weapon.GetComponent<NetworkObject>().SpawnWithOwnership(GetComponent<NetworkObject>().OwnerClientId, true);
-            weapon.GetComponent<NetworkObject>().TrySetParent(rightHand);
+            if (weaponName == "GrapplingHook")
+                weapon.GetComponent<NetworkObject>().TrySetParent(leftHand);
+            else
+                weapon.GetComponent<NetworkObject>().TrySetParent(rightHand);
         }
     }
 
@@ -679,7 +688,7 @@ public class FPS : NetworkBehaviour
         }
     }
 
-    [ClientRpc]
+    [ClientRpc] //do after all weapons + grappling hook (if have) added
     private void OnEquippedChangedClientRpc(ulong objectId1, ulong objectId2, ulong objectId3)
     {
         if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(objectId1, out NetworkObject networkObject1))
