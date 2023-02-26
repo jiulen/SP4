@@ -201,23 +201,9 @@ public class PlayerEntity : EntityBase
         return cameraEffectsCanvas.transform.GetChild(0).GetChild(prevSize).gameObject;
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void testServerRpc(float hp, Vector3 dir, ulong source, ulong weaponUsed)
-    {
-        testClientRpc(hp, dir, source, weaponUsed);
-    }
 
     public override void TakeDamage(float hp, Vector3 dir, GameObject source, GameObject weaponUsed)
     {
-        testServerRpc(hp, dir, source.GetComponent<NetworkObject>().OwnerClientId, weaponUsed.GetComponent<NetworkObject>().OwnerClientId);
-    }
-    [ClientRpc]
-    private void testClientRpc(float hp, Vector3 dir, ulong source, ulong weaponUsed)
-    {
-        GameObject t1 = null;
-        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(source, out NetworkObject networkObject1))
-            t1 = networkObject1.gameObject;
-
         SpawnDamageIndicatorClientRpc(dir, new ClientRpcParams
         {
             Send = new ClientRpcSendParams
@@ -226,14 +212,15 @@ public class PlayerEntity : EntityBase
             }
         });
 
-        SetLastTouch(t1);
+        SetLastTouch(source);
         SetHealth(GetHealth() - hp);
 
-        if (Health <= 0)
-        {
-            SpawnKillFeedServerRpc(source, this.gameObject.GetComponent<NetworkObject>().NetworkObjectId, weaponUsed);
-        }
+        //if (Health <= 0)
+        //{
+        SpawnKillFeedServerRpc(source.gameObject.GetComponent<NetworkObject>().NetworkObjectId, this.gameObject.GetComponent<NetworkObject>().NetworkObjectId, weaponUsed.gameObject.GetComponent<NetworkObject>().NetworkObjectId);
+        //}
     }
+
 
     public void UpdateDead(ulong lastTouchSource)
     {

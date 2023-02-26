@@ -21,7 +21,7 @@ public class Explosion : ProjectileBase
 
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void ExplodeServerRPC()
     {
         Collider[] colliders = Physics.OverlapSphere(transform.position, radius);

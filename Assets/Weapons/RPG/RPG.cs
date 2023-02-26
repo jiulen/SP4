@@ -88,11 +88,11 @@ public class RPG : WeaponBase
         {
             if (CheckCanFire(1))
             {
+                Transform newTransform = camera.transform;
+                Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
+                ShootRocketServerRpc(front, bulletEmitter.transform.position);
                 AudioFire1.Play();
-
-                ShootRocketServerRpc();
                 PowerCurrentScale = 1;
-                AudioFire1.Play();
                 RocketMuzzle.SetActive(false);
                 animator.SetBool("isActive", true);
             }
@@ -101,25 +101,17 @@ public class RPG : WeaponBase
 
 
     [ServerRpc(RequireOwnership = false)]
-    private void ShootRocketServerRpc()
+    private void ShootRocketServerRpc(Vector3 front, Vector3 spawnposition)
     {
-        CallShootRocketClientRpc();
-        //go.transform.SetParent(projectileManager.transform);
-    }
-
-    [ClientRpc]
-    private void CallShootRocketClientRpc()
-    {
-        Transform newTransform = camera.transform;
-        Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
-        GameObject go = Instantiate(Rocket, bulletEmitter.transform);
+        GameObject go = Instantiate(Rocket, spawnposition, Quaternion.identity);
         go.GetComponent<NetworkObject>().Spawn();
         go.GetComponent<NetworkObject>().TrySetParent(projectileManager);
         go.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
         go.GetComponent<Rocket>().damage = damage[0];
         go.GetComponent<Rocket>().SetObjectReferences(owner, particleManager);
-        go.GetComponent<Rocket>().LaserVelocity.Value = front.normalized * projectileVel[0] * PowerCurrentScale;
+        go.GetComponent<Rocket>().SetVelocity(front.normalized * projectileVel[0] * PowerCurrentScale);
     }
+
     private void UpdateSlider()
     {
         slider.value = PowerCurrentScale;
