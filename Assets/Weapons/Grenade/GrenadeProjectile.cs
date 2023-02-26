@@ -21,11 +21,14 @@ public class GrenadeProjectile : ProjectileBase
     // Update is called once per frame
     void Update()
     {
-        elapsed += Time.deltaTime;
-        if (elapsed >= duration)
+        if (IsServer)
         {
-            GrenadeExplode();
-            Destroy(this.gameObject);
+            elapsed += Time.deltaTime;
+            if (elapsed >= duration)
+            {
+                GrenadeExplode();
+                Destroy(gameObject);
+            }
         }
     }
 
@@ -50,6 +53,7 @@ public class GrenadeProjectile : ProjectileBase
     [ClientRpc]
     private void MakeExplosionEffectClientRpc(Vector3 position, Vector3 normal)
     {
+        Debug.LogWarning("KABOOM");
         particleManager.GetComponent<ParticleManager>().CreateEffect("Explosion_PE", position, normal);
     }
 
