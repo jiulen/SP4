@@ -31,9 +31,6 @@ public class SwordProjectile : ProjectileBase
             {
                 EntityBase player = other.gameObject.GetComponent<PlayerHitBox>().owner.GetComponent<EntityBase>();
                 Vector3 dir = player.transform.position - transform.position;
-                Debug.Log("Creator : " + creator.GetComponent<NetworkObject>().OwnerClientId);
-                Debug.Log("Tag : " + other.tag);
-                Debug.Log("Name : " + other.name);
                 if (player.gameObject != creator)
                 {
                     if (other.name == "Head")
@@ -48,6 +45,7 @@ public class SwordProjectile : ProjectileBase
                         player.TakeDamage(damage, dir, creator, weaponused);
 
                     }
+                    Destroy(gameObject);
                 }
             }
             else
@@ -60,11 +58,10 @@ public class SwordProjectile : ProjectileBase
                     Vector3 dir = entity.transform.position - transform.position;
                     entity.TakeDamage(damage, dir, creator, weaponused);
                 }
+
+                Destroy(gameObject);
             }
-
         }
-
-        Destroy(gameObject);
     }
 
     [ServerRpc]

@@ -183,6 +183,7 @@ MonoBehaviour:
   WeaponIcon: {fileID: 21300000, guid: 21501f3a091c58646a48723cb3a474ca, type: 3}
   owner: {fileID: 0}
   KnifeProjectile: {fileID: 673387428329875730, guid: a6bb5ddbc7c87094ab321ddf47647e26, type: 3}
+  swordModelCollider: {fileID: 3316557840242002254}
 --- !u!114 &-810588104068375425
 MonoBehaviour:
   m_ObjectHideFlags: 0

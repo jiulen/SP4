@@ -65,7 +65,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 0
-  duration: 1
+  duration: 5
   bloodEffect: {fileID: 2305821162208844719, guid: 042f5cddfa0450d45b346081207b21bf, type: 3}
   sparkEffect: {fileID: 2907902898773258639, guid: 7b77a91ec9a07a2468091790b6471b8e, type: 3}
 --- !u!114 &-7965484810318845850

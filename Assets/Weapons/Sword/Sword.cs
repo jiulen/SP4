@@ -11,6 +11,8 @@ public class Sword : WeaponBase
     private Vector3 storeOGPosition;
     private Quaternion storeOGRotation;
 
+    [SerializeField] MeshCollider swordModelCollider;
+
     private float KnifeThrowCooldown = 2.0f, elaspe = 0;
     public Animator GetAnimator()
     {
@@ -47,8 +49,8 @@ public class Sword : WeaponBase
 
                 if ((AnimatorIsPlaying("Throw") && !animator.GetBool("TrThrow")))
                 {
-                    //if (currentStrength > minStrength)
-                    ThrowKnifeServerRpc();
+                    if (currentStrength > minStrength)
+                        ThrowKnifeServerRpc();
                 }
 
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Empty"))
@@ -140,9 +142,10 @@ public class Sword : WeaponBase
         animator.SetBool("TrSlice", false);
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [ServerRpc]
     private void ThrowKnifeServerRpc()
     {
+        Debug.LogWarning("KNIFE");
         Transform newTransform = camera.transform;
         Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
         GameObject go = Instantiate(KnifeProjectile, bulletEmitter.transform);
@@ -167,6 +170,7 @@ public class Sword : WeaponBase
     private void SetKnifeModelActiveClientRpc(bool active)
     {
         weaponModel.SetActive(active);
+        swordModelCollider.enabled = active;
     }
 
     [ServerRpc]
