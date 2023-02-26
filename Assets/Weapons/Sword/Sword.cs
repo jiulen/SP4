@@ -50,7 +50,11 @@ public class Sword : WeaponBase
                 if (AnimatorIsPlaying("Throw") && !animator.GetBool("TrThrow") && weaponModel.activeSelf)
                 {
                     //if (currentStrength > minStrength)
-                    ThrowKnifeServerRpc();
+
+                    Transform newTransform = camera.transform;
+                    Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
+
+                    ThrowKnifeServerRpc(front);
                     weaponModel.SetActive(false);
                 }
 
@@ -144,10 +148,8 @@ public class Sword : WeaponBase
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void ThrowKnifeServerRpc()
-    {
-        Transform newTransform = camera.transform;
-        Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
+    private void ThrowKnifeServerRpc(Vector3 front)
+    {        
         GameObject go = Instantiate(KnifeProjectile, bulletEmitter.transform);
         go.GetComponent<NetworkObject>().Spawn();
         go.GetComponent<NetworkObject>().TrySetParent(projectileManager);
