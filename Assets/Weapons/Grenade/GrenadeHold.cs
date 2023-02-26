@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class GrenadeHold : WeaponBase
@@ -53,17 +54,24 @@ public class GrenadeHold : WeaponBase
         if (grenadestate == GrenadeWeaponState.NONE)
         {
             AudioThrow.Play();
-            Rigidbody rb = grenade.GetComponent<Rigidbody>();
-            grenade.GetComponent<MeshCollider>().enabled = true;
-            rb.isKinematic = false;
-            rb.useGravity = true;
-            grenade.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
-            grenade.GetComponent<ProjectileBase>().SetCreator(owner);
-            grenade.GetComponent<GrenadeProjectile>().SetObjectReferences(owner, particleManager);
-            grenade.transform.SetParent(projectileManager.transform);
-            rb.AddForce(camera.transform.forward * ThrowForce, ForceMode.Impulse);
+            ThrowServerRpc();
             grenade.GetComponent<GrenadeProjectile>().state = GrenadeProjectile.GrenadeState.EXPLODE;
             grenadestate = GrenadeWeaponState.THROW;
         }
+    }
+
+
+    [ServerRpc(RequireOwnership = false)]
+    void ThrowServerRpc()
+    {
+        Rigidbody rb = grenade.GetComponent<Rigidbody>();
+        grenade.GetComponent<MeshCollider>().enabled = true;
+        rb.isKinematic = false;
+        rb.useGravity = true;
+        grenade.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
+        grenade.GetComponent<ProjectileBase>().SetCreator(owner);
+        grenade.GetComponent<GrenadeProjectile>().SetObjectReferences(owner, particleManager);
+        grenade.transform.SetParent(projectileManager.transform);
+        rb.AddForce(camera.transform.forward * ThrowForce, ForceMode.Impulse);
     }
 }

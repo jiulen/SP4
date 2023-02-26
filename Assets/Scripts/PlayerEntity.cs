@@ -138,7 +138,7 @@ public class PlayerEntity : EntityBase
         {
             Vector2 killfeedpos = KillPrefabList[0].GetComponent<RectTransform>().anchoredPosition;
             killfeed.GetComponent<RectTransform>().anchoredPosition = new Vector2(killfeedpos.x, killfeedpos.y + (i * 25));
-            killfeed.transform.parent = uiKillFeedCanvas.transform;
+            killfeed.transform.SetParent(uiKillFeedCanvas.transform);
             i++;
         }
 
@@ -200,10 +200,13 @@ public class PlayerEntity : EntityBase
         cameraEffectsCanvas.transform.GetChild(0).GetChild(prevSize).GetComponent<Image>().enabled = true;
         return cameraEffectsCanvas.transform.GetChild(0).GetChild(prevSize).gameObject;
     }
-
-
-    public override void TakeDamage(float hp, Vector3 dir, GameObject source, GameObject weaponUsed)
+    [ServerRpc(RequireOwnership = false)]
+    private void TakeDmgServerRpc(float hp, Vector3 dir, ulong source)
     {
+        GameObject t1 = null;
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(source, out NetworkObject networkObject1))
+            t1 = networkObject1.gameObject;
+
         SpawnDamageIndicatorClientRpc(dir, new ClientRpcParams
         {
             Send = new ClientRpcSendParams
@@ -212,8 +215,13 @@ public class PlayerEntity : EntityBase
             }
         });
 
-        SetLastTouch(source);
+        SetLastTouch(t1);
         SetHealth(GetHealth() - hp);
+    }
+
+    public override void TakeDamage(float hp, Vector3 dir, GameObject source, GameObject weaponUsed)
+    {
+        TakeDmgServerRpc(hp, dir, source.gameObject.GetComponent<NetworkObject>().NetworkObjectId);
 
         //if (Health <= 0)
         //{
