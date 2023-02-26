@@ -17,7 +17,6 @@ public class Ballista : WeaponBase
     void Start()
     {
         base.Start();
-        bulletEmitter = GameObject.Find("Gun/Bullet emitter");
 
         fireAnimation = weaponModel.transform.Find("Staff").GetComponent<Animator>();
 
@@ -173,21 +172,28 @@ public class Ballista : WeaponBase
         if (CheckCanFire(2))
         {
             AudioFire2.Play();
+
             Transform newTransform = camera.transform;
-            GameObject blast = Instantiate(stormBlastPF, bulletEmitter.transform);
             Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
-            blast.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[1];
-            blast.transform.SetParent(projectileManager.transform);
-            blast.GetComponent<StormBlast>().SetCreator(owner);
-            AudioFire2.Play();
+            CreateBlastServerRpc(bulletEmitter.transform.position);
 
             fireAnimation.enabled = true;
             fireAnimation.StopPlayback();
             fireAnimation.Play("Fire2");
 
             fireAnimation.speed = 1 / (float)elapsedBetweenEachShot[0];
-
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    private void CreateBlastServerRpc(Vector3 startPos)
+    {
+        GameObject go = Instantiate(stormBlastPF, startPos, Quaternion.identity);
+        go.GetComponent<NetworkObject>().Spawn();
+        go.GetComponent<NetworkObject>().TrySetParent(projectileManager);
+        go.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
+        go.GetComponent<StormBlast>().damage = damage[0];
+        go.GetComponent<StormBlast>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
+                                                                   particleManager.GetComponent<NetworkObject>().NetworkObjectId);
+    }
 } 
