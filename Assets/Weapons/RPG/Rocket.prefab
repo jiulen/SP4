@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 7595136744234808230}
   - component: {fileID: 5783993153443128663}
   - component: {fileID: 7903178808192537443}
+  - component: {fileID: 7477314404709963699}
   m_Layer: 0
   m_Name: Rocket
   m_TagString: Untagged
@@ -134,6 +135,8 @@ MonoBehaviour:
   duration: 2
   bloodEffect: {fileID: 0}
   sparkEffect: {fileID: 0}
+  LaserVelocity:
+    m_InternalValue: {x: 0, y: 0, z: 0}
 --- !u!114 &416668422356109525
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -291,3 +294,15 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
+--- !u!114 &7477314404709963699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6011158359209759673}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

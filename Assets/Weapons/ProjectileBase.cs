@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class ProjectileBase : MonoBehaviour
+public class ProjectileBase : NetworkBehaviour
 {
     public int damage = 0;
     public float duration = 1;

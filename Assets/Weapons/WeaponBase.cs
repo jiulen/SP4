@@ -55,7 +55,7 @@ public class WeaponBase : NetworkBehaviour
         particleManager = GameObject.Find("Particle Manager");
         bulletEmitter = transform.Find("Gun/Bullet emitter").gameObject;
         //playerOwner = transform.parent.transform.parent.Find("Player Entity").gameObject;
-        owner = transform.parent.parent./*parent.*/gameObject;   // this > right hand > equipped > player
+        owner = transform.parent.parent.parent.gameObject;   // this > right hand > equipped > player
         ownerPlayerEntityScript = owner.GetComponent<PlayerEntity>();
         weaponModel = transform.Find("Gun").gameObject;
         saveStartingWeaponPosition = weaponModel.transform.localPosition;

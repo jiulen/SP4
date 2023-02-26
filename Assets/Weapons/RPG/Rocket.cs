@@ -1,9 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class Rocket : ProjectileBase
 {
+    public NetworkVariable<Vector3> LaserVelocity = new NetworkVariable<Vector3>();
+
+    public override void OnNetworkSpawn()
+    {
+        GetComponent<Rigidbody>().velocity = new Vector3(LaserVelocity.Value.x, LaserVelocity.Value.y, LaserVelocity.Value.z);
+    }
+
     private Explosion explosion;
     // Start is called before the first frame update
     void Start()

@@ -41,7 +41,7 @@ public class PlayerEntity : EntityBase
     {
         FPSScript = this.GetComponent<FPS>();
         base.Start();
-        InitialiseUI();
+        //InitialiseUI();
         uiKillFeedCanvas = GameObject.Find("Canvas/KillerFeedUI");
     }
 
@@ -74,6 +74,7 @@ public class PlayerEntity : EntityBase
 
     void Start()
     {
+        InitialiseUI();
         currentrespawnelaspe = respawncountdown;
     }
 
@@ -199,8 +200,24 @@ public class PlayerEntity : EntityBase
         cameraEffectsCanvas.transform.GetChild(0).GetChild(prevSize).GetComponent<Image>().enabled = true;
         return cameraEffectsCanvas.transform.GetChild(0).GetChild(prevSize).gameObject;
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void testServerRpc(float hp, Vector3 dir, ulong source, ulong weaponUsed)
+    {
+        testClientRpc(hp, dir, source, weaponUsed);
+    }
+
     public override void TakeDamage(float hp, Vector3 dir, GameObject source, GameObject weaponUsed)
     {
+        testServerRpc(hp, dir, source.GetComponent<NetworkObject>().OwnerClientId, weaponUsed.GetComponent<NetworkObject>().OwnerClientId);
+    }
+    [ClientRpc]
+    private void testClientRpc(float hp, Vector3 dir, ulong source, ulong weaponUsed)
+    {
+        GameObject t1 = null;
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(source, out NetworkObject networkObject1))
+            t1 = networkObject1.gameObject;
+
         SpawnDamageIndicatorClientRpc(dir, new ClientRpcParams
         {
             Send = new ClientRpcSendParams
@@ -209,15 +226,14 @@ public class PlayerEntity : EntityBase
             }
         });
 
-        SetLastTouch(source);
+        SetLastTouch(t1);
         SetHealth(GetHealth() - hp);
 
         if (Health <= 0)
         {
-            SpawnKillFeedServerRpc(source.GetComponent<NetworkObject>().NetworkObjectId, this.gameObject.GetComponent<NetworkObject>().NetworkObjectId, weaponUsed.GetComponent<NetworkObject>().NetworkObjectId);
+            SpawnKillFeedServerRpc(source, this.gameObject.GetComponent<NetworkObject>().NetworkObjectId, weaponUsed);
         }
     }
-
 
     public void UpdateDead(ulong lastTouchSource)
     {

@@ -90,7 +90,7 @@ public class RPG : WeaponBase
             {
                 AudioFire1.Play();
 
-                ShootRocket();
+                ShootRocketServerRpc();
                 PowerCurrentScale = 1;
                 AudioFire1.Play();
                 RocketMuzzle.SetActive(false);
@@ -99,7 +99,16 @@ public class RPG : WeaponBase
         }
     }
 
-    private void ShootRocket()
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ShootRocketServerRpc()
+    {
+        CallShootRocketClientRpc();
+        //go.transform.SetParent(projectileManager.transform);
+    }
+
+    [ClientRpc]
+    private void CallShootRocketClientRpc()
     {
         Transform newTransform = camera.transform;
         Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
@@ -109,10 +118,8 @@ public class RPG : WeaponBase
         go.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
         go.GetComponent<Rocket>().damage = damage[0];
         go.GetComponent<Rocket>().SetObjectReferences(owner, particleManager);
-        go.GetComponent<Rigidbody>().velocity = front.normalized * projectileVel[0] * PowerCurrentScale;
-        //go.transform.SetParent(projectileManager.transform);
+        go.GetComponent<Rocket>().LaserVelocity.Value = front.normalized * projectileVel[0] * PowerCurrentScale;
     }
-
     private void UpdateSlider()
     {
         slider.value = PowerCurrentScale;
