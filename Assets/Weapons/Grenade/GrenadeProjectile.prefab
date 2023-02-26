@@ -98,8 +98,8 @@ GameObject:
   - component: {fileID: 6876261372421706920}
   - component: {fileID: 6876261372421706921}
   - component: {fileID: 6876261372421706922}
-  - component: {fileID: 6876261372421706923}
-  - component: {fileID: 6876261372421706900}
+  - component: {fileID: -5025549223172370792}
+  - component: {fileID: -8612270574838843822}
   m_Layer: 0
   m_Name: GrenadeProjectile
   m_TagString: Untagged
@@ -348,7 +348,7 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &6876261372421706923
+--- !u!114 &-5025549223172370792
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -357,7 +357,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6876261372421706901}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Script: {fileID: 11500000, guid: 6a688d916da9df543bb947bb12488bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   SyncPositionX: 1
@@ -366,15 +366,15 @@ MonoBehaviour:
   SyncRotAngleX: 1
   SyncRotAngleY: 1
   SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
---- !u!114 &6876261372421706900
+--- !u!114 &-8612270574838843822
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

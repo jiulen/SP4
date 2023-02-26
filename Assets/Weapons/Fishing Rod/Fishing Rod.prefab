@@ -815,6 +815,8 @@ MonoBehaviour:
   hookedCollider: {fileID: 0}
   hookVelocity: {x: 0, y: 0, z: 0}
   hookDamage: 0
+  AudioFire1: {fileID: 0}
+  AudioFire2: {fileID: 0}
   hookState: 0
   rodPullAudio: {fileID: 8317608451114051056}
 --- !u!114 &-5841457720904137704
@@ -845,9 +847,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SyncPositionX: 0
-  SyncPositionY: 0
-  SyncPositionZ: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
   SyncRotAngleX: 1
   SyncRotAngleY: 1
   SyncRotAngleZ: 1
