@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Unity.Netcode;
 
 public class StormBlast : ProjectileBase
 {
@@ -21,59 +21,70 @@ public class StormBlast : ProjectileBase
     void Awake()
     {
         playerManager = GameObject.Find("Player Manager");
-        particleManager = GameObject.Find("Particle Manager");
     }
 
-    void Update()
-    {
+    //void Update()
+    //{
         
-    }
+    //}
 
     private void OnTriggerEnter(Collider other)
     {
-        if (CheckIfCreator(other.gameObject))
-            return;
-        foreach (Transform child in playerManager.transform)
-        {
-            Vector3 difference = child.transform.position - transform.position;
-            float distance = difference.magnitude;
-            if (distance > upperExplosionRadius)
-            {
-                continue;
-            }
+        //if (CheckIfCreator(other.gameObject))
+        //    return;
+        //foreach (Transform child in playerManager.transform)
+        //{
+        //    Vector3 difference = child.transform.position - transform.position;
+        //    float distance = difference.magnitude;
+        //    if (distance > upperExplosionRadius)
+        //    {
+        //        continue;
+        //    }
 
-            Vector3 direction = difference.normalized;
+        //    Vector3 direction = difference.normalized;
 
-            Rigidbody childRB = child.transform.GetComponent<Rigidbody>();
-            FPS childFPS = child.transform.GetComponent<FPS>();
+        //    Rigidbody childRB = child.transform.GetComponent<Rigidbody>();
+        //    FPS childFPS = child.transform.GetComponent<FPS>();
 
-            if (distance < innerExplosionRadius)
-            {
-                childRB.AddForce(direction * explosionForce);
+        //    if (distance < innerExplosionRadius)
+        //    {
+        //        childRB.AddForce(direction * explosionForce);
 
-                // We lift the player up so they are unnaffliced by ground friction
-                if(childFPS.GetIsGrounded())
-                    childRB.AddForce(0, verticalExplosionForce, 0);
-            }
-            else
-            {
-                float distancedExplosionForce = explosionForce / distance; // We do not square distance as per the inverse square law, as it would be too weak
-                childRB.AddForce(direction * distancedExplosionForce);
+        //        // We lift the player up so they are unnaffliced by ground friction
+        //        if(childFPS.GetIsGrounded())
+        //            childRB.AddForce(0, verticalExplosionForce, 0);
+        //    }
+        //    else
+        //    {
+        //        float distancedExplosionForce = explosionForce / distance; // We do not square distance as per the inverse square law, as it would be too weak
+        //        childRB.AddForce(direction * distancedExplosionForce);
 
-                // We lift the player up so they are unnaffliced by ground friction
-                if (childFPS.GetIsGrounded())
-                    childRB.AddForce(0, verticalExplosionForce, 0);
+        //        // We lift the player up so they are unnaffliced by ground friction
+        //        if (childFPS.GetIsGrounded())
+        //            childRB.AddForce(0, verticalExplosionForce, 0);
 
-            }
+        //    }
           
 
-        }
-        particleManager.GetComponent<ParticleManager>().CreateEffect("WindExplosion_PE", this.transform.position, Vector3.up);
+        //}
 
-        Destroy(gameObject);
+        //MakeExplosionEffectServerRpc(transform.position, Vector3.up);
+
+        //Destroy(gameObject);
     }
-}
 
+    //[ServerRpc(RequireOwnership = false)]
+    //private void MakeExplosionEffectServerRpc(Vector3 position, Vector3 normal)
+    //{
+    //    MakeExplosionEffectClientRpc(position, normal);
+    //}
+
+    //[ClientRpc]
+    //private void MakeExplosionEffectClientRpc(Vector3 position, Vector3 normal)
+    //{
+    //    particleManager.GetComponent<ParticleManager>().CreateEffect("WindExplosion_PE", position, normal);
+    //}
+}
 
 // This version of storm blast is designed for debugging. It won't destroy the game object, and will draw a debug ray showing the direction of the blast to the player
 

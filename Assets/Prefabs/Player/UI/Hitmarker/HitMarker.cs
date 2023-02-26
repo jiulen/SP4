@@ -24,7 +24,6 @@ public class HitMarker : MonoBehaviour
 
     void Start()
     {
-
         for (int i = 0; i != 4; i++)
         {
             hitMarkerImage.Add(this.transform.GetChild(i).GetChild(0).GetComponent<Image>());

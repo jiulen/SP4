@@ -64,7 +64,7 @@ public class WeaponBase : NetworkBehaviour
 
         wheelManagerUI = ownerPlayerEntityScript.GetWeaponWheelCanvas().gameObject;
         crosshair = ownerPlayerEntityScript.GetCrosshairCanvas().GetComponent<CustomCrosshair>();
-        Debug.LogWarning(wheelManagerUI);
+        Debug.LogWarning("WheelManagerUI : " + wheelManagerUI);
     }
 
     // Update is called once per frame
