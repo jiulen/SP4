@@ -111,7 +111,8 @@ public class RPG : WeaponBase
         go.GetComponent<NetworkObject>().TrySetParent(projectileManager);
         go.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
         go.GetComponent<Rocket>().damage = damage[0];
-        go.GetComponent<Rocket>().SetObjectReferences(owner, particleManager);
+        go.GetComponent<Rocket>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId, 
+                                                               particleManager.GetComponent<NetworkObject>().NetworkObjectId);
         go.GetComponent<Rocket>().SetVelocity(front.normalized * projectileVel[0] * PowerCurrentScale);
     }
 
@@ -119,5 +120,4 @@ public class RPG : WeaponBase
     {
         slider.value = PowerCurrentScale;
     }
-
 }

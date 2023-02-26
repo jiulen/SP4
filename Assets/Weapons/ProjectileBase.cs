@@ -33,6 +33,17 @@ public class ProjectileBase : NetworkBehaviour
         particleManager = _particleManager;
     }
 
+    [ClientRpc]
+    public void SetObjectReferencesClientRpc(ulong _creatorID, ulong _particleManagerID)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(_creatorID, out NetworkObject creator) &&
+            NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(_particleManagerID, out NetworkObject particleManager))
+        {
+            SetObjectReferences(creator.gameObject, particleManager.gameObject);
+        }
+        else Debug.LogWarning("SetObjRefCliRpc Fail!");
+    }
+
     public void SetObjectReferences(GameObject _creator, GameObject _particleManager)
     {
         creator = _creator;
