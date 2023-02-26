@@ -22,10 +22,10 @@ public class LobbyAssets : MonoBehaviour {
     public Sprite GetSprite(LobbyManager.PlayerCharacter playerCharacter) {
         switch (playerCharacter) {
             default:
-            case LobbyManager.PlayerCharacter.Marine:   return marineSprite;
-            case LobbyManager.PlayerCharacter.Ninja:    return ninjaSprite;
-            case LobbyManager.PlayerCharacter.Zombie:   return zombieSprite;
+            case LobbyManager.PlayerCharacter.Rhino:   return marineSprite;
+            case LobbyManager.PlayerCharacter.Angler:    return ninjaSprite;
+            case LobbyManager.PlayerCharacter.Winton:   return zombieSprite;
+            case LobbyManager.PlayerCharacter.Beast: return zombieSprite;
         }
     }
-
 }
