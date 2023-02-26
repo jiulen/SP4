@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
 using Unity.Netcode;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
 
 public class Boomerang : ProjectileBase
 {
@@ -22,37 +21,14 @@ public class Boomerang : ProjectileBase
 
     void Start()
     {
-        speed = 1000f;
+        speed = 5000f;
         rb = GetComponent<Rigidbody>();
+        boomererangState = BoomererangState.THROW;
     }
 
     void Update()
     {
-        transform.forward = dir.normalized;
-        switch (boomererangState)
-        {
-            case BoomererangState.THROW:
-                if (speed <= 0)
-                {
-                    boomererangState = BoomererangState.RECOIL;
-                }
-                rb.velocity = transform.forward * -speed * Time.deltaTime;
-                break;
-            case BoomererangState.RECOIL:
-                dir = (rb.position - creator.transform.position).normalized;
-                rb.velocity = transform.forward * speed * Time.deltaTime;
-                break;
-        }
-        transform.localRotation = Quaternion.LookRotation(-transform.forward);
-        var axis = transform.InverseTransformDirection(transform.up);
-        transform.localRotation = transform.localRotation * Quaternion.AngleAxis(rotationElaspe * rotationSpeed, axis);
-
-        rotationElaspe += Time.deltaTime;
-        speed -= Time.deltaTime * 1000f;
-
-        speed = Mathf.Clamp(speed, -1000f, 1000f);
-
-        elapsed += Time.deltaTime;
+        UpdateBoomerangServerRpc();
     }
 
     [ServerRpc(RequireOwnership =false)]
@@ -64,6 +40,31 @@ public class Boomerang : ProjectileBase
     [ClientRpc]
     void UpdateBoomerangClientRpc()
     {
+        transform.forward = dir.normalized;
+        switch (boomererangState)
+        {
+            case BoomererangState.THROW:
+                if (speed <= 0)
+                {
+                    boomererangState = BoomererangState.RECOIL;
+                }
+                SetVelocity(transform.forward * -speed * Time.deltaTime);
+                break;
+            case BoomererangState.RECOIL:
+                dir = (rb.position - creator.transform.position).normalized;
+                SetVelocity(transform.forward * speed * Time.deltaTime);
+                break;
+        }
+        transform.localRotation = Quaternion.LookRotation(-transform.forward);
+        var axis = transform.InverseTransformDirection(transform.up);
+        transform.localRotation = transform.localRotation * Quaternion.AngleAxis(rotationElaspe * rotationSpeed, axis);
+
+        rotationElaspe += Time.deltaTime;
+        speed -= Time.deltaTime * 2800f;
+
+        speed = Mathf.Clamp(speed, -5000f, 5000f);
+
+        elapsed += Time.deltaTime;
     }
 
 
@@ -79,7 +80,7 @@ public class Boomerang : ProjectileBase
             {
                 if (boomererangState == BoomererangState.RECOIL)
                 {
-                    //Destroy(this.gameObject);
+                    Destroy(this.gameObject);
                 }
             }
             else

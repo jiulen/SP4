@@ -133,7 +133,7 @@ public class ProjectileBase : NetworkBehaviour
         GetComponent<Rigidbody>().velocity = velocity;
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void SetVelocityServerRpc(Vector3 velocity)
     {
         SetVelocityClientRpc(velocity);
