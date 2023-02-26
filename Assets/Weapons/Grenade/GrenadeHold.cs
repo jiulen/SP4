@@ -24,7 +24,23 @@ public class GrenadeHold : WeaponBase
     {
         base.Start();
         grenadestate = GrenadeWeaponState.NONE;
-        grenade.GetComponent<MeshCollider>().enabled = false;
+        SpawnGrenadeWeaponHoldServerRpc();
+
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void SpawnGrenadeWeaponHoldServerRpc()
+    {
+        GameObject go = Instantiate(grenadePrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        go.GetComponent<GrenadeProjectile>().damage = damage[0];
+        go.GetComponent<MeshCollider>().enabled = false;
+        go.GetComponent<NetworkObject>().Spawn();
+        go.GetComponent<NetworkObject>().TrySetParent(this.transform);
+        go.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
+        go.GetComponent<GrenadeProjectile>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
+                                                                               particleManager.GetComponent<NetworkObject>().NetworkObjectId);
+        go.transform.localPosition = Vector3.zero;
+        grenade = go.transform;
     }
 
     // Update is called once per frame
@@ -32,16 +48,13 @@ public class GrenadeHold : WeaponBase
     {
         base.Update();
 
-        switch(grenadestate)
+        switch (grenadestate)
         {
             case GrenadeWeaponState.THROW:
                 if (currentCooldownElaspe >= Cooldown)
                 {
                     currentCooldownElaspe = 0;
-                    GameObject newGrenadeObj = Instantiate(grenadePrefab, transform);
-                    newGrenadeObj.transform.parent = transform.GetChild(0);
-                    grenade = newGrenadeObj.transform;
-                    grenade.GetComponent<MeshCollider>().enabled = false;
+                    SpawnGrenadeWeaponHoldServerRpc();
                     grenadestate = GrenadeWeaponState.NONE;
                 }
                 currentCooldownElaspe += Time.deltaTime;
@@ -69,10 +82,11 @@ public class GrenadeHold : WeaponBase
         rb.isKinematic = false;
         rb.useGravity = true;
         grenade.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
-        grenade.GetComponent<ProjectileBase>().SetCreator(owner);
         grenade.GetComponent<GrenadeProjectile>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
                                                                                particleManager.GetComponent<NetworkObject>().NetworkObjectId);
         grenade.transform.SetParent(projectileManager.transform);
         rb.AddForce(camera.transform.forward * ThrowForce, ForceMode.Impulse);
     }
+
+
 }

@@ -7,7 +7,7 @@ public class GrenadeProjectile : ProjectileBase
 {
     private Explosion explosion;
     private Rigidbody rb;
-    [SerializeField] GrenadeHold grenadeWeapon;
+
     public enum GrenadeState
     {
         NONE,
@@ -21,7 +21,9 @@ public class GrenadeProjectile : ProjectileBase
         state = GrenadeState.NONE;
         rb = GetComponent<Rigidbody>();
         explosion = GetComponent<Explosion>();
-        explosion.damage = grenadeWeapon.damage[0];
+        explosion.SetCreator(creator);
+        explosion.SetWeaponUsed(weaponused);
+        explosion.damage = damage;
         rb.isKinematic = true;
         duration = 3;
     }
