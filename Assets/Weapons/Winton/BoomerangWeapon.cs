@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class BoomerangWeapon : WeaponBase
 {
-    [SerializeField] Transform boomerang;
+    [SerializeField] GameObject boomerang;
     public float spinRate;
-    public GameObject emitter;
 
     enum BoomererangWeaponState
     {
@@ -26,11 +26,10 @@ public class BoomerangWeapon : WeaponBase
     void Update()
     {
         base.Update();
-        emitter = bulletEmitter.gameObject;
         switch (boomererangWeaponState)
         {
             case BoomererangWeaponState.THROW:
-                if (boomerang.parent != null)
+                if (boomerang.gameObject == null)
                 {
                     boomererangWeaponState = BoomererangWeaponState.NONE;
                 }
@@ -43,15 +42,24 @@ public class BoomerangWeapon : WeaponBase
     {
         if (boomererangWeaponState == BoomererangWeaponState.NONE)
         {
-            Rigidbody rb = boomerang.GetComponent<Rigidbody>();
-            boomerang.GetComponent<Boomerang>().SetObjectReferences(owner, particleManager);
-            boomerang.GetComponent<Boomerang>().SetWeaponUsed(gameObject);
-            boomerang.GetComponent<Boomerang>().boomererangState = Boomerang.BoomererangState.THROW;
-            boomerang.GetComponent<MeshCollider>().enabled = true;
-            boomerang.GetComponent<Boomerang>().dir = -camera.transform.forward;
-            rb.isKinematic = false;
-            boomerang.parent = null;
+            Transform newTransform = camera.transform;
+            Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
+            ThrowBoomeramgServerRpc(front, bulletEmitter.transform.position);
             boomererangWeaponState = BoomererangWeaponState.THROW;
         }
+    }
+
+
+    [ServerRpc(RequireOwnership = false)]
+    void ThrowBoomeramgServerRpc(Vector3 front, Vector3 spawnposition)
+    {
+        GameObject go = Instantiate(boomerang, spawnposition, Quaternion.identity);
+        go.GetComponent<NetworkObject>().Spawn();
+        go.GetComponent<NetworkObject>().TrySetParent(projectileManager);
+        go.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
+        go.GetComponent<Boomerang>().damage = damage[0];
+        go.GetComponent<Boomerang>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
+                                                               particleManager.GetComponent<NetworkObject>().NetworkObjectId);
+        go.GetComponent<Boomerang>().dir = front;
     }
 }
