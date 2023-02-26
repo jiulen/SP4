@@ -70,7 +70,6 @@ public class WeaponBase : NetworkBehaviour
     // Update is called once per frame
     public void Update()
     {
-
         for (int i = 0; i != elapsedSinceLastShot.Length; i++)
         {
             elapsedSinceLastShot[i] += Time.deltaTime;
