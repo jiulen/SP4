@@ -7,7 +7,6 @@ public class GrenadeHold : WeaponBase
 {
     private float Cooldown = 5f, currentCooldownElaspe = 0f;
     public float ThrowForce;
-    [SerializeField] GameObject grenade;
     [SerializeField] GameObject grenadePrefab;
 
     public AudioSource AudioThrow;
@@ -24,22 +23,7 @@ public class GrenadeHold : WeaponBase
     {
         base.Start();
         grenadestate = GrenadeWeaponState.NONE;
-        SpawnGrenadeWeaponHoldServerRpc();
 
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    void SpawnGrenadeWeaponHoldServerRpc()
-    {
-        grenade = Instantiate(grenadePrefab, new Vector3(0,0,0), Quaternion.identity);
-        grenade.GetComponent<GrenadeProjectile>().SetCollider(false);
-        grenade.GetComponent<GrenadeProjectile>().damage = damage[0];
-        grenade.GetComponent<NetworkObject>().Spawn();
-        grenade.GetComponent<NetworkObject>().TrySetParent(gameObject);
-        grenade.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
-        grenade.GetComponent<GrenadeProjectile>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
-                                                                               particleManager.GetComponent<NetworkObject>().NetworkObjectId);
-        grenade.transform.localPosition = Vector3.zero;
     }
 
     // Update is called once per frame
@@ -53,7 +37,7 @@ public class GrenadeHold : WeaponBase
                 if (currentCooldownElaspe >= Cooldown)
                 {
                     currentCooldownElaspe = 0;
-                    SpawnGrenadeWeaponHoldServerRpc();
+                    SetKnifeModelActiveServerRpc(true);
                     grenadestate = GrenadeWeaponState.NONE;
                 }
                 currentCooldownElaspe += Time.deltaTime;
@@ -66,34 +50,38 @@ public class GrenadeHold : WeaponBase
         if (grenadestate == GrenadeWeaponState.NONE)
         {
             AudioThrow.Play();
-            ThrowServerRpc();
-            SetExplosionstateServerRpc();
+            Transform newTransform = camera.transform;
+            Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
+            ThrowServerRpc(front, bulletEmitter.transform.position);
             grenadestate = GrenadeWeaponState.THROW;
         }
     }
-    [ServerRpc(RequireOwnership = false)]
-    private void SetExplosionstateServerRpc()
-    {
-        if (grenadestate == GrenadeWeaponState.NONE)
-        {
-            grenade.GetComponent<GrenadeProjectile>().state = GrenadeProjectile.GrenadeState.EXPLODE;
-
-        }
-    }
 
     [ServerRpc(RequireOwnership = false)]
-    void ThrowServerRpc()
+    void ThrowServerRpc(Vector3 front, Vector3 spawnposition)
     {
-        Rigidbody rb = grenade.GetComponent<Rigidbody>();
-        rb.isKinematic = false;
-        rb.useGravity = true;
-        grenade.GetComponent<GrenadeProjectile>().SetCollider(true);
+        GameObject grenade = Instantiate(grenadePrefab, spawnposition, Quaternion.identity);
+        grenade.GetComponent<NetworkObject>().Spawn();
+        grenade.GetComponent<ProjectileBase>().damage = damage[0];
+        grenade.GetComponent<NetworkObject>().TrySetParent(projectileManager);
         grenade.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
         grenade.GetComponent<GrenadeProjectile>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
                                                                                particleManager.GetComponent<NetworkObject>().NetworkObjectId);
         grenade.transform.SetParent(projectileManager.transform);
-        rb.AddForce(camera.transform.forward * ThrowForce, ForceMode.Impulse);
+        grenade.GetComponent<GrenadeProjectile>().SetVelocity(front.normalized * ThrowForce);
+        SetKnifeModelActiveServerRpc(false);
     }
 
 
+    [ServerRpc(RequireOwnership = false)]
+    private void SetKnifeModelActiveServerRpc(bool active)
+    {
+        SetKnifeModelActiveClientRpc(active);
+    }
+
+    [ClientRpc]
+    private void SetKnifeModelActiveClientRpc(bool active)
+    {
+        weaponModel.SetActive(active);
+    }
 }
