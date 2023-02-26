@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
+using Unity.Netcode;
 
 public class GrenadeProjectile : ProjectileBase
 {
@@ -43,6 +43,19 @@ public class GrenadeProjectile : ProjectileBase
     private void GrenadeExplode()
     {
         explosion.Explode();
-        particleManager.GetComponent<ParticleManager>().CreateEffect("Explosion_PE", this.transform.position, this.transform.forward);
+
+        MakeExplosionEffectServerRpc(transform.position, transform.forward);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void MakeExplosionEffectServerRpc(Vector3 position, Vector3 normal)
+    {
+        MakeExplosionEffectClientRpc(position, normal);
+    }
+
+    [ClientRpc]
+    private void MakeExplosionEffectClientRpc(Vector3 position, Vector3 normal)
+    {
+        particleManager.GetComponent<ParticleManager>().CreateEffect("Explosion_PE", position, normal);
     }
 }

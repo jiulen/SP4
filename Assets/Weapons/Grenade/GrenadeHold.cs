@@ -70,7 +70,8 @@ public class GrenadeHold : WeaponBase
         rb.useGravity = true;
         grenade.GetComponent<ProjectileBase>().SetWeaponUsed(this.gameObject);
         grenade.GetComponent<ProjectileBase>().SetCreator(owner);
-        grenade.GetComponent<GrenadeProjectile>().SetObjectReferences(owner, particleManager);
+        grenade.GetComponent<GrenadeProjectile>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
+                                                                               particleManager.GetComponent<NetworkObject>().NetworkObjectId);
         grenade.transform.SetParent(projectileManager.transform);
         rb.AddForce(camera.transform.forward * ThrowForce, ForceMode.Impulse);
     }
