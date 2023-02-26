@@ -70,62 +70,64 @@ public class WeaponBase : NetworkBehaviour
     // Update is called once per frame
     public void Update()
     {
-        for (int i = 0; i != elapsedSinceLastShot.Length; i++)
+        if (IsOwner)
         {
-            elapsedSinceLastShot[i] += Time.deltaTime;
+            for (int i = 0; i != elapsedSinceLastShot.Length; i++)
+            {
+                elapsedSinceLastShot[i] += Time.deltaTime;
+            }
+
+            if (!wheelManagerUI.transform.GetChild(0).gameObject.activeSelf)
+            {
+                if (Input.GetButton("Fire1"))
+                {
+                    Fire1();
+                }
+                else
+                    Fire1Up();
+
+                if (Input.GetButton("Fire2"))
+                {
+                    Fire2();
+                }
+                else
+                    Fire2Up();
+
+                if (Input.GetButtonDown("Fire1"))
+                {
+                    Fire1Once();
+                }
+
+                if (Input.GetButtonDown("Fire2"))
+                {
+                    Fire2Once();
+                }
+
+
+                if (!isLeftClickDown && Input.GetButton("Fire1"))
+                {
+                    isLeftClickDown = true;
+                }
+                else if (isLeftClickDown && !Input.GetButton("Fire1"))
+                {
+                    Fire1UpOnce();
+                    isLeftClickDown = false;
+                }
+
+
+                if (!isRightClickDown && Input.GetButton("Fire2"))
+                {
+                    isRightClickDown = true;
+                }
+                else if (isRightClickDown && !Input.GetButton("Fire2"))
+                {
+                    Fire2UpOnce();
+                    isRightClickDown = false;
+                }
+            }
+
+            crosshair.UpdateBloom(bloomProgress, bloomMax);
         }
-
-        if (!wheelManagerUI.transform.GetChild(0).gameObject.activeSelf)
-        {
-            if (Input.GetButton("Fire1"))
-            {
-                Fire1();
-            }
-            else
-                Fire1Up();
-
-            if (Input.GetButton("Fire2"))
-            {
-                Fire2();
-            }
-            else
-                Fire2Up();
-
-            if (Input.GetButtonDown("Fire1"))
-            {
-                Fire1Once();
-            }
-
-            if (Input.GetButtonDown("Fire2"))
-            {
-                Fire2Once();
-            }
-
-
-            if (!isLeftClickDown && Input.GetButton("Fire1"))
-            {
-                isLeftClickDown = true;
-            }
-            else if (isLeftClickDown && !Input.GetButton("Fire1"))
-            {
-                Fire1UpOnce();
-                isLeftClickDown = false;
-            }
-
-
-            if (!isRightClickDown && Input.GetButton("Fire2"))
-            {
-                isRightClickDown = true;
-            }
-            else if (isRightClickDown && !Input.GetButton("Fire2"))
-            {
-                Fire2UpOnce();
-                isRightClickDown = false;
-            }
-        }
-
-        crosshair.UpdateBloom(bloomProgress, bloomMax);
-
     }
 
     protected virtual void Fire1()
