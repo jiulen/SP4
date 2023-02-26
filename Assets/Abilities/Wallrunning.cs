@@ -7,7 +7,7 @@ public class Wallrunning : MonoBehaviour
     LayerMask terrain;
     float wallRunForce = 200;
     float wallCheckDist = 2.0f;
-    float wallRunSpeed = 5.0f;
+    float wallRunSpeed = 15.0f;
     RaycastHit leftWallHit, rightWallHit;
     bool wallLeft = false, wallRight = false;
     bool wallRunningLeft = false; //check which direction wallrunning on - doesnt matter when not wallrunning
@@ -29,6 +29,8 @@ public class Wallrunning : MonoBehaviour
     //Camera effects
     Coroutine zoomInCoroutine, zoomOutCoroutine;
     Coroutine tiltToRightCoroutine, tiltToLeftCoroutine, tiltToMiddleCoroutine;
+
+    public AudioSource AudioWallrunning;
 
     // Start is called before the first frame update
     void Start()
@@ -131,6 +133,7 @@ public class Wallrunning : MonoBehaviour
 
     void StartWallRun()
     {
+        AudioWallrunning.Play();
         playerFPSScript.isWallrunning = true;
         rb.useGravity = false;
 
@@ -154,6 +157,7 @@ public class Wallrunning : MonoBehaviour
 
     void StopWallRun()
     {
+        AudioWallrunning.Stop();
         playerFPSScript.isWallrunning = false;
         rb.useGravity = true;
 

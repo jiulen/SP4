@@ -62,8 +62,8 @@ public class WeaponBase : NetworkBehaviour
         if (bulletEmitter.transform.childCount > 0)
             muzzleFlash = bulletEmitter.transform.GetChild(0).GetComponent<ParticleSystem>();
 
-        crosshair = ownerPlayerEntityScript.GetCrosshairCanvas().GetComponent<CustomCrosshair>();
         wheelManagerUI = ownerPlayerEntityScript.GetWeaponWheelCanvas().gameObject;
+        crosshair = ownerPlayerEntityScript.GetCrosshairCanvas().GetComponent<CustomCrosshair>();
         Debug.LogWarning(wheelManagerUI);
     }
 
