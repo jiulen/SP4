@@ -233,20 +233,23 @@ public class PlayerEntity : EntityBase
     [ServerRpc(RequireOwnership = false)]
     private void TakeDmgServerRpc(float hp, Vector3 dir, ulong source)
     {
-        GameObject t1 = null;
-        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(source, out NetworkObject networkObject1))
-            t1 = networkObject1.gameObject;
-
-        SpawnDamageIndicatorClientRpc(dir, new ClientRpcParams
+        if (equippedWeaponList.Length > 0)
         {
-            Send = new ClientRpcSendParams
-            {
-                TargetClientIds = new ulong[] { gameObject.GetComponent<NetworkBehaviour>().OwnerClientId }
-            }
-        });
+            GameObject t1 = null;
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(source, out NetworkObject networkObject1))
+                t1 = networkObject1.gameObject;
 
-        SetLastTouch(t1);
-        SetHealth(GetHealth() - hp);
+            SpawnDamageIndicatorClientRpc(dir, new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { gameObject.GetComponent<NetworkBehaviour>().OwnerClientId }
+                }
+            });
+
+            SetLastTouch(t1);
+            SetHealth(GetHealth() - hp);
+        }
     }
 
     public override void TakeDamage(float hp, Vector3 dir, GameObject source, GameObject weaponUsed)
