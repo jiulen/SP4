@@ -17,14 +17,14 @@ public class Sniper : WeaponBase
     private bool animationdone = true;
     private float DmgReduction;
     public float stablizeElasped = 0;
-    float StablizeDuration = 10f, StablizeProgress, AnimationRate = 0.1f;
+    float StablizeDuration = 10f, StablizeProgress, AnimationRate = 0.05f;
     private bool PlayOnce = false;
     private Text DmgReductionTxt;
     private Vector3 ScopeDesiredPosition;
     private Vector3 storeOGPosition;
     private Quaternion storeOGRotation;
     [SerializeField] TrailRenderer bulletTrail;
-    const float trailSpeed = 200f;
+    const float trailSpeed = 400f;
     FPS player;
 
     [Header("Audio References")]

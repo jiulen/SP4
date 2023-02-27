@@ -65,6 +65,7 @@ public class WeaponWheelV2 : MonoBehaviour
 
         // Initialise centre
         centre.GetComponent<ProudLlama.CircleGenerator.FillCircleGenerator>().CircleData = new ProudLlama.CircleGenerator.CircleData(centreRadius, 360, 0, 32, true);
+        centre.GetComponent<ProudLlama.CircleGenerator.FillCircleGenerator>().Generate();
 
         //foreach(Transform child in wheelSegmentsParent.transform)
         //{
@@ -83,11 +84,12 @@ public class WeaponWheelV2 : MonoBehaviour
 
             // Set the angle to 300 so that it is oriented to the top. We rotate the pivot instead to get it each segment where we want
             float strokeSize = totalRadius - centreRadius - centreToSegmentGap;
-
+            Debug.Log(strokeSize);
             ProudLlama.CircleGenerator.StrokeCircleGenerator iterateSegmentCircle = iterateSegment.transform.GetChild(0).GetComponent<ProudLlama.CircleGenerator.StrokeCircleGenerator>();
             float arcAngle = 360 / segmentNum - segmentGapAngle;
             iterateSegmentCircle.CircleData = new ProudLlama.CircleGenerator.CircleData(centreRadius + centreToSegmentGap, arcAngle, 360 - arcAngle / 2, 32, true);
             iterateSegmentCircle.StrokeData = new ProudLlama.CircleGenerator.StrokeData(strokeSize, false);
+            iterateSegmentCircle.Generate();
 
             // Recalculate normals to get the material to work
             iterateSegmentCircle.GetComponent<MeshFilter>().mesh.RecalculateNormals();

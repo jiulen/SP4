@@ -56,7 +56,7 @@ public class FPS : NetworkBehaviour
     private int jumpCount = 0;
 
     // Multi jump
-    public bool canMultiJump = false;
+    public bool canMultiJump = true;
 
     // Dash
     public float dashSpeed = 5;
@@ -541,8 +541,8 @@ public class FPS : NetworkBehaviour
             valueToUse = bodyHeight;
         valueToUse = bodyHeight;
         Ray laserRayCast = new Ray(body.transform.position, new Vector3(0, -1, 0));
-        Debug.DrawRay(this.transform.position, new Vector3(0, -valueToUse - 0.01f, 0 ), Color.red);
-        if (Physics.Raycast(laserRayCast, out RaycastHit hit, valueToUse + 0.01f))
+        Debug.DrawRay(this.transform.position, new Vector3(0, -valueToUse - 0.1f, 0 ), Color.red);
+        if (Physics.Raycast(laserRayCast, out RaycastHit hit, valueToUse + 0.1f))
         {
             jumpCount = 0;
             isGround = true;
