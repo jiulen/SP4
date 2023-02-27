@@ -72,8 +72,9 @@ public class LobbyUI : MonoBehaviour {
     }
 
     private void LobbyManager_CharSelect(object sender, LobbyManager.LobbyEventArgs e)
-    {
-        Hide();
+    {   
+        if(gameObject != null)
+            Hide();
     }
     private void UpdateLobby_Event(object sender, LobbyManager.LobbyEventArgs e) {
         UpdateLobby();
@@ -125,6 +126,8 @@ public class LobbyUI : MonoBehaviour {
     }
 
     private void Hide() {
+        if (gameObject == null)
+            return;
         gameObject.SetActive(false);
     }
 

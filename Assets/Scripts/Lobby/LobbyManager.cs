@@ -218,6 +218,7 @@ public class LobbyManager : NetworkBehaviour {
                     {
                         TestRelay.Instance.JoinRelay(joinedLobby.Data[KEY_START_GAME].Value);
                     }
+                    NetworkManager.SceneManager.LoadScene(joinedLobby.Data[KEY_MAP_SELECT].Value, LoadSceneMode.Single);
                     joinedLobby = null;
                     OnGameStarted?.Invoke(this, EventArgs.Empty); 
                 }
@@ -487,6 +488,36 @@ public class LobbyManager : NetworkBehaviour {
         }
     }
 
+    public async void UpdatePlayerSpecial(PlayerSpecial playerSpecial)
+    {
+        if (joinedLobby != null)
+        {
+            try
+            {
+                UpdatePlayerOptions options = new UpdatePlayerOptions();
+
+                options.Data = new Dictionary<string, PlayerDataObject>() {
+                    {
+                        KEY_PLAYER_SPECIAL, new PlayerDataObject(
+                            visibility: PlayerDataObject.VisibilityOptions.Public,
+                            value: playerSpecial.ToString())
+                    }
+                };
+
+                string playerId = AuthenticationService.Instance.PlayerId;
+
+                Lobby lobby = await LobbyService.Instance.UpdatePlayerAsync(joinedLobby.Id, playerId, options);
+                joinedLobby = lobby;
+
+                OnSelect?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+        }
+    }
+
     public async void CharSelect(LobbyState lobbyselect)
     {
         if (joinedLobby != null)
@@ -640,7 +671,7 @@ public class LobbyManager : NetworkBehaviour {
                     }
                 });
                 joinedLobby = lobby;
-                NetworkManager.SceneManager.LoadScene(joinedLobby.Data[KEY_MAP_SELECT].Value, LoadSceneMode.Single);
+                
                 //NetworkManager.SceneManager.LoadScene("CharSelect", LoadSceneMode.Single);
             }
             catch (LobbyServiceException e)
