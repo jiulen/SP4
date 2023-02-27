@@ -166,8 +166,8 @@ public class WeaponWheelV2 : MonoBehaviour
                 saveMousePostion = Input.mousePosition;
                 FPSScript.cameraMoveEnabled = true;
                 uiParent.SetActive(false);
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
+                //Cursor.visible = false;
+                //Cursor.lockState = CursorLockMode.Locked;
             }
         }
     }

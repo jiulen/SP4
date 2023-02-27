@@ -29,26 +29,95 @@ public class CustomCrosshair : MonoBehaviour
 
     private Transform circle;
     private ProudLlama.CircleGenerator.StrokeCircleGenerator circleScript;
+    public GameObject CrosshairGo;
     private Canvas canvas;
+
+    private bool menuActive = false;
+    public GameObject menuParent;
+
+    public Slider sliderCentreGap;
+    public Slider sliderHorizontalLength;
+    public Slider sliderHorizontalThickness;
+    public Slider sliderVerticalLength;
+    public Slider sliderVeritcalThickness;
+
+    public Slider sliderR;
+    public Slider sliderG;
+    public Slider sliderB;
+
+    public Toggle toggleCircle;
+    public Toggle toggleLines;
+    public Toggle toggleCentreDot;
+    public Toggle toggleDynamic;
 
     void Start()
     {
-        lineXP = this.transform.Find("LineXP").GetComponent<RectTransform>();
-        lineXN = this.transform.Find("LineXN").GetComponent<RectTransform>();
-        lineYP = this.transform.Find("LineYP").GetComponent<RectTransform>();
-        lineYN = this.transform.Find("LineYN").GetComponent<RectTransform>();
-        lineCentre = this.transform.Find("LineCentre").GetComponent<RectTransform>();
+        canvas = CrosshairGo.GetComponent<Canvas>();
 
-        circle = this.transform.Find("Circle");
+        lineXP = CrosshairGo.transform.Find("LineXP").GetComponent<RectTransform>();
+        lineXN = CrosshairGo.transform.Find("LineXN").GetComponent<RectTransform>();
+        lineYP = CrosshairGo.transform.Find("LineYP").GetComponent<RectTransform>();
+        lineYN = CrosshairGo.transform.Find("LineYN").GetComponent<RectTransform>();
+        lineCentre = CrosshairGo.transform.Find("LineCentre").GetComponent<RectTransform>();
+
+        circle = canvas.transform.Find("Circle");
         circleScript = circle.GetComponent<ProudLlama.CircleGenerator.StrokeCircleGenerator>();
 
-        canvas = this.GetComponent<Canvas>();
+        sliderCentreGap.value = centreGap;
+        sliderHorizontalLength.value = xLineLength;
+        sliderHorizontalThickness.value = xLineThickness;
+        sliderVerticalLength.value = yLineLength;
+        sliderVeritcalThickness.value = yLineThickness;
+
+        sliderR.value = color.r;
+        sliderG.value = color.g;
+        sliderB.value = color.b;
+
+        toggleCircle.isOn = enableCircle;
+        toggleLines.isOn = enableLines;
+        toggleCentreDot.isOn = enableCentre;
+        toggleDynamic.isOn = dynamic;
+
+
         canvas.worldCamera = this.GetComponentInParent<FPS>().camera;
         canvas.planeDistance = 0.09f;
+
+
     }
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Tab))
+            menuActive = !menuActive;
+        //menuActive = true;
+        menuParent.SetActive(menuActive);
+        if(menuActive)
+        {
+            doUpdate = true;
+            centreGap = sliderCentreGap.value;
+            xLineLength = sliderHorizontalLength.value;
+            xLineThickness = sliderHorizontalThickness.value;
+            yLineLength = sliderVerticalLength.value;
+            yLineThickness = sliderVeritcalThickness.value;
+
+            color.r = sliderR.value;
+            color.g = sliderG.value;
+            color.b = sliderB.value;
+
+            enableCircle = toggleCircle.isOn;
+            enableCentre = toggleCentreDot.isOn;
+            enableLines = toggleLines.isOn;
+            dynamic = toggleDynamic.isOn;
+
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+        else
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+
         if (!doUpdate)
             return;
         doUpdate = false;

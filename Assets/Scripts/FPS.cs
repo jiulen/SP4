@@ -208,7 +208,7 @@ public class FPS : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.P) && IsOwner)
         {
-            AddWeaponServerRpc("RPG");
+            AddWeaponServerRpc("DickScat");
             AddWeaponServerRpc("Sniper");
             AddWeaponServerRpc("Shotgun");
         }
@@ -305,7 +305,7 @@ public class FPS : NetworkBehaviour
                     if (isSlide)
                     {
                         isSlide = false;
-                        this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
+                        this.transform.position = new Vector3(this.transform.position.x, this.transform.position.y + headHeight/4, this.transform.position.z);
                         AudioSlide.Stop();
                     }
                     else
