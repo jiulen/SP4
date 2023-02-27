@@ -621,9 +621,6 @@ public class FPS : NetworkBehaviour
 
         switch (weaponName)
         {
-            case "Bananarang":
-                weapon = Instantiate(weaponPrefabList[2], leftHand.transform.position, leftHand.transform.rotation);
-                break;
             case "DickScat":
                 weapon = Instantiate(weaponPrefabList[3], rightHand.transform.position, rightHand.transform.rotation);
                 break;
@@ -673,11 +670,11 @@ public class FPS : NetworkBehaviour
         switch (charName)
         {
             case "Rhino":
-                weapon = Instantiate(weaponPrefabList[0], rightHand.transform.position, rightHand.transform.rotation);
+                weapon = Instantiate(weaponPrefabList[2], rightHand.transform.position, rightHand.transform.rotation);
                 SetHatClientRpc(0);
                 break;
             case "Angler":
-                weapon = Instantiate(weaponPrefabList[1], rightHand.transform.position, rightHand.transform.rotation);
+                weapon = Instantiate(weaponPrefabList[2], rightHand.transform.position, rightHand.transform.rotation);
                 SetHatClientRpc(1);
                 break;
             case "Winton":
