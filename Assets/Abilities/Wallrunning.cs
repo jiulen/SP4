@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class Wallrunning : MonoBehaviour
+public class Wallrunning : NetworkBehaviour
 {
     LayerMask terrain;
     float wallRunForce = 200;
@@ -133,7 +134,7 @@ public class Wallrunning : MonoBehaviour
 
     void StartWallRun()
     {
-        AudioWallrunning.Play();
+        PlayAudioServerRpc();
         playerFPSScript.isWallrunning = true;
         rb.useGravity = false;
 
@@ -157,7 +158,7 @@ public class Wallrunning : MonoBehaviour
 
     void StopWallRun()
     {
-        AudioWallrunning.Stop();
+        StopAudioServerRpc();
         playerFPSScript.isWallrunning = false;
         rb.useGravity = true;
 
@@ -216,5 +217,29 @@ public class Wallrunning : MonoBehaviour
 
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         rb.AddForce(forceToApply, ForceMode.Impulse);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void PlayAudioServerRpc()
+    {
+        PlayAudioClientRpc();
+    }
+
+    [ClientRpc]
+    void PlayAudioClientRpc()
+    {
+        AudioWallrunning.Play();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void StopAudioServerRpc()
+    {
+        StopAudioClientRpc();
+    }
+
+    [ClientRpc]
+    void StopAudioClientRpc()
+    {
+        AudioWallrunning.Stop();
     }
 }

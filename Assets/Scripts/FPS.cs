@@ -306,11 +306,11 @@ public class FPS : NetworkBehaviour
                     {
                         isSlide = false;
                         this.transform.position = new Vector3(this.transform.position.x, headHeight, this.transform.position.z);
-                        AudioSlide.Stop();
+                        StopAudio2ServerRpc();
                     }
                     else
                     {
-                        AudioSlide.Play();
+                        PlayAudio2ServerRpc();
                         isSlide = true;
                         if (moveVector.magnitude == 0)
                         {
@@ -335,7 +335,7 @@ public class FPS : NetworkBehaviour
                 if (isGround)
                 {
                     dropKickActive = false;
-                    AudioGroundPound.Play();
+                    PlayAudio4ServerRpc();
                 }
                 else
                     rigidbody.velocity = new Vector3(0, -50, 0);
@@ -429,7 +429,7 @@ public class FPS : NetworkBehaviour
         if ((Input.GetKeyDown(KeyCode.LeftShift) || forcedash) && staminaAmount >= staminaDashCost && candash)
         {
             playerEntity.StartDashEffect();
-            AudioDash.Play();
+            PlayAudioServerRpc();
             // If no keyboard input, use camera direction
             if (moveVector.magnitude == 0 || forcedash)
             {
@@ -491,14 +491,14 @@ public class FPS : NetworkBehaviour
         if (isSlide)
         {
             // So the audio won't play during the grace period in which the player can still slide while midair
-            if(isGround && !AudioSlide.isPlaying)
-                AudioSlide.Play();
-            if(!isGround)
-                AudioSlide.Stop();
+            if (isGround && !AudioSlide.isPlaying)
+                PlayAudio2ServerRpc();
+            if (!isGround)
+                StopAudio2ServerRpc();
 
             if (airTimer >= 0.5)
             {
-                AudioSlide.Stop();
+                StopAudio2ServerRpc();
                 isSlide = false;
                 return;
             }
@@ -730,5 +730,53 @@ public class FPS : NetworkBehaviour
         WeaponWheelV2 weaponWheel = playerEntity.GetWeaponWheelCanvas().GetComponent<WeaponWheelV2>();
         if (weaponWheel)
             playerEntity.GetWeaponWheelCanvas().GetComponent<WeaponWheelV2>().InitMeshes();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void PlayAudioServerRpc()
+    {
+        PlayAudioClientRpc();
+    }
+
+    [ClientRpc]
+    void PlayAudioClientRpc()
+    {
+        AudioDash.Play();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void PlayAudio2ServerRpc()
+    {
+        PlayAudio2ClientRpc();
+    }
+
+    [ClientRpc]
+    void PlayAudio2ClientRpc()
+    {
+        AudioSlide.Play();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void StopAudio2ServerRpc()
+    {
+        StopAudio2ClientRpc();
+    }
+
+    [ClientRpc]
+    void StopAudio2ClientRpc()
+    {
+        AudioSlide.Stop();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void PlayAudio4ServerRpc()
+    {
+        PlayAudio4ClientRpc();
+    }
+
+    [ClientRpc]
+    void PlayAudio4ClientRpc()
+    {
+        AudioGroundPound.Play();
     }
 }
