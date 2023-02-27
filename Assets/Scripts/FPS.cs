@@ -154,6 +154,8 @@ public class FPS : NetworkBehaviour
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         body.GetComponent<MeshRenderer>().enabled = false;
         visorMR.enabled = false;
+
+        Random.InitState((int)System.DateTime.Now.Ticks);
     }
 
     public override void OnNetworkSpawn() //must do check for IsOwner in OnNetworkSpawn (IsOwner only updates after awake)
@@ -201,33 +203,56 @@ public class FPS : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug multiplayer
-
-        if (Input.GetKeyDown(KeyCode.O) && IsOwner)
-            AddEquippedServerRpc();
-
-        if (Input.GetKeyDown(KeyCode.P) && IsOwner)
+        if (Input.GetKeyDown(KeyCode.Return) && IsOwner)
         {
-            AddWeaponServerRpc("RPG");
-            AddWeaponServerRpc("Sniper");
-            AddWeaponServerRpc("Shotgun");
-        }
+            AddEquippedServerRpc();
+            int prevWeapon = -1;
+            for (int i = 0; i < 2; ++i)
+            {
+                int weapon = Random.Range(0, 6);
+                while (weapon == prevWeapon)
+                    weapon = Random.Range(0, 6);
+                prevWeapon = weapon;
 
-        if (Input.GetKeyDown(KeyCode.Alpha0) && IsOwner)
+                switch (weapon)
+                {
+                    case 0:
+                        AddWeaponServerRpc("Grenade");
+                        break;
+                    case 1:
+                        AddWeaponServerRpc("RPG");
+                        break;
+                    case 2:
+                        AddWeaponServerRpc("Shotgun");
+                        break;
+                    case 3:
+                        AddWeaponServerRpc("Sniper");
+                        break;
+                    case 4:
+                        AddWeaponServerRpc("Staff");
+                        break;
+                    case 5:
+                        AddWeaponServerRpc("Sword");
+                        break;
+                }
+            }
             AddWeaponServerRpc("GrapplingHook");
-
-        if (Input.GetKeyDown(KeyCode.Alpha7) && IsOwner)
-            SetCharacterServerRpc("Rhino");
-
-        if (Input.GetKeyDown(KeyCode.Alpha8) && IsOwner)
-            SetCharacterServerRpc("Angler");
-
-        if (Input.GetKeyDown(KeyCode.Alpha9) && IsOwner)
-            SetCharacterServerRpc("Winton");
-
-        if (Input.GetKeyDown(KeyCode.LeftBracket) && IsOwner)
+            //Rand
+            int character = Random.Range(0, 3);
+            switch (character)
+            {
+                case 0:
+                    SetCharacterServerRpc("Rhino");
+                    break;
+                case 1:
+                    SetCharacterServerRpc("Angler");
+                    break;
+                case 2:
+                    SetCharacterServerRpc("Winton");
+                    break;
+            }
             SetWeaponsServerRpc();
-        //
+        }
 
             // Reset position and velocity if player goes out of bounds for debugging
         if (transform.position.magnitude > 100 || transform.position.y <= -20)
