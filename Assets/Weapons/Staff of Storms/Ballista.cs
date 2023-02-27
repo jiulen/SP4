@@ -31,7 +31,7 @@ public class Ballista : WeaponBase
     {
         if (CheckCanFire(1))
         {
-            PlayAudioServerRpc();
+            AudioFire1.Play();
 
             fireAnimation.enabled = true;
             fireAnimation.StopPlayback();
@@ -171,7 +171,7 @@ public class Ballista : WeaponBase
     {
         if (CheckCanFire(2))
         {
-            PlayAudio2ServerRpc();
+            AudioFire2.Play();
 
             Transform newTransform = camera.transform;
             Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
@@ -196,28 +196,5 @@ public class Ballista : WeaponBase
         go.GetComponent<StormBlast>().SetObjectReferencesClientRpc(owner.GetComponent<NetworkObject>().NetworkObjectId,
                                                                    particleManager.GetComponent<NetworkObject>().NetworkObjectId);
     }
-
-    [ServerRpc(RequireOwnership = false)]
-    void PlayAudioServerRpc()
-    {
-        PlayAudioClientRpc();
-    }
-
-    [ClientRpc]
-    void PlayAudioClientRpc()
-    {
-        AudioFire1.Play();
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    void PlayAudio2ServerRpc()
-    {
-        PlayAudio2ClientRpc();
-    }
-
-    [ClientRpc]
-    void PlayAudio2ClientRpc()
-    {
-        AudioFire2.Play();
-    }
 } 
+    

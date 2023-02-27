@@ -1291,6 +1291,7 @@ MonoBehaviour:
   staminaMax: 5
   staminaRefillRate: 2
   jumpForce: 250
+  canMultiJump: 1
   dashSpeed: 5
   dashDuration: 0.2
   candash: 1

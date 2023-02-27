@@ -30,7 +30,7 @@ Transform:
   - {fileID: 7934672361141583435}
   - {fileID: 8561618822782858653}
   - {fileID: 4392816309991436901}
-  - {fileID: 6756421201779244612}
+  - {fileID: 6576264962990388549}
   - {fileID: 6151239352832106962}
   - {fileID: 3337353917670767648}
   - {fileID: 8830775244891510024}
@@ -167,6 +167,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Custom Crosshair Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 4778736348366622015, guid: 0f3425e527a764a4899eb97e3fbcb584, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4958828291092399678, guid: 0f3425e527a764a4899eb97e3fbcb584, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -257,9 +261,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0f3425e527a764a4899eb97e3fbcb584, type: 3}
---- !u!224 &6756421201779244612 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 4958828291092399678, guid: 0f3425e527a764a4899eb97e3fbcb584, type: 3}
+--- !u!4 &6576264962990388549 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4778736348366622015, guid: 0f3425e527a764a4899eb97e3fbcb584, type: 3}
   m_PrefabInstance: {fileID: 1806767293959534714}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2854617813639442997
