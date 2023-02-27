@@ -177,7 +177,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fireRate:
   - 1
-  damage: 32000000
+  damage: 28000000
   bulletsPerShot: 
   inaccuracy: []
   projectileVel:

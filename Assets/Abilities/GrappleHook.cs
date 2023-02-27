@@ -119,8 +119,7 @@ public class GrappleHook : NetworkBehaviour
                 }
                 else if (playerScript.staminaAmount >= playerScript.staminaGrappleCost)
                 {
-                    AudioGrappleShoot.Play();
-                    AudioGrappling.Play();
+                    PlayAudioServerRpc();
 
                     //Ray laserRayCast = new Ray(body.transform.position, 5 * (hook.transform.position - body.transform.position));
                     Ray laserRayCast = new Ray(camera.transform.position, camera.transform.forward);
@@ -204,7 +203,7 @@ public class GrappleHook : NetworkBehaviour
         }
         else
         {
-            AudioGrappling.Stop();
+            StopAudioServerRpc();
             hook.transform.parent = this.transform;
             if (grappledRigidBody != null)
                 grappledRigidBody.useGravity = true;
@@ -237,5 +236,30 @@ public class GrappleHook : NetworkBehaviour
         grappleLine.positionCount = 2;
         grappleLine.SetPosition(0, grappleBodyPos);
         grappleLine.SetPosition(1, hookPos);
+    }
+
+    [ServerRpc (RequireOwnership = false)]
+    void PlayAudioServerRpc()
+    {
+        PlayAudioClientRpc();
+    }
+
+    [ClientRpc]
+    void PlayAudioClientRpc()
+    {
+        AudioGrappleShoot.Play();
+        AudioGrappling.Play();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void StopAudioServerRpc()
+    {
+        StopAudioClientRpc();
+    }
+
+    [ClientRpc]
+    void StopAudioClientRpc()
+    {
+        AudioGrappling.Stop();
     }
 }

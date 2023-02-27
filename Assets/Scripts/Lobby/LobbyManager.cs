@@ -198,10 +198,14 @@ public class LobbyManager : NetworkBehaviour {
                         ++i;
                 }
 
-                if(i == joinedLobby.Players.Count)
+                if (joinedLobby.Data[KEY_START_GAME].Value == "0")
                 {
-                    StartGame();
+                    if (i == joinedLobby.Players.Count)
+                    {
+                        StartGame();
+                    }
                 }
+
 
                 if (!IsPlayerInLobby()) {
                     // Player was kicked out of this lobby
@@ -218,7 +222,8 @@ public class LobbyManager : NetworkBehaviour {
                     {
                         TestRelay.Instance.JoinRelay(joinedLobby.Data[KEY_START_GAME].Value);
                     }
-                    NetworkManager.SceneManager.LoadScene(joinedLobby.Data[KEY_MAP_SELECT].Value, LoadSceneMode.Single);
+                    //StartCoroutine(LoadScene());
+
                     joinedLobby = null;
                     OnGameStarted?.Invoke(this, EventArgs.Empty); 
                 }
@@ -671,13 +676,39 @@ public class LobbyManager : NetworkBehaviour {
                     }
                 });
                 joinedLobby = lobby;
-                
-                //NetworkManager.SceneManager.LoadScene("CharSelect", LoadSceneMode.Single);
+
+                //StartCoroutine(LoadScene());
+                NetworkManager.SceneManager.LoadScene("RandallTestingScene", LoadSceneMode.Single);
             }
             catch (LobbyServiceException e)
             {
                 Debug.Log(e);
             }
+        }
+    }
+
+    IEnumerator LoadScene()
+    {
+        yield return null;
+
+        //Begin to load the Scene you specify
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync("Parallel_Pillars");
+        //Don't let the Scene activate until you allow it to
+        asyncOperation.allowSceneActivation = false;
+        Debug.Log("Pro :" + asyncOperation.progress);
+        //When the load is still in progress, output the Text and progress bar
+        while (!asyncOperation.isDone)
+        {
+            //Output the current progress
+            //m_Text.text = "Loading progress: " + (asyncOperation.progress * 100) + "%";
+
+            // Check if the load has finished
+            if (asyncOperation.progress >= 0.9f)
+            {
+                asyncOperation.allowSceneActivation = true;
+            }
+
+            yield return null;
         }
     }
 }

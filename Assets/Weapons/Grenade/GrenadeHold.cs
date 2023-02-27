@@ -49,7 +49,7 @@ public class GrenadeHold : WeaponBase
     {
         if (grenadestate == GrenadeWeaponState.NONE)
         {
-            AudioThrow.Play();
+            PlayAudioServerRpc();
             Transform newTransform = camera.transform;
             Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
             ThrowServerRpc(front, bulletEmitter.transform.position);
@@ -82,5 +82,17 @@ public class GrenadeHold : WeaponBase
     private void SetKnifeModelActiveClientRpc(bool active)
     {
         weaponModel.SetActive(active);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void PlayAudioServerRpc()
+    {
+        PlayAudioClientRpc();
+    }
+
+    [ClientRpc]
+    void PlayAudioClientRpc()
+    {
+        AudioThrow.Play();
     }
 }

@@ -154,6 +154,8 @@ public class FPS : NetworkBehaviour
         camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         body.GetComponent<MeshRenderer>().enabled = false;
         visorMR.enabled = false;
+
+        Random.InitState((int)System.DateTime.Now.Ticks);
     }
 
     public override void OnNetworkSpawn() //must do check for IsOwner in OnNetworkSpawn (IsOwner only updates after awake)
@@ -167,7 +169,7 @@ public class FPS : NetworkBehaviour
     {
         if (IsServer)
         {
-            
+
         }
 
         if (!IsOwner && !debugBelongsToPlayer) return;
@@ -201,33 +203,56 @@ public class FPS : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug multiplayer
-
-        if (Input.GetKeyDown(KeyCode.O) && IsOwner)
-            AddEquippedServerRpc();
-
-        if (Input.GetKeyDown(KeyCode.P) && IsOwner)
+        if (Input.GetKeyDown(KeyCode.Return) && IsOwner)
         {
-            AddWeaponServerRpc("DickScat");
-            AddWeaponServerRpc("Sniper");
-            AddWeaponServerRpc("Shotgun");
-        }
+            AddEquippedServerRpc();
+            int prevWeapon = -1;
+            for (int i = 0; i < 2; ++i)
+            {
+                int weapon = Random.Range(0, 6);
+                while (weapon == prevWeapon)
+                    weapon = Random.Range(0, 6);
+                prevWeapon = weapon;
 
-        if (Input.GetKeyDown(KeyCode.Alpha0) && IsOwner)
+                switch (weapon)
+                {
+                    case 0:
+                        AddWeaponServerRpc("Grenade");
+                        break;
+                    case 1:
+                        AddWeaponServerRpc("RPG");
+                        break;
+                    case 2:
+                        AddWeaponServerRpc("Shotgun");
+                        break;
+                    case 3:
+                        AddWeaponServerRpc("Sniper");
+                        break;
+                    case 4:
+                        AddWeaponServerRpc("Staff");
+                        break;
+                    case 5:
+                        AddWeaponServerRpc("Sword");
+                        break;
+                }
+            }
             AddWeaponServerRpc("GrapplingHook");
-
-        if (Input.GetKeyDown(KeyCode.Alpha7) && IsOwner)
-            SetCharacterServerRpc("Rhino");
-
-        if (Input.GetKeyDown(KeyCode.Alpha8) && IsOwner)
-            SetCharacterServerRpc("Angler");
-
-        if (Input.GetKeyDown(KeyCode.Alpha9) && IsOwner)
-            SetCharacterServerRpc("Winton");
-
-        if (Input.GetKeyDown(KeyCode.LeftBracket) && IsOwner)
+            //Rand
+            int character = Random.Range(0, 3);
+            switch (character)
+            {
+                case 0:
+                    SetCharacterServerRpc("Rhino");
+                    break;
+                case 1:
+                    SetCharacterServerRpc("Angler");
+                    break;
+                case 2:
+                    SetCharacterServerRpc("Winton");
+                    break;
+            }
             SetWeaponsServerRpc();
-        //
+        }
 
             // Reset position and velocity if player goes out of bounds for debugging
         if (transform.position.magnitude > 100 || transform.position.y <= -20)
@@ -240,7 +265,7 @@ public class FPS : NetworkBehaviour
         if (!IsOwner && !debugBelongsToPlayer) return;
         Debug.DrawRay(camera.transform.position, 100 * camera.transform.forward, Color.black);
 
-        
+
 
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
@@ -251,7 +276,7 @@ public class FPS : NetworkBehaviour
         {
             yaw += mouseX * CamSen * Time.deltaTime;
             pitch -= mouseY * CamSen * Time.deltaTime;
-            camera.transform.rotation = Quaternion.Euler(pitch, yaw, roll); 
+            camera.transform.rotation = Quaternion.Euler(pitch, yaw, roll);
         }
 
         Vector3 forward = camera.transform.forward;
@@ -310,7 +335,7 @@ public class FPS : NetworkBehaviour
                     }
                     else
                     {
-                        AudioSlide.Play();
+                        PlayAudio2ServerRpc();
                         isSlide = true;
                         if (moveVector.magnitude == 0)
                         {
@@ -335,7 +360,7 @@ public class FPS : NetworkBehaviour
                 if (isGround)
                 {
                     dropKickActive = false;
-                    AudioGroundPound.Play();
+                    PlayAudio4ServerRpc();
                 }
                 else
                     rigidbody.velocity = new Vector3(0, -50, 0);
@@ -397,12 +422,12 @@ public class FPS : NetworkBehaviour
         {
             if (isGround)
             {
-                
+
                 if(isGrapple)
                     rigidbody.AddForce(0, jumpForce * 2.5f, 0);
                 else
                     rigidbody.AddForce(0, jumpForce, 0);
-                
+
                 if (isSlide)
                 {
                     rigidbody.AddForce(0, jumpForce, 0);
@@ -424,12 +449,12 @@ public class FPS : NetworkBehaviour
 
     private void UpdateDash()
     {
-        dashProgress += Time.deltaTime;       
+        dashProgress += Time.deltaTime;
 
         if ((Input.GetKeyDown(KeyCode.LeftShift) || forcedash) && staminaAmount >= staminaDashCost && candash)
         {
             playerEntity.StartDashEffect();
-            AudioDash.Play();
+            PlayAudioServerRpc();
             // If no keyboard input, use camera direction
             if (moveVector.magnitude == 0 || forcedash)
             {
@@ -491,14 +516,14 @@ public class FPS : NetworkBehaviour
         if (isSlide)
         {
             // So the audio won't play during the grace period in which the player can still slide while midair
-            if(isGround && !AudioSlide.isPlaying)
-                AudioSlide.Play();
-            if(!isGround)
-                AudioSlide.Stop();
+            if (isGround && !AudioSlide.isPlaying)
+                PlayAudio2ServerRpc();
+            if (!isGround)
+                StopAudio2ServerRpc();
 
             if (airTimer >= 0.5)
             {
-                AudioSlide.Stop();
+                StopAudio2ServerRpc();
                 isSlide = false;
                 return;
             }
@@ -670,11 +695,11 @@ public class FPS : NetworkBehaviour
         switch (charName)
         {
             case "Rhino":
-                weapon = Instantiate(weaponPrefabList[0], rightHand.transform.position, rightHand.transform.rotation);
+                weapon = Instantiate(weaponPrefabList[2], rightHand.transform.position, rightHand.transform.rotation);
                 SetHatClientRpc(0);
                 break;
             case "Angler":
-                weapon = Instantiate(weaponPrefabList[1], rightHand.transform.position, rightHand.transform.rotation);
+                weapon = Instantiate(weaponPrefabList[2], rightHand.transform.position, rightHand.transform.rotation);
                 SetHatClientRpc(1);
                 break;
             case "Winton":
@@ -730,5 +755,53 @@ public class FPS : NetworkBehaviour
         WeaponWheelV2 weaponWheel = playerEntity.GetWeaponWheelCanvas().GetComponent<WeaponWheelV2>();
         if (weaponWheel)
             playerEntity.GetWeaponWheelCanvas().GetComponent<WeaponWheelV2>().InitMeshes();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void PlayAudioServerRpc()
+    {
+        PlayAudioClientRpc();
+    }
+
+    [ClientRpc]
+    void PlayAudioClientRpc()
+    {
+        AudioDash.Play();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void PlayAudio2ServerRpc()
+    {
+        PlayAudio2ClientRpc();
+    }
+
+    [ClientRpc]
+    void PlayAudio2ClientRpc()
+    {
+        AudioSlide.Play();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void StopAudio2ServerRpc()
+    {
+        StopAudio2ClientRpc();
+    }
+
+    [ClientRpc]
+    void StopAudio2ClientRpc()
+    {
+        AudioSlide.Stop();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void PlayAudio4ServerRpc()
+    {
+        PlayAudio4ClientRpc();
+    }
+
+    [ClientRpc]
+    void PlayAudio4ClientRpc()
+    {
+        AudioGroundPound.Play();
     }
 }

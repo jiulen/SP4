@@ -25,7 +25,6 @@ public class Shotgun : WeaponBase
     {
         if (CheckCanFire(1))
         {
-            AudioFire1.Play();
             fireAnimation.speed = 1 / (float)elapsedBetweenEachShot[0];
             fireAnimation.PlayInFixedTime("Fire", -1, 0);
             muzzleFlash.GetComponent<ParticleSystem>().Stop();
@@ -126,7 +125,7 @@ public class Shotgun : WeaponBase
                 }
             }
             //shootingSystem.Play();
-            AudioFire1.Play();
+            PlayAudioServerRpc();
         }
     }
 
@@ -178,5 +177,17 @@ public class Shotgun : WeaponBase
                 particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hitPoint, hitNormal);
                 break;
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void PlayAudioServerRpc()
+    {
+        PlayAudioClientRpc();
+    }
+
+    [ClientRpc]
+    void PlayAudioClientRpc()
+    {
+        AudioFire1.Play();
     }
 }

@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 using System;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
+using static UnityEngine.EventSystems.EventTrigger;
 
 // Player script for UI, playerstats
 public class PlayerEntity : EntityBase
@@ -37,6 +38,7 @@ public class PlayerEntity : EntityBase
     //public GameObject CameraEffectsCanvasPF;
     public GameObject KillFeedPrefab;
     private static List<GameObject> KillPrefabList = new List<GameObject>();
+    private int kills = 0, deaths = 0;
 
     void Awake()
     {
@@ -120,31 +122,35 @@ public class PlayerEntity : EntityBase
     }
 
     [ClientRpc]
-    private void UpdateKillFeedClientRpc(ulong networkObject, ulong networkObject2, string name1, string name2)
+    private void UpdateKillFeedClientRpc(ulong networkObject, ulong networkObject2, ulong playerkill, ulong playerdeath)
     {
+        GameObject me = null, enemy = null;
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerkill, out NetworkObject networkObjectplayerkill))
+            me = networkObjectplayerkill.gameObject;
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerdeath, out NetworkObject networkObjectenemy))
+            enemy = networkObjectenemy.gameObject;
+
         if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObject, out NetworkObject networkObject1))
         {
-            networkObject1.gameObject.transform.Find("PlayerKill").GetComponent<Text>().text = name1;
-            networkObject1.gameObject.transform.Find("PlayerDeath").GetComponent<Text>().text = name2;
+            networkObject1.gameObject.transform.Find("PlayerKill").GetComponent<Text>().text = me.name;
+            networkObject1.gameObject.transform.Find("PlayerDeath").GetComponent<Text>().text = enemy.name;
             if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObject2, out NetworkObject networkObject22))
             {
                 networkObject1.gameObject.transform.Find("KillerWeapon").GetComponent<Image>().sprite = networkObject22.gameObject.GetComponent<WeaponBase>().WeaponIcon;
             }
+
         }
+
+        me.GetComponent<PlayerEntity>().kills++;
+        enemy.GetComponent<PlayerEntity>().deaths++;
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void SpawnKillFeedServerRpc(ulong playerkills, ulong playerdeath, ulong typeofWeapon)
     {
-        GameObject t1 = null, t2 = null;
-        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerkills, out NetworkObject networkObject1))
-            t1 = networkObject1.gameObject;
-        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerdeath, out NetworkObject networkObject2))
-            t2 = networkObject2.gameObject;
-
         GameObject spawnFeed = Instantiate(KillFeedPrefab, uiKillFeedCanvas.transform);
         spawnFeed.GetComponent<NetworkObject>().Spawn();
-        UpdateKillFeedClientRpc(spawnFeed.GetComponent<NetworkObject>().NetworkObjectId, typeofWeapon, t1.name, t2.name);
+        UpdateKillFeedClientRpc(spawnFeed.GetComponent<NetworkObject>().NetworkObjectId, typeofWeapon, playerkills, playerdeath);
         spawnFeed.GetComponent<NetworkObject>().TrySetParent(uiKillFeedCanvas);
         KillPrefabList.Insert(0, spawnFeed);
 
@@ -193,8 +199,10 @@ public class PlayerEntity : EntityBase
         currAlpha.a = 1 - (Health / MaxHealth);
         cameraEffectInjured.color = currAlpha;
 
-        uiStaminaCanvas.GetComponent<StaminaUI>().UpdateStamina(FPSScript.staminaAmount);
 
+        uiStaminaCanvas.GetComponent<StaminaUI>().UpdateStamina(FPSScript.staminaAmount);
+        uiPlayerStatsCanvas.transform.Find("MyScore/Text").GetComponent<Text>().text = kills.ToString();
+        uiPlayerStatsCanvas.transform.Find("EScore/Text").GetComponent<Text>().text = deaths.ToString();
     }
 
     [ClientRpc]
@@ -225,20 +233,23 @@ public class PlayerEntity : EntityBase
     [ServerRpc(RequireOwnership = false)]
     private void TakeDmgServerRpc(float hp, Vector3 dir, ulong source)
     {
-        GameObject t1 = null;
-        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(source, out NetworkObject networkObject1))
-            t1 = networkObject1.gameObject;
-
-        SpawnDamageIndicatorClientRpc(dir, new ClientRpcParams
+        if (equippedWeaponList.Length > 0)
         {
-            Send = new ClientRpcSendParams
-            {
-                TargetClientIds = new ulong[] { gameObject.GetComponent<NetworkBehaviour>().OwnerClientId }
-            }
-        });
+            GameObject t1 = null;
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(source, out NetworkObject networkObject1))
+                t1 = networkObject1.gameObject;
 
-        SetLastTouch(t1);
-        SetHealth(GetHealth() - hp);
+            SpawnDamageIndicatorClientRpc(dir, new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { gameObject.GetComponent<NetworkBehaviour>().OwnerClientId }
+                }
+            });
+
+            SetLastTouch(t1);
+            SetHealth(GetHealth() - hp);
+        }
     }
 
     public override void TakeDamage(float hp, Vector3 dir, GameObject source, GameObject weaponUsed)

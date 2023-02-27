@@ -74,12 +74,24 @@ public class Explosion : ProjectileBase
                 }
             }
         }
-        AudioSource.PlayClipAtPoint(clip, transform.position);
+        PlayAudioServerRpc(transform.position);
 
         emptycollider.Clear();
     }
     public void Explode()
     {
         ExplodeServerRPC();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void PlayAudioServerRpc(Vector3 pos)
+    {
+        PlayAudioClientRpc(pos);
+    }
+
+    [ClientRpc]
+    void PlayAudioClientRpc(Vector3 pos)
+    {
+        AudioSource.PlayClipAtPoint(clip, pos);
     }
 }
