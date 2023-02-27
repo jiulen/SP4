@@ -56,7 +56,7 @@ public class Sword : WeaponBase
 
                     Transform newTransform = camera.transform;
                     Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
-                    AudioThrow.Play();
+                    PlayAudioServerRpc();
 
                     ThrowKnifeServerRpc(front);
                     weaponModel.SetActive(false);
@@ -200,5 +200,17 @@ public class Sword : WeaponBase
                 particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hitPoint, hitNormal);
                 break;
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void PlayAudioServerRpc()
+    {
+        PlayAudioClientRpc();
+    }
+
+    [ClientRpc]
+    void PlayAudioClientRpc()
+    {
+        AudioThrow.Play();
     }
 }

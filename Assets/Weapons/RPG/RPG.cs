@@ -107,7 +107,7 @@ public class RPG : WeaponBase
                 Vector3 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
                 Vector3 speed = front.normalized * projectileVel[0] * PowerCurrentScale;
                 ShootRocketServerRpc(front, bulletEmitter.transform.position, speed);
-                AudioFire1.Play();
+                PlayAudioServerRpc();
                 PowerCurrentScale = 1;
                 RocketMuzzle.SetActive(false);
                 animator.SetBool("isActive", true);
@@ -132,5 +132,17 @@ public class RPG : WeaponBase
     private void UpdateSlider()
     {
         slider.value = PowerCurrentScale;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void PlayAudioServerRpc()
+    {
+        PlayAudioClientRpc();
+    }
+
+    [ClientRpc]
+    void PlayAudioClientRpc()
+    {
+        AudioFire1.Play();
     }
 }

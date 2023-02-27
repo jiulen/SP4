@@ -621,6 +621,9 @@ public class FPS : NetworkBehaviour
 
         switch (weaponName)
         {
+            case "Bananarang":
+                weapon = Instantiate(weaponPrefabList[2], leftHand.transform.position, leftHand.transform.rotation);
+                break;
             case "DickScat":
                 weapon = Instantiate(weaponPrefabList[3], rightHand.transform.position, rightHand.transform.rotation);
                 break;

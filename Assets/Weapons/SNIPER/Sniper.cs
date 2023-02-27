@@ -118,8 +118,6 @@ public class Sniper : WeaponBase
         {
             if (CheckCanFire(1))
             {
-                AudioFire1.Play();
-
                 Transform newTransform = camera.transform;
                 int hitType = -1;
                 front = newTransform.forward * 1000 - bulletEmitter.transform.position;
@@ -214,8 +212,7 @@ public class Sniper : WeaponBase
                     CreateTrailServerRpc(bulletEmitter.transform.position + front * 200, Vector3.zero, hitType);
                 }
                 animator.SetBool("isActive", true);
-                AudioFire1.Play();
-
+                PlayAudioServerRpc();
             }
         }
     }
@@ -316,5 +313,17 @@ public class Sniper : WeaponBase
                 particleManager.GetComponent<ParticleManager>().CreateEffect("Blood_PE", hitPoint, hitNormal);
                 break;
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void PlayAudioServerRpc()
+    {
+        PlayAudioClientRpc();
+    }
+
+    [ClientRpc]
+    void PlayAudioClientRpc()
+    {
+        AudioFire1.Play();
     }
 }
