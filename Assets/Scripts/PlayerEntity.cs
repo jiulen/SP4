@@ -70,7 +70,7 @@ public class PlayerEntity : EntityBase
 
         // I am too lazy to make sure that the start functions are called in the right order so I just grab the camera from the top of the hierarchy
         dashEffectCanvas.GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
-        dashEffectCanvas.GetComponent<Canvas>().planeDistance = 50f;
+        dashEffectCanvas.GetComponent<Canvas>().planeDistance = 0.1f;
     }
 
     void Start()
